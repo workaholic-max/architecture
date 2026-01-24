@@ -156,8 +156,6 @@ represents all available application routes.
 
 ## Possible Improvements
 
----
-
 - TypeScript
 - Add pre-commit hooks
 - Automatic import sorting via ESLint
@@ -166,6 +164,11 @@ represents all available application routes.
 ---
 
 ## Implementation Notes
+
+This section highlights practical implementation choices, patterns, and conventions used across the project that are not
+strictly defined by the architectural structure. It provides additional context around how certain concerns are handled
+in practice, capturing decisions and approaches that help keep the codebase consistent, predictable, and easier to
+reason about as it grows.
 
 ---
 
@@ -490,4 +493,4 @@ usage across the application.
 Stored values are automatically namespaced using a predefined prefix, preventing key collisions with other applications
 or environments and keeping stored data clearly identifiable.
 
-Also handles common edge cases, such as invalid JSON data or unavailable storage capacity.\*\*
+Also handles common edge cases, such as invalid JSON data or unavailable storage capacity.

@@ -1,4 +1,4 @@
-\*\*# Architecture
+# Architecture
 
 A scalable solution for **Vue** applications, designed for long-term maintainability, clear boundaries, predictable
 structure, and high codebase readability.

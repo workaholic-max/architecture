@@ -1,0 +1,38 @@
+$white: #ffffff;
+$black: #2d2d2d;
+
+$green: #008000;
+$green-a10: rgba($green, 0.1);
+
+$yellow-light: #fffbe8;
+
+$red: #cf382f;
+$red-light: #ff4439;
+$red-light-a10: rgba($red-light, 0.1);
+$red-muted: #de736d;
+$red-dark: #a52d26;
+$red-soft: #d34f47;
+
+$gray-50: #fafafa;
+$gray-100: #f1efef;
+$gray-200: #dadada;
+$gray-300: #d8d8d8;
+$gray-400: #dfdfdf;
+$gray-500: #c4c4c4;
+$gray-600: #969aab;
+$gray-700: #808080;
+$gray-800: #5e6273;
+$gray-900: #414353;
+
+$orange: #ffa000;
+$orange-a10: rgba($orange, 0.1);
+$orange-light: #ffc666;
+$orange-muted: #feb272;
+$orange-dark: #984c0c;
+
+$primary: $orange;
+
+$info: $gray-800;
+$success: $green;
+$warning: $orange;
+$error: $red;

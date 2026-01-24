@@ -1,0 +1,37 @@
+@use '@style-vars' as vars;
+@use '@style-mixins' as mixins;
+
+/* fade */
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    @include mixins.transition(opacity);
+}
+
+/* scale */
+.scale-enter-from,
+.scale-leave-to {
+    opacity: 0;
+    transform: scale(0.95);
+}
+
+.scale-enter-active,
+.scale-leave-active {
+    @include mixins.transition(opacity, transform);
+}
+
+/* slide down */
+.slide-down-enter-from,
+.slide-down-leave-to {
+    opacity: 0;
+    transform: translateY(vars.$space-safe-area-negative);
+}
+
+.slide-down-enter-active,
+.slide-down-leave-active {
+    @include mixins.transition(opacity, transform);
+}

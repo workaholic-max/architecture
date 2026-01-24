@@ -1,0 +1,11 @@
+@use '@style-vars' as vars;
+
+:root {
+    --space-content-y: 25px;
+}
+
+@media screen and (max-width: vars.$breakpoint-container-max-width) {
+    :root {
+        --space-content-y: #{vars.$space-safe-area};
+    }
+}

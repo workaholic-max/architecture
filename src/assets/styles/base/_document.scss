@@ -1,0 +1,60 @@
+@use '@style-vars' as vars;
+
+body {
+    display: flex;
+    flex-direction: column;
+    background-color: vars.$color-white;
+    color: vars.$color-black;
+    font-size: vars.$font-size-base;
+    font-weight: vars.$font-weight-medium;
+    font-family: vars.$font-family-base;
+    line-height: 1.25;
+
+    &.ml-body--scroll-locked {
+        overflow: hidden;
+    }
+
+    &.ml-body--interaction-locked {
+        pointer-events: none;
+        user-select: none;
+    }
+}
+
+#app {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+::selection {
+    background: vars.$color-primary;
+    color: vars.$color-white;
+}
+
+::-moz-selection {
+    background-color: vars.$color-primary;
+    color: vars.$color-white;
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+    height: 3px;
+    background: vars.$color-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+    background: vars.$color-primary;
+    border-radius: vars.$border-radius-base;
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: vars.$color-primary;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-track:active {
+    background: transparent;
+}

@@ -1,0 +1,113 @@
+@use '@style-vars' as vars;
+
+html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    height: 100%;
+}
+
+body {
+    min-height: 100%;
+    margin: 0;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0;
+    line-height: 1;
+}
+
+p {
+    margin: 0;
+}
+
+a {
+    background-color: transparent;
+    text-decoration: none;
+}
+
+ul,
+ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+img {
+    border-style: none;
+    display: flex;
+    max-width: 100%;
+
+    &::selection {
+        background-color: transparent;
+    }
+}
+
+label[for] {
+    cursor: pointer;
+    width: fit-content;
+}
+
+input {
+    /* Chrome, Safari, Edge, Opera */
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Firefox */
+    &[type='number'] {
+        -moz-appearance: textfield;
+    }
+
+    &[type='search']::-webkit-search-cancel-button,
+    &[type='search']::-webkit-search-decoration,
+    &[type='search']::-webkit-search-cancel-button,
+    &[type='search']::-webkit-search-results-button,
+    &[type='search']::-webkit-search-results-decoration {
+        display: none;
+    }
+}
+
+button,
+select {
+    cursor: pointer;
+}
+
+button,
+input,
+select,
+textarea {
+    background-color: transparent;
+    color: inherit;
+    font-family: inherit;
+    font-size: 100%;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+
+    &:active,
+    &:focus {
+        outline: none;
+    }
+
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus {
+        -webkit-text-fill-color: vars.$color-black;
+        transition: background-color 9999s ease;
+    }
+}

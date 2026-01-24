@@ -1,0 +1,28 @@
+@use '@style-vars' as vars;
+
+@mixin transition($properties...) {
+    transition-property: $properties;
+    transition-duration: vars.$transition-duration;
+    transition-timing-function: vars.$transition-timing-function;
+}
+
+@mixin transition-fast($properties...) {
+    transition-property: $properties;
+    transition-duration: vars.$transition-duration-fast;
+    transition-timing-function: vars.$transition-timing-function-fast;
+}
+
+@mixin hover() {
+    @media (hover: hover) and (pointer: fine) {
+        &:not(:disabled):not([disabled]):hover {
+            @content;
+        }
+    }
+}
+
+@mixin truncate {
+    min-width: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}

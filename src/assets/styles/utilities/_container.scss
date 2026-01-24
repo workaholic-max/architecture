@@ -1,0 +1,13 @@
+@use '@style-vars' as vars;
+@use '@style-mixins' as mixins;
+
+.ml-container {
+    width: 100%;
+    max-width: vars.$breakpoint-container-max-width;
+    margin: 0 auto;
+    padding: 0 vars.$space-safe-area;
+
+    @media (max-width: vars.$breakpoint-container-max-width) {
+        max-width: vars.$breakpoint-container-full-width;
+    }
+}

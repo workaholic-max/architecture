@@ -1,21 +1,22 @@
-# Architecture
+\*\*# Architecture
 
 A scalable solution for **Vue** applications, designed for long-term maintainability, clear boundaries, predictable
 structure, and high codebase readability.
 
 ---
 
-## [`app`/](https://github.com/workaholic-max)
+## [`app`/](https://github.com/workaholic-max/architecture/tree/main/src/app)
 
 Defines how the application starts.
 
-- Expected to be imported once, and only from [main.js](https://github.com/workaholic-max)
+- Expected to be imported once, and only
+  from [main.js](https://github.com/workaholic-max/architecture/blob/main/src/main.js)
 - Allowed to import all other layers: `router` `api` `domains` `features` `shared` etc
 - May contain local-only modules: `services` `utils` `constants` `composables` `components` etc
 
 ---
 
-## [`app/`init/](https://github.com/workaholic-max)
+## [`app/`init/](https://github.com/workaholic-max/architecture/tree/main/src/app/init)
 
 Responsible for executing all required initialization steps before the application is mounted.
 
@@ -26,7 +27,7 @@ Responsible for executing all required initialization steps before the applicati
 
 ---
 
-## [`domains`/](https://github.com/workaholic-max)
+## [`domains`/](https://github.com/workaholic-max/architecture/tree/main/src/domains)
 
 Encapsulates a specific responsibility and fully owns its internal implementation and business logic.
 
@@ -45,13 +46,14 @@ Exposes a clearly defined `public.js` that may be consumed by other parts of the
 implementation details are considered private and should not be accessed directly, **BUT:**
 
 - `/routes/route-names.js` may be accessed directly
-- `/routes/index.js` may be accessed directly only by [router/routes.js](https://github.com/workaholic-max)
+- `/routes/index.js` may be accessed directly only
+  by [router/routes.js](https://github.com/workaholic-max/architecture/blob/main/src/router/routes.js)
 - `domains` may depend on other `domains/` and such dependencies must remain strictly one-directional to avoid coupling
   and cyclic dependencies between business areas
 
 ---
 
-## [`features`/](https://github.com/workaholic-max)
+## [`features`/](https://github.com/workaholic-max/architecture/tree/main/src/featurues)
 
 Encapsulates a specific reusable concern and owns its internal implementation.
 
@@ -69,7 +71,7 @@ Features are intended to be consumed by `domains` and higher-level application l
 
 ---
 
-## [`shared`/](https://github.com/workaholic-max)
+## [`shared`/](https://github.com/workaholic-max/architecture/tree/main/src/shared)
 
 Encapsulates generic, independent, reusable functionality and owns its internal implementation.
 
@@ -89,24 +91,25 @@ Shared represents the lowest-level layer and may be freely consumed by higher-le
 
 ---
 
-## [`api`/](https://github.com/workaholic-max)
+## [`api`/](https://github.com/workaholic-max/architecture/tree/main/src/api)
 
 Defines interaction with backend APIs and other external services.
 
-- The entry point is [index.js](https://github.com/workaholic-max), which aggregates and exports all available APIs
+- The entry point is [index.js](https://github.com/workaholic-max/architecture/blob/main/src/api/index.js), which
+  aggregates and exports all available APIs
 - APIs are grouped by resource and represent available operations
 - API resource may expose nested structures
 
 ---
 
-## [`api/`client.js](https://github.com/workaholic-max)
+## [`api/`client.js](https://github.com/workaholic-max/architecture/blob/main/src/api/client.js)
 
 Responsible for configuring and executing requests to external services, providing a single, consistent entry point for
 API communication.
 
 ---
 
-## [`router/`fallback/](https://github.com/workaholic-max)
+## [`router/`fallback/](https://github.com/workaholic-max/architecture/tree/main/src/router/fallback)
 
 Responsible for routing in system-level cases.
 
@@ -117,12 +120,13 @@ Responsible for routing in system-level cases.
 
 ---
 
-## [`router/`guards/](https://github.com/workaholic-max)
+## [`router/`guards/](https://github.com/workaholic-max/architecture/tree/main/src/router/guards)
 
 Responsible for controlling navigation flow.
 
-The entry point is [index.js](https://github.com/workaholic-max), which provides a function for running route guards in
-a defined order. The order of guards is significant and directly affects how navigation decisions are resolved.
+The entry point is [index.js](https://github.com/workaholic-max/architecture/blob/main/src/router/guards/index.js),
+which provides a function for running route guards in a defined order. The order of guards is significant and directly
+affects how navigation decisions are resolved.
 
 Guards are checked one by one to determine how navigation proceeds:
 
@@ -132,7 +136,7 @@ Guards are checked one by one to determine how navigation proceeds:
 
 ---
 
-## [`router/`init.js](https://github.com/workaholic-max)
+## [`router/`init.js](https://github.com/workaholic-max/architecture/blob/main/src/router/init.js)
 
 Responsible for initializing the application router.
 
@@ -141,7 +145,7 @@ such as guards and other routing concerns.
 
 ---
 
-## [`router/`routes.js](https://github.com/workaholic-max)
+## [`router/`routes.js](https://github.com/workaholic-max/architecture/blob/main/src/router/routes.js)
 
 Responsible for composing the application routing.
 
@@ -167,8 +171,9 @@ represents all available application routes.
 
 ### Fonts
 
-Fonts are placed in [public/](https://github.com/workaholic-max) and preloaded
-in [index.html](https://github.com/workaholic-max) to prevent FOUT (Flash of Unstyled Text) during application startup.
+Fonts are placed in [public/](https://github.com/workaholic-max/architecture/tree/main/public) and preloaded
+in [index.html](https://github.com/workaholic-max/architecture/blob/main/index.html) to prevent FOUT (Flash of Unstyled
+Text) during application startup.
 
 Preloading fonts ensures they are available before initial render, improving visual stability and perceived performance,
 especially on slower connections.
@@ -188,7 +193,7 @@ code, improves readability, and makes responsibilities clearer.
 
 ---
 
-### [vite.config.js](https://github.com/workaholic-max)
+### [vite.config.js](https://github.com/workaholic-max/architecture/blob/main/vite.config.js)
 
 The configuration is intentionally minimal and primarily focused on declaring module resolution aliases that reflect the
 architectural structure of the project.
@@ -198,7 +203,7 @@ centralized and predictable styling structure.
 
 ---
 
-### [eslint.config.js](https://github.com/workaholic-max)
+### [eslint.config.js](https://github.com/workaholic-max/architecture/blob/main/eslint.config.js)
 
 This configuration helps maintain a clean codebase, prevents architectural violations, and ensures that project
 structure and conventions are applied consistently.
@@ -209,7 +214,7 @@ structure and conventions are applied consistently.
 
 ---
 
-### [api/](https://github.com/workaholic-max)
+### [api/](https://github.com/workaholic-max/architecture/tree/main/src/api)
 
 Serves as a single reference for all available interactions with backend and external services.
 
@@ -218,11 +223,12 @@ predictable usage.
 
 ---
 
-### [api/client.js](https://github.com/workaholic-max)
+### [api/client.js](https://github.com/workaholic-max/architecture/blob/main/src/api/client.js)
 
 The API client supports abortable requests.
 
-Request cancellation is handled via [shared/composables/useAbortableRequest.js](https://github.com/workaholic-max)
+Request cancellation is handled
+via [shared/composables/useAbortableRequest.js](https://github.com/workaholic-max/architecture/blob/main/src/shared/composables/useAbortableRequest.js)
 allowing requests to be automatically aborted when the user leaves a page or manually cancelled using `abortRequests`
 for example when a newer request replaces a previous one.
 
@@ -242,7 +248,7 @@ The API client can be further extended with better response interceptors:
 
 ---
 
-### [assets/styles/abstracts/variables/](https://github.com/workaholic-max)
+### [assets/styles/abstracts/variables/](https://github.com/workaholic-max/architecture/tree/main/src/assets/styles/abstracts/variables)
 
 Variables are grouped by concern (spacing, colors, breakpoints, etc.) and exposed through a single entry point using
 Sass `@forward`. Each group is namespaced at the entry level to keep usage explicit and prevent naming collisions.
@@ -266,7 +272,7 @@ h2 {
 
 ---
 
-### [assets/styles/abstracts/\_functions.scss](https://github.com/workaholic-max)
+### [assets/styles/abstracts/\_functions.scss](https://github.com/workaholic-max/architecture/blob/main/src/assets/styles/abstracts/_functions.scss)
 
 Usage example:
 
@@ -283,7 +289,7 @@ ul {
 
 ---
 
-### [assets/styles/abstracts/\_mixins.scss](https://github.com/workaholic-max)
+### [assets/styles/abstracts/\_mixins.scss](https://github.com/workaholic-max/architecture/blob/main/src/assets/styles/abstracts/_mixins.scss)
 
 Usage example:
 
@@ -307,7 +313,7 @@ button {
 
 ---
 
-### [router/composables/useResolvedRoutes.js](https://github.com/workaholic-max)
+### [router/composables/useResolvedRoutes.js](https://github.com/workaholic-max/architecture/blob/main/src/router/composables/useResolvedRoutes.js)
 
 This composable centralizes access to `router.resolve()` results and avoids repeated resolution of the same route.
 Resolved values are cached by route name and reused across the application to ensure consistent access to route metadata
@@ -320,11 +326,13 @@ It exposes focused helpers for retrieving commonly needed information, such as:
 
 ---
 
-### [shared/components/modal/](https://github.com/workaholic-max)
+### [shared/components/modal/](https://github.com/workaholic-max/architecture/tree/main/src/shared/components/modal)
 
 This implementation is what I refer to as a `construction`
 
-Exposes a single public entry point `index.js` that exports an object containing all fragments.
+Exposes a single public entry
+point [index.js](https://github.com/workaholic-max/architecture/blob/main/src/shared/components/modal/index.js) that
+exports an object containing all fragments.
 
 - Fragments are not intended to be imported directly
 - Fragments have a defined role and composition order
@@ -351,7 +359,7 @@ flexible, consistent, and easy to reason about.
 
 ---
 
-### [shared/components/ConfirmationModal.vue](https://github.com/workaholic-max)
+### [shared/components/ConfirmationModal.vue](https://github.com/workaholic-max/architecture/blob/main/src/shared/components/ConfirmationModal.vue)
 
 Instead of rendering multiple confirmation modals or controlling them via props, this component exposes an `open` method
 and is intended to be instantiated **once per view** and reused for multiple confirmation scenarios (delete, edit,
@@ -405,7 +413,7 @@ const openEmployeeDeleteModal = (employee) => {
 
 ---
 
-### [shared/configs/limits.js](https://github.com/workaholic-max)
+### [shared/configs/limits.js](https://github.com/workaholic-max/architecture/blob/main/src/shared/configs/limits.js)
 
 Centralized business limits for the application.
 
@@ -415,7 +423,7 @@ evolve. It serves as a single source of truth for constraints that define what t
 
 ---
 
-### [shared/controls/body-scroll.js](https://github.com/workaholic-max)
+### [shared/controls/body-scroll.js](https://github.com/workaholic-max/architecture/blob/main/src/shared/controls/body-scroll.js)
 
 Controls document body scroll locking in a predictable and safe way.
 
@@ -432,7 +440,7 @@ Its responsibility is strictly limited to coordinating scroll state, not managin
 
 ---
 
-### [shared/controls/interaction.js](https://github.com/workaholic-max)
+### [shared/controls/interaction.js](https://github.com/workaholic-max/architecture/blob/main/src/shared/controls/interaction.js)
 
 Controls user interaction with the document in a predictable and temporary way.
 
@@ -449,19 +457,19 @@ Typical use cases include:
 
 ---
 
-### [shared/layouts/BaseLayout.vue](https://github.com/workaholic-max)
+### [shared/layouts/BaseLayout.vue](https://github.com/workaholic-max/architecture/blob/main/src/shared/layouts/BaseLayout.vue)
 
 This layout demonstrates how routing metadata is used as the single source of truth for page-level information such as
 titles.
 
 Navigation is rendered from a simple configuration containing only route names. All additional information (such as
 titles or permissions) is resolved dynamically
-via [router/composables/useResolvedRoutes.js](https://github.com/workaholic-max), avoiding redundant configuration and
-keeping navigation logic centralized and predictable.
+via [router/composables/useResolvedRoutes.js](https://github.com/workaholic-max/architecture/blob/main/src/router/composables/useResolvedRoutes.js),
+avoiding redundant configuration and keeping navigation logic centralized and predictable.
 
 ---
 
-### [shared/services/device.js](https://github.com/workaholic-max)
+### [shared/services/device.js](https://github.com/workaholic-max/architecture/blob/main/src/shared/services/device.js)
 
 This service is responsible for determining and exposing information about the current device environment.
 
@@ -473,7 +481,7 @@ as part of the app initialization flow.
 
 ---
 
-### [shared/services/local-storage.js](https://github.com/workaholic-max)
+### [shared/services/local-storage.js](https://github.com/workaholic-max/architecture/blob/main/src/shared/services/local-storage.js)
 
 This service centralizes access to `localStorage` to ensure safe, predictable behavior and avoid scattering direct
 storage
@@ -482,4 +490,4 @@ usage across the application.
 Stored values are automatically namespaced using a predefined prefix, preventing key collisions with other applications
 or environments and keeping stored data clearly identifiable.
 
-Also handles common edge cases, such as invalid JSON data or unavailable storage capacity.
+Also handles common edge cases, such as invalid JSON data or unavailable storage capacity.\*\*

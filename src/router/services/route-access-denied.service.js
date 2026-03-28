@@ -1,4 +1,4 @@
-import { notificationService } from '@shared/services/notification.js';
+import { notificationService } from '@shared/services/notification.service.js';
 
 let pendingPageLabel = null;
 

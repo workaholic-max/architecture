@@ -11,26 +11,21 @@ const { getResolvedMeta } = useResolvedRoutes();
 
 <template>
     <div class="ml-layout">
-        <transition
-            appear
-            name="fade"
-        >
-            <div class="ml-container">
-                <nav>
-                    <router-link
-                        v-for="routeName in MAIN_NAVIGATION_CONFIG"
-                        :key="`navigation route: ${routeName}`"
-                        :to="{ name: routeName }"
-                    >
-                        {{ `${getResolvedMeta(routeName).title}` }}
-                    </router-link>
-                </nav>
+        <div class="ml-container">
+            <nav>
+                <router-link
+                    v-for="routeName in MAIN_NAVIGATION_CONFIG"
+                    :key="routeName"
+                    :to="{ name: routeName }"
+                >
+                    {{ `${getResolvedMeta(routeName).title}` }}
+                </router-link>
+            </nav>
 
-                <h1 v-if="route.meta.title">{{ route.meta.title }}</h1>
+            <h1 v-if="route.meta.title">{{ route.meta.title }}</h1>
 
-                <slot>Me too lazy..</slot>
-            </div>
-        </transition>
+            <slot>Me too lazy..</slot>
+        </div>
     </div>
 </template>
 

@@ -5,7 +5,7 @@
         <ul>
             <li
                 v-for="taskNumber in 8"
-                :key="`task: ${taskNumber}`"
+                :key="taskNumber"
             >
                 {{ `Task ${taskNumber - 1}` }}
             </li>

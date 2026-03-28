@@ -1,7 +1,11 @@
-import { documentService } from '@shared/services/document.js';
-import { deviceService } from '@shared/services/device.js';
+const serviceModules = import.meta.glob('/src/**/*.service.js', { eager: true });
 
 export const initServices = () => {
-    documentService.init();
-    deviceService.init();
+    Object.values(serviceModules ?? {}).forEach((module) => {
+        Object.values(module).forEach((service) => {
+            if (typeof service?.init === 'function') {
+                service.init();
+            }
+        });
+    });
 };

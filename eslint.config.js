@@ -2,6 +2,7 @@ import importPlugin from 'eslint-plugin-import';
 import unusedImports from 'eslint-plugin-unused-imports';
 import eslintPluginVue from 'eslint-plugin-vue';
 import vueParser from 'vue-eslint-parser';
+import eslintConfigPrettier from 'eslint-config-prettier';
 
 export default [
     {
@@ -46,43 +47,6 @@ export default [
             'no-console': 'warn',
             'no-debugger': 'warn',
             'vue/multi-word-component-names': 'off',
-            'vue/max-attributes-per-line': [
-                'error',
-                {
-                    singleline: 1,
-                    multiline: 1,
-                },
-            ],
-            'vue/html-closing-bracket-newline': [
-                'error',
-                {
-                    singleline: 'never',
-                    multiline: 'always',
-                },
-            ],
-            'vue/html-indent': [
-                'error',
-                4,
-                {
-                    attribute: 1,
-                    baseIndent: 1,
-                    closeBracket: 0,
-                    alignAttributesVertically: true,
-                    ignores: [],
-                },
-            ],
-            'vue/html-self-closing': [
-                'error',
-                {
-                    html: {
-                        void: 'always',
-                        normal: 'always',
-                        component: 'always',
-                    },
-                    svg: 'always',
-                    math: 'always',
-                },
-            ],
             'vue/attributes-order': [
                 'error',
                 {
@@ -158,4 +122,6 @@ export default [
             'import/no-unresolved': 'error',
         },
     },
+
+    eslintConfigPrettier,
 ];

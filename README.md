@@ -183,15 +183,18 @@ especially on slower connections.
 
 ---
 
-### Code Comments
+### Section Comments
 
-It's recommended to use a reusable comment block to visually separate group-related logic. This helps structure complex
-code, improves readability, and makes responsibilities clearer.
+It's recommended to use reusable section comment blocks to visually separate group-related logic. This improves
+readability, helps structure complex code, and makes responsibilities clearer.
+
+For setup instructions and IDE
+configuration: [docs/section-comments.md](https://github.com/workaholic-max/architecture/blob/main/docs/section-comments.md)
 
 ```
-// ----------------------------------------------------------------------
+// ───────────────────────────────────────────────────────
 // Employees state
-// ----------------------------------------------------------------------
+// ───────────────────────────────────────────────────────
 ```
 
 ---
@@ -369,9 +372,9 @@ and is intended to be instantiated **once per view** and reused for multiple con
 etc.).
 
 ```
-// ----------------------------------------------------------------------
+// ───────────────────────────────────────────────────────
 // Confirmation modal
-// ----------------------------------------------------------------------
+// ───────────────────────────────────────────────────────
 
 const confirmationModalRef = ref(null);
 

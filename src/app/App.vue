@@ -3,9 +3,9 @@ import { ref, onErrorCaptured } from 'vue';
 
 import OccurredErrorModal from './components/OccurredErrorModal.vue';
 
-// ----------------------------------------------------------------------
+// ───────────────────────────────────────────────────────
 // Occurred error state
-// ----------------------------------------------------------------------
+// ───────────────────────────────────────────────────────
 
 const occurredErrorMessage = ref(null);
 

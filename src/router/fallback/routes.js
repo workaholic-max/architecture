@@ -1,5 +1,5 @@
-import { FALLBACK_ROUTE_NAMES } from './route-names.js';
-import NotFoundView from './views/not-found/NotFoundView.vue';
+import { FALLBACK_ROUTE_NAMES } from '@router/fallback/route-names.js';
+import NotFoundView from '@router/fallback/views/not-found/NotFoundView.vue';
 
 export const fallbackRoutes = [
     {

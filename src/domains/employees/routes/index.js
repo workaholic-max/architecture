@@ -1,9 +1,12 @@
 import { PATH_PATTERNS } from '@router/utils/path-patterns.js';
-import { EMPLOYEES_ROUTE_NAMES } from './route-names.js';
-import { EMPLOYEES_PERMISSION_KEYS } from '../configs/permissions.js';
-import EmployeesView from '../views/EmployeesView.vue';
-import EmployeeCreateView from '../views/create/EmployeeCreateView.vue';
-import EmployeeEditView from '../views/edit/EmployeeEditView.vue';
+
+import { EMPLOYEES_ROUTE_NAMES } from '@domains/employees/routes/route-names.js';
+
+import { EMPLOYEES_PERMISSION_KEYS } from '@domains/employees/configs/permissions.js';
+
+import EmployeeCreateView from '@domains/employees/views/create/EmployeeCreateView.vue';
+import EmployeeEditView from '@domains/employees/views/edit/EmployeeEditView.vue';
+import EmployeesView from '@domains/employees/views/EmployeesView.vue';
 
 export const employeesRoute = {
     path: 'employees',

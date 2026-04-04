@@ -1,8 +1,41 @@
-import importPlugin from 'eslint-plugin-import';
-import unusedImports from 'eslint-plugin-unused-imports';
-import eslintPluginVue from 'eslint-plugin-vue';
 import vueParser from 'vue-eslint-parser';
 import eslintConfigPrettier from 'eslint-config-prettier';
+import importPlugin from 'eslint-plugin-import';
+import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import unusedImports from 'eslint-plugin-unused-imports';
+import eslintPluginVue from 'eslint-plugin-vue';
+
+// ───────────────────────────────────────────────────────
+// Import sort
+// ───────────────────────────────────────────────────────
+
+const TYPE_ORDER = [
+    'routes',
+    'services',
+    'utils',
+    'configs',
+    'constants',
+    'composables',
+    'directives',
+    'views',
+    'layouts',
+    'components',
+    'icons',
+];
+
+const createTypeGroup = (type) => [
+    `^@domains/.*/${type}`,
+    `^@features/.*/${type}`,
+    `^@shared/${type}`,
+
+    `^\\./${type}`,
+    `^\\.\\./${type}`,
+    `^\\.\\.\\/(?:\\.\\.\\/)+${type}`,
+];
+
+// ───────────────────────────────────────────────────────
+// Config
+// ───────────────────────────────────────────────────────
 
 export default [
     {
@@ -27,6 +60,7 @@ export default [
             vue: eslintPluginVue,
             import: importPlugin,
             'unused-imports': unusedImports,
+            'simple-import-sort': simpleImportSort,
         },
         settings: {
             'import/resolver': {
@@ -106,6 +140,25 @@ export default [
                     ],
                 },
             ],
+
+            'simple-import-sort/imports': [
+                'error',
+                {
+                    groups: [
+                        ['^vue', '^@?\\w'],
+
+                        ['^@/'],
+                        ['^@router'],
+                        ['^@api'],
+                        ['^@domains'],
+
+                        ...TYPE_ORDER.map(createTypeGroup),
+
+                        ['^\\.'],
+                    ],
+                },
+            ],
+            'simple-import-sort/exports': 'error',
         },
     },
 

@@ -1,7 +1,8 @@
+import router from '@router';
+import { resolveGuards } from '@router/guards/index.js';
+import { routeAccessDeniedService } from '@router/services/route-access-denied.service.js';
+
 import { EMPLOYEE_ROLES, EMPLOYEES_PERMISSION_KEYS } from '@domains/employees/public.js';
-import router from './index.js';
-import { resolveGuards } from './guards/index.js';
-import { routeAccessDeniedService } from './services/route-access-denied.service.js';
 
 const EMPLOYEE_MOCK_DATA = {
     role: EMPLOYEE_ROLES.MANAGER,

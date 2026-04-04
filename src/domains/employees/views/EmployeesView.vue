@@ -1,6 +1,7 @@
 <script setup>
+import { EMPLOYEES_ROUTE_NAMES } from '@domains/employees/routes/route-names.js';
+
 import BaseLayout from '@shared/layouts/BaseLayout.vue';
-import { EMPLOYEES_ROUTE_NAMES } from '../routes/route-names.js';
 </script>
 
 <template>

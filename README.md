@@ -157,8 +157,9 @@ represents all available application routes.
 ## Possible Improvements
 
 - TypeScript
-- Add pre-commit hooks
-- Automatic import sorting via ESLint
+- Lazy Loading
+- PWA
+- Unit tests
 - Extend ESLint rules to enforce architectural boundaries more strictly if the codebase grows
 
 ---

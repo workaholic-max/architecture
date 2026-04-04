@@ -1,6 +1,7 @@
-import { AUTH_ROUTE_NAMES } from './route-names.js';
-import LoginView from '../views/login/LoginView.vue';
-import JoinView from '../views/join/JoinView.vue';
+import { AUTH_ROUTE_NAMES } from '@domains/auth/routes/route-names.js';
+
+import JoinView from '@domains/auth/views/join/JoinView.vue';
+import LoginView from '@domains/auth/views/login/LoginView.vue';
 
 export const authRoutes = [
     {

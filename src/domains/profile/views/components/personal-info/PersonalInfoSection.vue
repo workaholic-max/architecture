@@ -1,6 +1,6 @@
 <script setup>
-import FamilyDetails from './components/FamilyDetails.vue';
 import CriminalDetails from './components/CriminalDetails.vue';
+import FamilyDetails from './components/FamilyDetails.vue';
 import InjuriesDetails from './components/InjuriesDetails.vue';
 </script>
 

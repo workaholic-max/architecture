@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onErrorCaptured } from 'vue';
+import { onErrorCaptured, ref } from 'vue';
 
 import OccurredErrorModal from './components/OccurredErrorModal.vue';
 

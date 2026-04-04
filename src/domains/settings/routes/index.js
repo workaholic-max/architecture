@@ -1,5 +1,6 @@
-import { SETTINGS_ROUTE_NAME } from './route-names.js';
-import SettingsView from '../views/SettingsView.vue';
+import { SETTINGS_ROUTE_NAME } from '@domains/settings/routes/route-names.js';
+
+import SettingsView from '@domains/settings/views/SettingsView.vue';
 
 export const settingsRoute = {
     path: '/settings',

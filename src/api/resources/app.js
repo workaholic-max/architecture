@@ -1,4 +1,5 @@
 import { HTTP_METHODS } from '@shared/constants/http.js';
+
 import { apiClient } from '../client.js';
 
 export default {

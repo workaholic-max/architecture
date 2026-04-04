@@ -1,4 +1,4 @@
-import { EMPLOYEE_ROLES } from '../constants/roles.js';
+import { EMPLOYEE_ROLES } from '@domains/employees/constants/roles.js';
 
 const hasRole = (employee, role) => employee.role === role;
 

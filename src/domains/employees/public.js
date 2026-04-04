@@ -1,3 +1,3 @@
-export { isAdmin, isManager } from './utils/roles.js';
-export { EMPLOYEES_PERMISSION_KEYS } from './configs/permissions.js';
-export { EMPLOYEE_ROLES } from './constants/roles.js';
+export { EMPLOYEES_PERMISSION_KEYS } from '@domains/employees/configs/permissions.js';
+export { EMPLOYEE_ROLES } from '@domains/employees/constants/roles.js';
+export { isAdmin, isManager } from '@domains/employees/utils/roles.js';

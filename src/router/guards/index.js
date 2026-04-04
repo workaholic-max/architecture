@@ -1,4 +1,5 @@
 import { isObject } from '@shared/utils/object.js';
+
 import { authGuard } from './fragments/auth.js';
 import { permissionGuard } from './fragments/permission.js';
 

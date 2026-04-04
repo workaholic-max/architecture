@@ -1,4 +1,4 @@
-import { isAdmin } from '../utils/roles.js';
+import { isAdmin } from '@domains/employees/utils/roles.js';
 
 export const EMPLOYEES_RESTRICTIONS = {
     EDIT: (account, target) => !isAdmin(target) || isAdmin(account),

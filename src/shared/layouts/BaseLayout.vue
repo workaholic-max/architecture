@@ -2,6 +2,7 @@
 import { useRoute } from 'vue-router';
 
 import { useResolvedRoutes } from '@router/composables/useResolvedRoutes.js';
+
 import { MAIN_NAVIGATION_CONFIG } from '@shared/configs/navigation.js';
 
 const route = useRoute();

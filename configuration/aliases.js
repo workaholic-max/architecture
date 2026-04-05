@@ -2,8 +2,6 @@ import { resolve } from 'node:path';
 
 const root = process.cwd();
 
-console.log(root);
-
 const baseAliases = {
     '@': resolve(root, 'src'),
     '@router': resolve(root, 'src/router'),

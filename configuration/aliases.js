@@ -2,6 +2,8 @@ import { resolve } from 'node:path';
 
 const root = process.cwd();
 
+console.log(root);
+
 const baseAliases = {
     '@': resolve(root, 'src'),
     '@router': resolve(root, 'src/router'),
@@ -11,15 +13,15 @@ const baseAliases = {
     '@shared': resolve(root, 'src/shared'),
 };
 
-const styleAliases = {
-    '@style-vars': resolve(root, 'src/assets/styles/variables/_index.scss'),
-    '@style-mixins': resolve(root, 'src/assets/styles/mixins/_index.scss'),
-    '@style-fns': resolve(root, 'src/assets/styles/functions/_index.scss'),
+const cssAliases = {
+    '@css-vars': resolve(root, 'src/assets/styles/abstracts/variables'),
+    '@css-mixins': resolve(root, 'src/assets/styles/abstracts/mixins'),
+    '@css-functions': resolve(root, 'src/assets/styles/abstracts/functions'),
 };
 
 export const viteAliases = {
     ...baseAliases,
-    ...styleAliases,
+    ...cssAliases,
 };
 
 export const eslintAliases = baseAliases;

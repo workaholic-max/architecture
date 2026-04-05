@@ -12,6 +12,10 @@
             "@domains/*": ["src/domains/*"],
             "@features/*": ["src/features/*"],
             "@shared/*": ["src/shared/*"],
+
+            "@css-vars": ["src/assets/styles/abstracts/variables/_index.scss"],
+            "@css-mixins": ["src/assets/styles/abstracts/mixins/_index.scss"],
+            "@css-functions": ["src/assets/styles/abstracts/functions/_index.scss"]
         }
     },
     "include": ["src", "dts"]

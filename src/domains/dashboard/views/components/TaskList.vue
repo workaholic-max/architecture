@@ -14,8 +14,8 @@
 </template>
 
 <style lang="scss" scoped>
-@use '@style-vars' as vars;
-@use '@style-fns' as fns;
+@use '@css-vars' as vars;
+@use '@css-functions' as functions;
 
 .ml-task-list {
     width: 100%;
@@ -32,7 +32,7 @@
         gap: vars.$space-base;
 
         > li {
-            flex: 1 1 fns.flex-basis(2, vars.$space-base);
+            flex: 1 1 functions.flex-basis(2, vars.$space-base);
         }
     }
 }

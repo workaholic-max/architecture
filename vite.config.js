@@ -8,6 +8,6 @@ export default defineConfig({
     plugins: [vuePlugin(), autoImportPlugin()],
     resolve: {
         alias: viteAliases,
-        extensions: ['.js', '.vue', '.scss'],
+        extensions: ['.js', '.vue'],
     },
 });

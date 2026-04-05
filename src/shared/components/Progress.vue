@@ -67,8 +67,8 @@ const percentages = computed(() => {
 </template>
 
 <style lang="scss" scoped>
-@use '@style-vars' as vars;
-@use '@style-mixins' as mixins;
+@use '@css-vars' as vars;
+@use '@css-mixins' as mixins;
 
 .ml-progress {
     position: relative;

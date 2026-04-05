@@ -49,8 +49,8 @@ const slots = useSlots();
 </template>
 
 <style lang="scss">
-@use '@style-vars' as vars;
-@use '@style-fns' as fns;
+@use '@css-vars' as vars;
+@use '@css-functions' as functions;
 
 .ml-modal-dialog {
     position: relative;
@@ -121,7 +121,7 @@ const slots = useSlots();
         }
 
         > .ml-btn {
-            flex: 1 1 fns.flex-basis(2);
+            flex: 1 1 functions.flex-basis(2);
 
             @media screen and (max-width: vars.$breakpoint-mobile-sm) {
                 flex: auto;

@@ -256,7 +256,7 @@ The API client can be further extended with better response interceptors:
 
 ---
 
-### [assets/styles/abstracts/variables/](https://github.com/workaholic-max/architecture/tree/main/src/assets/styles/abstracts/variables)
+### [assets/styles/variables/](https://github.com/workaholic-max/architecture/tree/main/src/assets/styles/variables)
 
 Variables are grouped by concern (spacing, colors, breakpoints, etc.) and exposed through a single entry point using
 Sass `@forward`. Each group is namespaced at the entry level to keep usage explicit and prevent naming collisions.
@@ -280,13 +280,12 @@ h2 {
 
 ---
 
-### [assets/styles/abstracts/\_functions.scss](https://github.com/workaholic-max/architecture/blob/main/src/assets/styles/abstracts/_functions.scss)
+### [assets/styles/functions/\index.scss](https://github.com/workaholic-max/architecture/blob/main/src/assets/styles/functions/index.scss)
 
 Usage example:
 
 ```
 <style lang="scss">
-@use '@style-vars' as vars;
 @use '@style-fns' as fns;
 
 ul {
@@ -297,7 +296,7 @@ ul {
 
 ---
 
-### [assets/styles/abstracts/\_mixins.scss](https://github.com/workaholic-max/architecture/blob/main/src/assets/styles/abstracts/_mixins.scss)
+### [assets/styles/mixins/\_index.scss](https://github.com/workaholic-max/architecture/blob/main/src/assets/styles/mixins/_index.scss)
 
 Usage example:
 

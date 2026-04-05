@@ -12,9 +12,9 @@ const baseAliases = {
 };
 
 const styleAliases = {
-    '@style-vars': resolve(root, 'src/assets/styles/abstracts/variables'),
-    '@style-mixins': resolve(root, 'src/assets/styles/abstracts/mixins'),
-    '@style-fns': resolve(root, 'src/assets/styles/abstracts/functions'),
+    '@style-vars': resolve(root, 'src/assets/styles/variables/_index.scss'),
+    '@style-mixins': resolve(root, 'src/assets/styles/mixins/_index.scss'),
+    '@style-fns': resolve(root, 'src/assets/styles/functions/_index.scss'),
 };
 
 export const viteAliases = {

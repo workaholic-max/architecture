@@ -5,7 +5,7 @@ const root = process.cwd();
 const baseAliases = {
     '@': resolve(root, 'src'),
     '@router': resolve(root, 'src/router'),
-    '@api': resolve(root, 'src/api'),
+    '@api': resolve(root, 'src/api/index.js'),
     '@domains': resolve(root, 'src/domains'),
     '@features': resolve(root, 'src/features'),
     '@shared': resolve(root, 'src/shared'),

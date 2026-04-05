@@ -1,4 +1,4 @@
-export default {
+export const vClickOutside = {
     beforeMount: (el, binding) => {
         el.clickOutsideEvent = (event) => {
             if (!el.contains(event.target)) {

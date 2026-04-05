@@ -20,9 +20,9 @@ Defines how the application starts.
 
 Responsible for executing all required initialization steps before the application is mounted.
 
+- `router`
 - `packages`
 - `services`
-- `directives`
 - etc
 
 ---
@@ -331,6 +331,21 @@ It exposes focused helpers for retrieving commonly needed information, such as:
 
 - resolved route metadata (e.g. title, permissions)
 - resolved route hrefs for navigation (e.g. window.location.href = ...)
+
+---
+
+### [shared/directives/click-outside.js](https://github.com/workaholic-max/architecture/blob/main/src/shared/directives/click-outside.js)
+
+In this project, directives are not globally registered. They must be explicitly imported and used only where needed.
+This keeps usage transparent and prevents hidden dependencies across the application.
+
+To keep directives predictable and reusable, they must follow a consistent export pattern. Each directive is exported as
+a named constant, using the `v` prefix followed by a PascalCase name. The export name directly defines how the directive
+is used in templates, automatically mapping to kebab-case.
+
+- Example: exported `vClickOutside`, usage `v-click-outside`
+- Naming must be predictable and kebab-case compatible
+- Directives may expose additional configuration (e.g. constants)
 
 ---
 

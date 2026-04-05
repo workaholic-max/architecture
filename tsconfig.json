@@ -1,3 +1,18 @@
 {
-    "include": ["dts", "src"]
+    "compilerOptions": {
+        "baseUrl": ".",
+        "allowJs": true,
+        "checkJs": false,
+        "paths": {
+            "@/*": ["src/*"],
+
+            "@router": ["src/router/index.js"],
+            "@router/*": ["src/router/*"],
+            "@api": ["src/api/index.js"],
+            "@domains/*": ["src/domains/*"],
+            "@features/*": ["src/features/*"],
+            "@shared/*": ["src/shared/*"],
+        }
+    },
+    "include": ["src", "dts"]
 }

@@ -1,4 +1,6 @@
 <script setup>
+import { vClickOutside } from '@shared/directives/click-outside.js';
+
 const props = defineProps({
     value: {
         type: Number,
@@ -18,6 +20,10 @@ const props = defineProps({
 // Progress state
 // ───────────────────────────────────────────────────────
 
+const onClickOutside = () => {
+    console.log('onClickOutside');
+};
+
 const percentages = computed(() => {
     const { value, max } = props;
 
@@ -36,7 +42,10 @@ const percentages = computed(() => {
 </script>
 
 <template>
-    <div class="ml-progress">
+    <div
+        v-click-outside="onClickOutside"
+        class="ml-progress"
+    >
         <div
             role="progressbar"
             class="ml-progress__bar"

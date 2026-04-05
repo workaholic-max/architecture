@@ -5,7 +5,7 @@ import { initPackages } from './fragments/packages.js';
 import { initServices } from './fragments/services.js';
 
 export const initApp = (app) => {
-    initPackages(app);
+    initPackages();
     initServices();
     initDirectives(app);
     initRouter(app);

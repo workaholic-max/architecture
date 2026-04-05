@@ -1,5 +1,4 @@
 <script setup>
-import { onBeforeUnmount, ref, watch } from 'vue';
 import { bodyScrollControl } from '@shared/controls/body-scroll.js';
 import { interactionControl } from '@shared/controls/interaction.js';
 

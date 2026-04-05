@@ -1,4 +1,3 @@
-import { onBeforeUnmount } from 'vue';
 import axios from 'axios';
 
 export const useAbortableRequest = () => {

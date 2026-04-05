@@ -1,6 +1,4 @@
 <script setup>
-import { useSlots } from 'vue';
-
 defineProps({
     enableCenteredContent: {
         type: Boolean,

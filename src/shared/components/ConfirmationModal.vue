@@ -1,6 +1,4 @@
 <script setup>
-import { reactive } from 'vue';
-
 import Modal from '@shared/components/modal/index.js';
 
 defineOptions({

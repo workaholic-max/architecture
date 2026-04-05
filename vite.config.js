@@ -1,25 +1,12 @@
-import vue from '@vitejs/plugin-vue';
-import { dirname, resolve as pathResolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import vuePlugin from '@vitejs/plugin-vue';
 import { defineConfig } from 'vite';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import { viteAliases } from './configuration/aliases.js';
+import { autoImportPlugin } from './configuration/vite/plugins/auto-import.js';
 
 export default defineConfig({
-    plugins: [vue()],
+    plugins: [vuePlugin(), autoImportPlugin()],
     resolve: {
-        alias: {
-            '@': pathResolve(__dirname, 'src'),
-
-            '@router': pathResolve(__dirname, 'src/router'),
-            '@api': pathResolve(__dirname, 'src/api'),
-            '@domains': pathResolve(__dirname, 'src/domains'),
-            '@features': pathResolve(__dirname, 'src/features'),
-            '@shared': pathResolve(__dirname, 'src/shared'),
-
-            '@style-vars': pathResolve(__dirname, 'src/assets/styles/abstracts/variables'),
-            '@style-mixins': pathResolve(__dirname, 'src/assets/styles/abstracts/mixins'),
-            '@style-fns': pathResolve(__dirname, 'src/assets/styles/abstracts/functions'),
-        },
+        alias: viteAliases,
     },
 });

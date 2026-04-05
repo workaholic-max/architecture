@@ -1,5 +1,3 @@
-import { reactive } from 'vue';
-
 export const useEntityFormState = () => {
     let initialPayloadJSON = null;
 

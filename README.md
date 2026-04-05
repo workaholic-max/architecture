@@ -157,6 +157,7 @@ represents all available application routes.
 ## Possible Improvements
 
 - TypeScript
+- Pinia
 - Lazy Loading
 - PWA
 - Unit tests

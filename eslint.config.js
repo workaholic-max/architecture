@@ -5,37 +5,8 @@ import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import unusedImports from 'eslint-plugin-unused-imports';
 import eslintPluginVue from 'eslint-plugin-vue';
 
-// ───────────────────────────────────────────────────────
-// Import sort
-// ───────────────────────────────────────────────────────
-
-const TYPE_ORDER = [
-    'routes',
-    'services',
-    'utils',
-    'configs',
-    'constants',
-    'composables',
-    'directives',
-    'views',
-    'layouts',
-    'components',
-    'icons',
-];
-
-const createTypeGroup = (type) => [
-    `^@domains/.*/${type}`,
-    `^@features/.*/${type}`,
-    `^@shared/${type}`,
-
-    `^\\./${type}`,
-    `^\\.\\./${type}`,
-    `^\\.\\.\\/(?:\\.\\.\\/)+${type}`,
-];
-
-// ───────────────────────────────────────────────────────
-// Config
-// ───────────────────────────────────────────────────────
+import { eslintAliases } from './configuration/aliases.js';
+import { importSortRules } from './configuration/eslint/plugins/import-sort.js';
 
 export default [
     {
@@ -64,15 +35,11 @@ export default [
         },
         settings: {
             'import/resolver': {
+                node: {
+                    extensions: ['.js', '.vue', '.scss'],
+                },
                 alias: {
-                    map: [
-                        ['@', './src'],
-                        ['@router', './src/router'],
-                        ['@api', './src/api'],
-                        ['@domains', './src/domains'],
-                        ['@features', './src/features'],
-                        ['@shared', './src/shared'],
-                    ],
+                    map: Object.entries(eslintAliases),
                     extensions: ['.js', '.vue', '.scss'],
                 },
             },
@@ -81,6 +48,7 @@ export default [
             'no-console': 'warn',
             'no-debugger': 'warn',
             'vue/multi-word-component-names': 'off',
+            'vue/component-name-in-template-casing': ['error', 'PascalCase'],
             'vue/attributes-order': [
                 'error',
                 {
@@ -112,16 +80,18 @@ export default [
                 },
             ],
 
+            'import/no-duplicates': 'error',
+            'import/newline-after-import': 'error',
+            'import/first': 'error',
             'import/extensions': [
                 'error',
-                'always',
+                'ignorePackages',
                 {
                     js: 'always',
                     vue: 'always',
                     scss: 'always',
                 },
             ],
-
             'import/no-unresolved': [
                 'error',
                 {
@@ -141,38 +111,7 @@ export default [
                 },
             ],
 
-            'simple-import-sort/imports': [
-                'error',
-                {
-                    groups: [
-                        ['^vue', '^@?\\w'],
-
-                        ['^@/'],
-                        ['^@router'],
-                        ['^@api'],
-                        ['^@domains'],
-
-                        ...TYPE_ORDER.map(createTypeGroup),
-
-                        ['^\\.'],
-                    ],
-                },
-            ],
-            'simple-import-sort/exports': 'error',
-        },
-    },
-
-    {
-        files: ['vite.config.js', 'eslint.config.js'],
-        settings: {
-            'import/resolver': {
-                node: {
-                    extensions: ['.js'],
-                },
-            },
-        },
-        rules: {
-            'import/no-unresolved': 'error',
+            ...importSortRules,
         },
     },
 

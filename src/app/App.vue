@@ -1,5 +1,5 @@
 <script setup>
-import { onErrorCaptured, ref } from 'vue';
+import { onErrorCaptured } from 'vue';
 
 import OccurredErrorModal from './components/OccurredErrorModal.vue';
 
@@ -20,6 +20,6 @@ onErrorCaptured((error) => {
     <div class="ml-app">
         <OccurredErrorModal :error-message="occurredErrorMessage" />
 
-        <router-view v-if="occurredErrorMessage === null" />
+        <RouterView v-if="occurredErrorMessage === null" />
     </div>
 </template>

@@ -1,5 +1,3 @@
-import { useRouter } from 'vue-router';
-
 const resolvedRoutesCache = new Map();
 
 export const useResolvedRoutes = () => {

@@ -1,6 +1,4 @@
 <script setup>
-import { useRoute } from 'vue-router';
-
 import { useResolvedRoutes } from '@router/composables/useResolvedRoutes.js';
 
 import { MAIN_NAVIGATION_CONFIG } from '@shared/configs/navigation.js';
@@ -14,13 +12,13 @@ const { getResolvedMeta } = useResolvedRoutes();
     <div class="ml-layout">
         <div class="ml-container">
             <nav>
-                <router-link
+                <RouterLink
                     v-for="routeName in MAIN_NAVIGATION_CONFIG"
                     :key="routeName"
                     :to="{ name: routeName }"
                 >
                     {{ `${getResolvedMeta(routeName).title}` }}
-                </router-link>
+                </RouterLink>
             </nav>
 
             <h1 v-if="route.meta.title">{{ route.meta.title }}</h1>

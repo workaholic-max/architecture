@@ -11,15 +11,15 @@ const baseAliases = {
     '@shared': resolve(root, 'src/shared'),
 };
 
-const cssAliases = {
-    '@css-vars': resolve(root, 'src/assets/styles/abstracts/variables'),
-    '@css-mixins': resolve(root, 'src/assets/styles/abstracts/mixins'),
-    '@css-functions': resolve(root, 'src/assets/styles/abstracts/functions'),
+const scssAliases = {
+    '@scss-vars': resolve(root, 'src/assets/styles/abstracts/variables'),
+    '@scss-mixins': resolve(root, 'src/assets/styles/abstracts/mixins'),
+    '@scss-functions': resolve(root, 'src/assets/styles/abstracts/functions'),
 };
 
 export const viteAliases = {
     ...baseAliases,
-    ...cssAliases,
+    ...scssAliases,
 };
 
 export const eslintAliases = baseAliases;

@@ -268,7 +268,7 @@ Usage example:
 
 ```
 <style lang="scss">
-@use '@css-vars' as vars;
+@use '@scss-vars' as vars;
 
 h2 {
   margin-bottom: vars.$space-base;
@@ -286,7 +286,7 @@ Usage example:
 
 ```
 <style lang="scss">
-@use '@css-functions' as functions;
+@use '@scss-functions' as functions;
 
 ul {
   flex-basis: functions.flex-basis(4, vars.$space-sm);
@@ -302,8 +302,8 @@ Usage example:
 
 ```
 <style lang="scss">
-@use '@css-vars' as vars;
-@use '@css-mixins' as mixins;
+@use '@scss-vars' as vars;
+@use '@scss-mixins' as mixins;
 
 button {
   border: 1px solid transparent;

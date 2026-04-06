@@ -139,8 +139,8 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onEscapeKeydown));
 </template>
 
 <style lang="scss">
-@use '@css-vars' as vars;
-@use '@css-mixins' as mixins;
+@use '@scss-vars' as vars;
+@use '@scss-mixins' as mixins;
 
 .ml-modal-overlay,
 .ml-modal-dialog-overlay {

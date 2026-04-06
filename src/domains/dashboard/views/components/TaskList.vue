@@ -14,8 +14,8 @@
 </template>
 
 <style lang="scss" scoped>
-@use '@css-vars' as vars;
-@use '@css-functions' as functions;
+@use '@scss-vars' as vars;
+@use '@scss-functions' as functions;
 
 .ml-task-list {
     width: 100%;

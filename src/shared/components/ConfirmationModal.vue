@@ -120,7 +120,7 @@ defineExpose({
 </template>
 
 <style lang="scss">
-@use '@css-vars' as vars;
+@use '@scss-vars' as vars;
 
 .ml-confirmation-modal-dialog.ml-modal-dialog {
     > h5 + .ml-modal-dialog__wrapper {

@@ -29,8 +29,8 @@ const { getResolvedMeta } = useResolvedRoutes();
 </template>
 
 <style lang="scss" scoped>
-@use '@css-vars' as vars;
-@use '@css-mixins' as mixins;
+@use '@scss-vars' as vars;
+@use '@scss-mixins' as mixins;
 
 .ml-layout {
     padding: vars.$space-base 0;

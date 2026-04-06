@@ -48,7 +48,6 @@ export default [
             'no-console': 'warn',
             'no-debugger': 'warn',
             'vue/multi-word-component-names': 'off',
-            'vue/component-name-in-template-casing': ['error', 'PascalCase'],
             'vue/attributes-order': [
                 'error',
                 {

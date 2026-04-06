@@ -12,13 +12,13 @@ const { getResolvedMeta } = useResolvedRoutes();
     <div class="ml-layout">
         <div class="ml-container">
             <nav>
-                <RouterLink
+                <router-link
                     v-for="routeName in MAIN_NAVIGATION_CONFIG"
                     :key="routeName"
                     :to="{ name: routeName }"
                 >
                     {{ `${getResolvedMeta(routeName).title}` }}
-                </RouterLink>
+                </router-link>
             </nav>
 
             <h1 v-if="route.meta.title">{{ route.meta.title }}</h1>

@@ -6,15 +6,15 @@ import BaseLayout from '@shared/layouts/BaseLayout.vue';
 
 <template>
     <BaseLayout>
-        <RouterLink :to="{ name: EMPLOYEES_ROUTE_NAMES.CREATE }">Create Employee</RouterLink>
+        <router-link :to="{ name: EMPLOYEES_ROUTE_NAMES.CREATE }">Create Employee</router-link>
 
-        <RouterLink
+        <router-link
             :to="{
                 name: EMPLOYEES_ROUTE_NAMES.EDIT,
                 params: { employeeId: 7 },
             }"
         >
             Edit Employee
-        </RouterLink>
+        </router-link>
     </BaseLayout>
 </template>

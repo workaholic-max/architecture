@@ -20,6 +20,6 @@ onErrorCaptured((error) => {
     <div class="ml-app">
         <OccurredErrorModal :error-message="occurredErrorMessage" />
 
-        <RouterView v-if="occurredErrorMessage === null" />
+        <router-view v-if="occurredErrorMessage === null" />
     </div>
 </template>

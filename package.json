@@ -10,17 +10,15 @@
         "build-dev": "vite build --mode development",
         "build-local": "vite build --mode local-development",
         "preview": "vite preview",
-        "lint:check": "eslint src",
-        "lint:fix": "eslint src --fix",
+        "lint:check": "eslint \"src/**/*.{js,vue}\"",
+        "lint:fix": "eslint --fix \"src/**/*.{js,vue}\"",
         "format:check": "prettier --check .",
         "format:fix": "prettier --write .",
         "prepare": "husky"
     },
     "lint-staged": {
-        "src/**/*.{js,vue,scss}": [
-            "prettier --write",
-            "eslint --fix"
-        ]
+        "*": "prettier --write",
+        "src/**/*.{js,vue}": "eslint --fix"
     },
     "dependencies": {
         "axios": "^1.15.0",
@@ -38,6 +36,7 @@
         "eslint-plugin-simple-import-sort": "^12.1.1",
         "eslint-plugin-unused-imports": "^4.1.4",
         "eslint-plugin-vue": "^10.3.0",
+        "globals": "^17.4.0",
         "husky": "^9.1.7",
         "lint-staged": "^16.4.0",
         "prettier": "^3.6.2",

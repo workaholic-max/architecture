@@ -7,7 +7,6 @@
 export {}
 declare global {
   const computed: typeof import('vue').computed
-  const defineModel: typeof import('vue').defineModel
   const nextTick: typeof import('vue').nextTick
   const onBeforeMount: typeof import('vue').onBeforeMount
   const onBeforeUnmount: typeof import('vue').onBeforeUnmount
@@ -17,7 +16,6 @@ declare global {
   const ref: typeof import('vue').ref
   const useRoute: typeof import('vue-router').useRoute
   const useRouter: typeof import('vue-router').useRouter
-  const useSlots: typeof import('vue').useSlots
   const useTemplateRef: typeof import('vue').useTemplateRef
   const watch: typeof import('vue').watch
 }

@@ -10,7 +10,7 @@ defineProps({
     },
 });
 
-const slots = useSlots();
+const slots = defineSlots();
 </script>
 
 <template>

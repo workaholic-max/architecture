@@ -7,12 +7,10 @@ export const autoImportPlugin = () =>
                 vue: [
                     'ref',
                     'reactive',
-                    'defineModel',
                     'computed',
                     'watch',
                     'nextTick',
                     'useTemplateRef',
-                    'useSlots',
                     'onBeforeMount',
                     'onMounted',
                     'onBeforeUnmount',

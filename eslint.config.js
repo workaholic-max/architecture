@@ -4,11 +4,14 @@ import importPlugin from 'eslint-plugin-import';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import unusedImports from 'eslint-plugin-unused-imports';
 import eslintPluginVue from 'eslint-plugin-vue';
+import globals from 'globals';
 
 import { eslintAliases } from './configuration/aliases.js';
 import { importSortRules } from './configuration/eslint/plugins/import-sort.js';
 
 export default [
+    ...eslintPluginVue.configs['flat/recommended'],
+
     {
         files: ['**/*.js', '**/*.vue'],
         languageOptions: {
@@ -21,8 +24,12 @@ export default [
                 extraFileExtensions: ['.vue'],
             },
             globals: {
+                ...globals.browser,
+
                 defineProps: 'readonly',
                 defineEmits: 'readonly',
+                defineSlots: 'readonly',
+                defineModel: 'readonly',
                 defineExpose: 'readonly',
                 defineOptions: 'readonly',
             },
@@ -105,6 +112,11 @@ export default [
                         {
                             group: ['@/router/**', '@/api/**', '@/domains/**', '@/features/**', '@/shared/**'],
                             message: 'Root-level @/ imports are forbidden. Always use the specific alias instead.',
+                        },
+                        {
+                            group: ['@/**/fragments/**', '@*/**/fragments/**'],
+                            message:
+                                'Fragments are local only intended for use within the same module. Always use relative imports. Absolute imports are forbidden.',
                         },
                     ],
                 },

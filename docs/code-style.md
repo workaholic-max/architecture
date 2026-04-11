@@ -12,5 +12,6 @@ This project uses Prettier for formatting and ESLint for code quality.
 Pre-commit hooks (husky + lint-staged) run on staged files only.
 
 **Execution order:**
+
 1. Prettier — formatting
 2. ESLint — linting and autofix

@@ -12,12 +12,12 @@
         "preview": "vite preview",
         "lint:check": "eslint src",
         "lint:fix": "eslint src --fix",
-        "format:check": "prettier --check \"src/**/*.{js,vue}\"",
-        "format:fix": "prettier --write \"src/**/*.{js,vue}\"",
+        "format:check": "prettier --check .",
+        "format:fix": "prettier --write .",
         "prepare": "husky"
     },
     "lint-staged": {
-        "src/**/*.{js,vue}": [
+        "src/**/*.{js,vue,scss}": [
             "prettier --write",
             "eslint --fix"
         ]

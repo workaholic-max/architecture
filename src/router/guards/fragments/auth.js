@@ -10,7 +10,7 @@ export const authGuard = ({ to, employee }) => {
         if (to.name !== AUTH_ROUTE_NAMES.LOGIN) {
             return {
                 name: AUTH_ROUTE_NAMES.LOGIN,
-                query: { come_from: window.location.href },
+                query: { from: window.location.href },
             };
         }
 

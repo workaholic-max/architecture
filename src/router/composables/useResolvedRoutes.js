@@ -3,25 +3,34 @@ const resolvedRoutesCache = new Map();
 export const useResolvedRoutes = () => {
     const router = useRouter();
 
-    const getResolvedRoute = (name) => {
+    const getResolvedRoute = (name, path = null) => {
         if (resolvedRoutesCache.has(name)) {
             return resolvedRoutesCache.get(name);
         }
 
-        const { href, meta } = router.resolve({ name });
+        let entry;
 
-        const entry = {
-            href: href,
-            meta: meta ?? {},
-        };
+        try {
+            const resolvedRoute = router.resolve(path !== null ? { path } : { name });
+
+            entry = {
+                href: resolvedRoute.href,
+                meta: resolvedRoute.meta ?? {},
+            };
+        } catch {
+            entry = {
+                href: null,
+                meta: {},
+            };
+        }
 
         resolvedRoutesCache.set(name, entry);
 
         return entry;
     };
 
-    const getResolvedMeta = (name) => getResolvedRoute(name).meta;
-    const getResolvedHref = (name) => getResolvedRoute(name).href;
+    const getResolvedMeta = (name, path = null) => getResolvedRoute(name, path).meta;
+    const getResolvedHref = (name, path = null) => getResolvedRoute(name, path).href;
 
     return { getResolvedMeta, getResolvedHref };
 };

@@ -42,14 +42,8 @@ Encapsulates a specific responsibility and fully owns its internal implementatio
 - `components`
 - etc
 
-Exposes a clearly defined `public.js` that may be consumed by other parts of the application. Internal
-implementation details are considered private and should not be accessed directly, **BUT:**
-
-- `/routes/route-names.js` may be accessed directly
-- `/routes/index.js` may be accessed directly only
-  by [router/routes.js](https://github.com/workaholic-max/architecture/blob/main/src/router/routes.js)
-- `domains` may depend on other `domains/` and such dependencies must remain strictly one-directional to avoid coupling
-  and cyclic dependencies between business areas
+Domains may depend on other `domains/` and such dependencies must remain strictly one-directional to avoid coupling and
+cyclic dependencies between business areas
 
 ---
 
@@ -66,8 +60,7 @@ Encapsulates a specific reusable concern and owns its internal implementation.
 - `components`
 - etc
 
-Features are intended to be consumed by `domains` and higher-level application layers and must not depend on other
-`features`
+Features are intended to be consumed by `domains` and higher-level application layers.
 
 ---
 
@@ -86,7 +79,7 @@ Encapsulates generic, independent, reusable functionality and owns its internal 
 
 Shared represents the lowest-level layer and may be freely consumed by higher-level application layers.
 
-- `shared` must not import `domains` or `features`
+- `shared` must not import `domains`
 - Modules within `shared` may depend on other `shared` modules as needed
 
 ---

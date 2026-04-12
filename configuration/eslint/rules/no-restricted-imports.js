@@ -1,4 +1,4 @@
-export const restrictedImportsRules = {
+export const noRestrictedImportsRules = {
     'no-restricted-imports': [
         'error',
         {

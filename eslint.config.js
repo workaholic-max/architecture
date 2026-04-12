@@ -9,7 +9,7 @@ import globals from 'globals';
 import { importRules, importSettings } from './configuration/eslint/plugins/import.js';
 import { simpleImportSortRules } from './configuration/eslint/plugins/simple-import-sort.js';
 import { unusedImportsRules } from './configuration/eslint/plugins/unused-imports.js';
-import { restrictedImportsRules } from './configuration/eslint/rules/restricted-imports.js';
+import { noRestrictedImportsRules } from './configuration/eslint/rules/no-restricted-imports.js';
 
 export default [
     ...eslintPluginVue.configs['flat/recommended'],
@@ -65,7 +65,7 @@ export default [
             ],
 
             ...unusedImportsRules,
-            ...restrictedImportsRules,
+            ...noRestrictedImportsRules,
             ...importRules,
             ...simpleImportSortRules,
         },

@@ -1,13 +1,13 @@
 import vueParser from 'vue-eslint-parser';
 import eslintConfigPrettier from 'eslint-config-prettier';
-import importPlugin from 'eslint-plugin-import';
-import simpleImportSort from 'eslint-plugin-simple-import-sort';
-import unusedImports from 'eslint-plugin-unused-imports';
+import eslintPluginImport from 'eslint-plugin-import';
+import eslintPluginSimpleImportSort from 'eslint-plugin-simple-import-sort';
+import eslintPluginUnusedImports from 'eslint-plugin-unused-imports';
 import eslintPluginVue from 'eslint-plugin-vue';
 import globals from 'globals';
 
 import { importRules, importSettings } from './configuration/eslint/plugins/import.js';
-import { importSortRules } from './configuration/eslint/plugins/import-sort.js';
+import { simpleImportSortRules } from './configuration/eslint/plugins/simple-import-sort.js';
 import { unusedImportsRules } from './configuration/eslint/plugins/unused-imports.js';
 import { restrictedImportsRules } from './configuration/eslint/rules/restricted-imports.js';
 
@@ -32,9 +32,9 @@ export default [
         },
         plugins: {
             vue: eslintPluginVue,
-            'unused-imports': unusedImports,
-            import: importPlugin,
-            'simple-import-sort': simpleImportSort,
+            'unused-imports': eslintPluginUnusedImports,
+            import: eslintPluginImport,
+            'simple-import-sort': eslintPluginSimpleImportSort,
         },
         settings: {
             ...importSettings,
@@ -67,7 +67,7 @@ export default [
             ...unusedImportsRules,
             ...restrictedImportsRules,
             ...importRules,
-            ...importSortRules,
+            ...simpleImportSortRules,
         },
     },
 

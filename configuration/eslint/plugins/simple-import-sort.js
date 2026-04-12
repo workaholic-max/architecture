@@ -20,7 +20,7 @@ const createTypeGroup = (type) => [
     `^\\./${type}`,
 ];
 
-export const importSortRules = {
+export const simpleImportSortRules = {
     'simple-import-sort/imports': [
         'error',
         {

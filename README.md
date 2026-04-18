@@ -389,8 +389,10 @@ const confirmationModalRef = ref(null);
 
 const openEmployeeEditModal = (employee) => {
     confirmationModalRef.value.open({
-        entity: employee,
-        messageSlot: 'message-employee-edit',
+        title: "Edit Employee?",
+        message: 'will be unavailable to others during editing.',
+        entityName: employee.name,
+        submitBtnText: 'edit',
         action: () => EmployeesApi.draft.create(employee.id),
         onSuccess: (data) => {
             ...
@@ -402,10 +404,10 @@ const openEmployeeEditModal = (employee) => {
 
 const openEmployeeDeleteModal = (employee) => {
     confirmationModalRef.value.open({
-        entity: employee,
-        cancelBtnText: 'no',
-        submitBtnText: 'yes',
-        messageSlot: 'message-employee-delete',
+        title: "Delete Employee?",
+        message: "will be permanently deleted.",
+        entityName: employee.name,
+        submitBtnText: 'delete',
         action: () => EmployeesApi.delete(employee.id),
         onSuccess: (data) => {
             ...
@@ -415,15 +417,7 @@ const openEmployeeDeleteModal = (employee) => {
     });
 };
 
-<ConfirmationModal ref="confirmationModalRef">
-    <template #message-employee-edit>
-      Are you sure you want start editing the employee?
-    </template>
-
-    <template #message-employee-delete="{ entity }">
-      Are you sure you want to delete {{ entity.name }}?
-    </template>
-</ConfirmationModal>
+<ConfirmationModal ref="confirmationModalRef" />
 ```
 
 ---

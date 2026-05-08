@@ -89,7 +89,7 @@ Shared represents the lowest-level layer and may be freely consumed by higher-le
 Defines interaction with backend APIs and other external services.
 
 - The entry point
-  is [index.ts](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/api/index.ts), which
+  is [index.js](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/api/index.js), which
   aggregates and exports all available APIs
 - APIs are grouped by resource and represent available operations
 - API resource may expose nested structures
@@ -140,7 +140,7 @@ such as guards and other routing concerns.
 
 ---
 
-## [`router/`routes.ts](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/router/routes.ts)
+## [`router/`routes.js](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/router/routes.js)
 
 Responsible for composing the application routing.
 
@@ -254,7 +254,7 @@ The API client can be further extended with better response interceptors:
 
 ---
 
-### [assets/styles/variables/](https://github.com/workaholic-max/architecture/tree/typescript-migration/src/assets/styles/variables)
+### [assets/styles/variables/](https://github.com/workaholic-max/architecture/tree/typescript-migration/src/assets/styles/abstracts/variables)
 
 Variables are grouped by concern (spacing, colors, breakpoints, etc.) and exposed through a single entry point using
 Sass `@forward`. Each group is namespaced at the entry level to keep usage explicit and prevent naming collisions.
@@ -278,7 +278,7 @@ h2 {
 
 ---
 
-### [assets/styles/functions/\index.scss](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/assets/styles/functions/index.scss)
+### [assets/styles/functions/\index.scss](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/assets/styles/abstracts/functions/_index.scss)
 
 Usage example:
 
@@ -294,7 +294,7 @@ ul {
 
 ---
 
-### [assets/styles/mixins/\_index.scss](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/assets/styles/mixins/_index.scss)
+### [assets/styles/mixins/\_index.scss](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/assets/styles/abstracts/mixins/_index.scss)
 
 Usage example:
 
@@ -496,7 +496,7 @@ as part of the app initialization flow.
 
 ---
 
-### [shared/services/local-storage.ts](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/shared/services/local-storage.ts)
+### [shared/services/local-storage.ts](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/shared/services/local-storage.service.ts)
 
 This service centralizes access to `localStorage` to ensure safe, predictable behavior and avoid scattering direct
 storage

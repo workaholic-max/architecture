@@ -5,18 +5,18 @@ structure, and high codebase readability.
 
 ---
 
-## [`app`/](https://github.com/workaholic-max/architecture/tree/main/src/app)
+## [`app`/](https://github.com/workaholic-max/architecture/tree/typescript-migration/src/app)
 
 Defines how the application starts.
 
 - Expected to be imported once, and only
-  from [main.ts](https://github.com/workaholic-max/architecture/blob/main/src/main.ts)
+  from [main.ts](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/main.ts)
 - Allowed to import all other layers: `router` `api` `domains` `features` `shared` etc
 - May contain local-only modules: `services` `utils` `constants` `composables` `components` etc
 
 ---
 
-## [`app/`init/](https://github.com/workaholic-max/architecture/tree/main/src/app/init)
+## [`app/`init/](https://github.com/workaholic-max/architecture/tree/typescript-migration/src/app/init)
 
 Responsible for executing all required initialization steps before the application is mounted.
 
@@ -27,7 +27,7 @@ Responsible for executing all required initialization steps before the applicati
 
 ---
 
-## [`domains`/](https://github.com/workaholic-max/architecture/tree/main/src/domains)
+## [`domains`/](https://github.com/workaholic-max/architecture/tree/typescript-migration/src/domains)
 
 Encapsulates a specific responsibility and fully owns its internal implementation and business logic.
 
@@ -47,7 +47,7 @@ cyclic dependencies between business areas
 
 ---
 
-## [`features`/](https://github.com/workaholic-max/architecture/tree/main/src/featurues)
+## [`features`/](https://github.com/workaholic-max/architecture/tree/typescript-migration/src/featurues)
 
 Encapsulates a specific reusable concern and owns its internal implementation.
 
@@ -64,7 +64,7 @@ Features are intended to be consumed by `domains` and higher-level application l
 
 ---
 
-## [`shared`/](https://github.com/workaholic-max/architecture/tree/main/src/shared)
+## [`shared`/](https://github.com/workaholic-max/architecture/tree/typescript-migration/src/shared)
 
 Encapsulates generic, independent, reusable functionality and owns its internal implementation.
 
@@ -84,25 +84,26 @@ Shared represents the lowest-level layer and may be freely consumed by higher-le
 
 ---
 
-## [`api`/](https://github.com/workaholic-max/architecture/tree/main/src/api)
+## [`api`/](https://github.com/workaholic-max/architecture/tree/typescript-migration/src/api)
 
 Defines interaction with backend APIs and other external services.
 
-- The entry point is [index.ts](https://github.com/workaholic-max/architecture/blob/main/src/api/index.ts), which
+- The entry point
+  is [index.ts](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/api/index.ts), which
   aggregates and exports all available APIs
 - APIs are grouped by resource and represent available operations
 - API resource may expose nested structures
 
 ---
 
-## [`api/`client.ts](https://github.com/workaholic-max/architecture/blob/main/src/api/client.ts)
+## [`api/`client.ts](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/api/client.ts)
 
 Responsible for configuring and executing requests to external services, providing a single, consistent entry point for
 API communication.
 
 ---
 
-## [`router/`fallback/](https://github.com/workaholic-max/architecture/tree/main/src/router/fallback)
+## [`router/`fallback/](https://github.com/workaholic-max/architecture/tree/typescript-migration/src/router/fallback)
 
 Responsible for routing in system-level cases.
 
@@ -113,11 +114,12 @@ Responsible for routing in system-level cases.
 
 ---
 
-## [`router/`guards/](https://github.com/workaholic-max/architecture/tree/main/src/router/guards)
+## [`router/`guards/](https://github.com/workaholic-max/architecture/tree/typescript-migration/src/router/guards)
 
 Responsible for controlling navigation flow.
 
-The entry point is [index.ts](https://github.com/workaholic-max/architecture/blob/main/src/router/guards/index.ts),
+The entry point
+is [index.ts](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/router/guards/index.ts),
 which provides a function for running route guards in a defined order. The order of guards is significant and directly
 affects how navigation decisions are resolved.
 
@@ -129,7 +131,7 @@ Guards are checked one by one to determine how navigation proceeds:
 
 ---
 
-## [`router/`init.ts](https://github.com/workaholic-max/architecture/blob/main/src/router/init.ts)
+## [`router/`init.ts](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/router/init.ts)
 
 Responsible for initializing the application router.
 
@@ -138,7 +140,7 @@ such as guards and other routing concerns.
 
 ---
 
-## [`router/`routes.ts](https://github.com/workaholic-max/architecture/blob/main/src/router/routes.ts)
+## [`router/`routes.ts](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/router/routes.ts)
 
 Responsible for composing the application routing.
 
@@ -168,8 +170,10 @@ reason about as it grows.
 
 ### Fonts
 
-Fonts are placed in [public/](https://github.com/workaholic-max/architecture/tree/main/public) and preloaded
-in [index.html](https://github.com/workaholic-max/architecture/blob/main/index.html) to prevent FOUT (Flash of Unstyled
+Fonts are placed in [public/](https://github.com/workaholic-max/architecture/tree/typescript-migration/public) and
+preloaded
+in [index.html](https://github.com/workaholic-max/architecture/blob/typescript-migration/index.html) to prevent FOUT (
+Flash of Unstyled
 Text) during application startup.
 
 Preloading fonts ensures they are available before initial render, improving visual stability and perceived performance,
@@ -183,7 +187,7 @@ It's recommended to use reusable section comment blocks to visually separate gro
 readability, helps structure complex code, and makes responsibilities clearer.
 
 For setup instructions and IDE
-configuration: [docs/section-comments.md](https://github.com/workaholic-max/architecture/blob/main/docs/section-comments.md)
+configuration: [docs/section-comments.md](https://github.com/workaholic-max/architecture/blob/typescript-migration/docs/section-comments.md)
 
 ```
 // ───────────────────────────────────────────────────────
@@ -193,7 +197,7 @@ configuration: [docs/section-comments.md](https://github.com/workaholic-max/arch
 
 ---
 
-### [vite.config.ts](https://github.com/workaholic-max/architecture/blob/main/vite.config.ts)
+### [vite.config.ts](https://github.com/workaholic-max/architecture/blob/typescript-migration/vite.config.ts)
 
 The configuration is intentionally minimal and primarily focused on declaring module resolution aliases that reflect the
 architectural structure of the project.
@@ -203,7 +207,7 @@ centralized and predictable styling structure.
 
 ---
 
-### [eslint.config.js](https://github.com/workaholic-max/architecture/blob/main/eslint.config.js)
+### [eslint.config.js](https://github.com/workaholic-max/architecture/blob/typescript-migration/eslint.config.js)
 
 This configuration helps maintain a clean codebase, prevents architectural violations, and ensures that project
 structure and conventions are applied consistently.
@@ -214,7 +218,7 @@ structure and conventions are applied consistently.
 
 ---
 
-### [api/](https://github.com/workaholic-max/architecture/tree/main/src/api)
+### [api/](https://github.com/workaholic-max/architecture/tree/typescript-migration/src/api)
 
 Serves as a single reference for all available interactions with backend and external services.
 
@@ -223,12 +227,12 @@ predictable usage.
 
 ---
 
-### [api/client.ts](https://github.com/workaholic-max/architecture/blob/main/src/api/client.ts)
+### [api/client.ts](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/api/client.ts)
 
 The API client supports abortable requests.
 
 Request cancellation is handled
-via [shared/composables/useAbortableRequest.ts](https://github.com/workaholic-max/architecture/blob/main/src/shared/composables/useAbortableRequest.ts)
+via [shared/composables/useAbortableRequest.ts](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/shared/composables/useAbortableRequest.ts)
 allowing requests to be automatically aborted when the user leaves a page or manually cancelled using `abortRequests`
 for example when a newer request replaces a previous one.
 
@@ -250,7 +254,7 @@ The API client can be further extended with better response interceptors:
 
 ---
 
-### [assets/styles/variables/](https://github.com/workaholic-max/architecture/tree/main/src/assets/styles/variables)
+### [assets/styles/variables/](https://github.com/workaholic-max/architecture/tree/typescript-migration/src/assets/styles/variables)
 
 Variables are grouped by concern (spacing, colors, breakpoints, etc.) and exposed through a single entry point using
 Sass `@forward`. Each group is namespaced at the entry level to keep usage explicit and prevent naming collisions.
@@ -274,7 +278,7 @@ h2 {
 
 ---
 
-### [assets/styles/functions/\index.scss](https://github.com/workaholic-max/architecture/blob/main/src/assets/styles/functions/index.scss)
+### [assets/styles/functions/\index.scss](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/assets/styles/functions/index.scss)
 
 Usage example:
 
@@ -290,7 +294,7 @@ ul {
 
 ---
 
-### [assets/styles/mixins/\_index.scss](https://github.com/workaholic-max/architecture/blob/main/src/assets/styles/mixins/_index.scss)
+### [assets/styles/mixins/\_index.scss](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/assets/styles/mixins/_index.scss)
 
 Usage example:
 
@@ -314,7 +318,7 @@ button {
 
 ---
 
-### [router/composables/useResolvedRoutes.ts](https://github.com/workaholic-max/architecture/blob/main/src/router/composables/useResolvedRoutes.ts)
+### [router/composables/useResolvedRoutes.ts](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/router/composables/useResolvedRoutes.ts)
 
 This composable centralizes access to `router.resolve()` results and avoids repeated resolution of the same route.
 Resolved values are cached by route name and reused across the application to ensure consistent access to route metadata
@@ -327,7 +331,7 @@ It exposes focused helpers for retrieving commonly needed information, such as:
 
 ---
 
-### [shared/directives/click-outside.ts](https://github.com/workaholic-max/architecture/blob/main/src/shared/directives/click-outside.ts)
+### [shared/directives/click-outside.ts](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/shared/directives/click-outside.ts)
 
 In this project, directives are not globally registered. They must be explicitly imported and used only where needed.
 This keeps usage transparent and prevents hidden dependencies across the application.
@@ -342,12 +346,13 @@ is used in templates, automatically mapping to kebab-case.
 
 ---
 
-### [shared/components/modal/](https://github.com/workaholic-max/architecture/tree/main/src/shared/components/modal)
+### [shared/components/modal/](https://github.com/workaholic-max/architecture/tree/typescript-migration/src/shared/components/modal)
 
 This implementation is what I refer to as a `construction`
 
 Exposes a single public entry
-point [index.js](https://github.com/workaholic-max/architecture/blob/main/src/shared/components/modal/index.js) that
+point [index.js](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/shared/components/modal/index.js)
+that
 exports an object containing all fragments.
 
 - Fragments are not intended to be imported directly
@@ -375,7 +380,7 @@ flexible, consistent, and easy to reason about.
 
 ---
 
-### [shared/components/ConfirmationModal.vue](https://github.com/workaholic-max/architecture/blob/main/src/shared/components/ConfirmationModal.vue)
+### [shared/components/ConfirmationModal.vue](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/shared/components/ConfirmationModal.vue)
 
 Instead of rendering multiple confirmation modals or controlling them via props, this component exposes an `open` method
 and is intended to be instantiated **once per view** and reused for multiple confirmation scenarios (delete, edit,
@@ -423,7 +428,7 @@ const openEmployeeDeleteModal = (employee) => {
 
 ---
 
-### [shared/configs/limits.js](https://github.com/workaholic-max/architecture/blob/main/src/shared/configs/limits.js)
+### [shared/configs/limits.js](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/shared/configs/limits.js)
 
 Centralized business limits for the application.
 
@@ -433,7 +438,7 @@ evolve. It serves as a single source of truth for constraints that define what t
 
 ---
 
-### [shared/controls/body-scroll.js](https://github.com/workaholic-max/architecture/blob/main/src/shared/controls/body-scroll.js)
+### [shared/controls/body-scroll.js](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/shared/controls/body-scroll.js)
 
 Controls document body scroll locking in a predictable and safe way.
 
@@ -450,7 +455,7 @@ Its responsibility is strictly limited to coordinating scroll state, not managin
 
 ---
 
-### [shared/controls/interaction.js](https://github.com/workaholic-max/architecture/blob/main/src/shared/controls/interaction.js)
+### [shared/controls/interaction.js](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/shared/controls/interaction.js)
 
 Controls user interaction with the document in a predictable and temporary way.
 
@@ -467,19 +472,19 @@ Typical use cases include:
 
 ---
 
-### [shared/layouts/BaseLayout.vue](https://github.com/workaholic-max/architecture/blob/main/src/shared/layouts/BaseLayout.vue)
+### [shared/layouts/BaseLayout.vue](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/shared/layouts/BaseLayout.vue)
 
 This layout demonstrates how routing metadata is used as the single source of truth for page-level information such as
 titles.
 
 Navigation is rendered from a simple configuration containing only route names. All additional information (such as
 titles or permissions) is resolved dynamically
-via [router/composables/useResolvedRoutes.ts](https://github.com/workaholic-max/architecture/blob/main/src/router/composables/useResolvedRoutes.ts),
+via [router/composables/useResolvedRoutes.ts](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/router/composables/useResolvedRoutes.ts),
 avoiding redundant configuration and keeping navigation logic centralized and predictable.
 
 ---
 
-### [shared/services/device.ts](https://github.com/workaholic-max/architecture/blob/main/src/shared/services/device.ts)
+### [shared/services/device.ts](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/shared/services/device.ts)
 
 This service is responsible for determining and exposing information about the current device environment.
 
@@ -491,7 +496,7 @@ as part of the app initialization flow.
 
 ---
 
-### [shared/services/local-storage.ts](https://github.com/workaholic-max/architecture/blob/main/src/shared/services/local-storage.ts)
+### [shared/services/local-storage.ts](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/shared/services/local-storage.ts)
 
 This service centralizes access to `localStorage` to ensure safe, predictable behavior and avoid scattering direct
 storage

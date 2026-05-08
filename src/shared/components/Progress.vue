@@ -1,5 +1,10 @@
-<script setup>
-import { vClickOutside } from '@shared/directives/click-outside.js';
+<script setup lang="ts">
+import { vClickOutside } from '@shared/directives/click-outside.ts';
+
+interface Percentages {
+    value: number;
+    overlayValue: number;
+}
 
 const props = defineProps({
     value: {
@@ -24,7 +29,7 @@ const onClickOutside = () => {
     console.log('onClickOutside');
 };
 
-const percentages = computed(() => {
+const percentages = computed<Percentages>(() => {
     const { value, max } = props;
 
     if (value > max) {

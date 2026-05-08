@@ -1,0 +1,37 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "Bundler",
+        "strict": true,
+        "allowJs": true,
+        "checkJs": false,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "esModuleInterop": true,
+        "allowImportingTsExtensions": true,
+        "lib": ["ESNext", "DOM"],
+        "baseUrl": ".",
+        "ignoreDeprecations": "6.0",
+        "types": ["vite/client"],
+        "paths": {
+            "@/*": ["src/*"],
+
+            "@app/*": ["src/app/*"],
+            "@router": ["src/router/index.js"],
+            "@router/*": ["src/router/*"],
+            "@api": ["src/api/index.js"],
+            "@api/*": ["src/api/*"],
+            "@domains/*": ["src/domains/*"],
+            "@features/*": ["src/features/*"],
+            "@shared/*": ["src/shared/*"],
+
+            "@scss-vars": ["src/assets/styles/abstracts/variables/_index.scss"],
+            "@scss-mixins": ["src/assets/styles/abstracts/mixins/_index.scss"],
+            "@scss-functions": ["src/assets/styles/abstracts/functions/_index.scss"]
+        }
+    },
+
+    "include": ["src", "dts", "*.d.ts"],
+    "exclude": ["node_modules", "dist"]
+}

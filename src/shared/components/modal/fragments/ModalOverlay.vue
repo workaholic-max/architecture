@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { bodyScrollControl } from '@shared/controls/body-scroll.js';
 import { interactionControl } from '@shared/controls/interaction.js';
 
@@ -25,7 +25,7 @@ const props = defineProps({
     },
 });
 
-const emit = defineEmits(['close']);
+const emit = defineEmits<{ close: [] }>();
 
 // ───────────────────────────────────────────────────────
 // Body scroll control
@@ -88,7 +88,7 @@ const onClickOutside = () => {
     }
 };
 
-const onEscapeKeydown = (event) => {
+const onEscapeKeydown = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
         closeModal();
     }

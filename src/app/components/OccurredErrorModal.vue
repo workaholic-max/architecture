@@ -1,12 +1,11 @@
-<script setup>
+<script setup lang="ts">
+import { Nullable } from '@shared/types/nullable.ts';
+
 import Modal from '@shared/components/modal/index.js';
 
-defineProps({
-    errorMessage: {
-        type: String,
-        default: null,
-    },
-});
+defineProps<{
+    errorMessage: Nullable<string>;
+}>();
 </script>
 
 <template>

@@ -3,11 +3,11 @@ import { eslintAliases } from '../../aliases.js';
 export const importSettings = {
     'import/resolver': {
         node: {
-            extensions: ['.js', '.vue', '.scss'],
+            extensions: ['.js', '.ts', '.vue', '.scss'],
         },
         alias: {
             map: Object.entries(eslintAliases),
-            extensions: ['.js', '.vue', '.scss'],
+            extensions: ['.js', '.ts', '.vue', '.scss'],
         },
     },
 };
@@ -21,6 +21,7 @@ export const importRules = {
         'ignorePackages',
         {
             js: 'always',
+            ts: 'always',
             vue: 'always',
             scss: 'always',
         },

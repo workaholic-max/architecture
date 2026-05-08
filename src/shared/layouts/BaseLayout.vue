@@ -1,7 +1,7 @@
-<script setup>
-import { useResolvedRoutes } from '@router/composables/useResolvedRoutes.js';
+<script setup lang="ts">
+import { MAIN_NAVIGATION_CONFIG } from '@shared/configs/navigation.ts';
 
-import { MAIN_NAVIGATION_CONFIG } from '@shared/configs/navigation.js';
+import { useResolvedRoutes } from '@router/composables/useResolvedRoutes.ts';
 
 const route = useRoute();
 
@@ -21,7 +21,7 @@ const { getResolvedMeta } = useResolvedRoutes();
                 </router-link>
             </nav>
 
-            <h1 v-if="route.meta.title">{{ route.meta.title }}</h1>
+            <h1>{{ route.meta.title }}</h1>
 
             <slot>Me too lazy..</slot>
         </div>

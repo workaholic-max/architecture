@@ -1,5 +1,36 @@
-<script setup>
+<script setup lang="ts">
+import { Nullable } from '@shared/types/nullable.ts';
+
 import Modal from '@shared/components/modal/index.js';
+
+interface ConfirmationModalConfig {
+    enableVerticalActions: boolean;
+    title: string;
+    message?: string;
+    entityName?: string;
+    cancelBtnText: string;
+    submitBtnText: string;
+    messageSlot: string;
+    action: () => Promise<unknown>;
+    onSuccess: (data: unknown) => void;
+    onError?: (error: unknown) => void;
+    onClose?: () => void;
+}
+
+interface OpenConfirmationModalConfig<T> {
+    withDelay?: boolean;
+    enableVerticalActions?: boolean;
+    title?: string;
+    message?: string;
+    entityName?: string;
+    cancelBtnText?: string;
+    submitBtnText?: string;
+    messageSlot?: string;
+    action: () => Promise<T>;
+    onSuccess: (data: T) => void;
+    onError?: (error: unknown) => void;
+    onClose?: () => void;
+}
 
 defineOptions({
     inheritAttrs: false,
@@ -9,17 +40,26 @@ defineOptions({
 // Confirmation delay
 // ───────────────────────────────────────────────────────
 
-let confirmationDelayIntervalId;
+let confirmationDelayIntervalId: Nullable<ReturnType<typeof setInterval>> = null;
 
 const confirmationDelayCountdown = ref(0);
 const isConfirmationDelayed = ref(false);
 
-const stopConfirmationDelay = () => {
-    clearInterval(confirmationDelayIntervalId);
+const stopConfirmationDelay = (force = false) => {
+    if (confirmationDelayIntervalId !== null) {
+        clearInterval(confirmationDelayIntervalId);
+
+        confirmationDelayIntervalId = null;
+    }
+
+    if (force) {
+        confirmationDelayCountdown.value = 0;
+        isConfirmationDelayed.value = false;
+    }
 };
 
 const startConfirmationDelay = () => {
-    stopConfirmationDelay();
+    stopConfirmationDelay(true);
 
     confirmationDelayIntervalId = setInterval(() => {
         if (confirmationDelayCountdown.value === 0) {
@@ -43,50 +83,42 @@ const handleConfirmationDelayCompleted = () => {
 // Confirmation modal state
 // ───────────────────────────────────────────────────────
 
-const config = {
-    enableVerticalActions: false,
-    title: null,
-    message: null,
-    entityName: null,
-    cancelBtnText: null,
-    submitBtnText: null,
-    messageSlot: null,
-    action: null,
-    onSuccess: null,
-    onError: null,
-    onClose: null,
-};
+let config: Nullable<ConfirmationModalConfig> = null;
 
 const state = reactive({
     isOpened: false,
     isSubmitting: false,
 });
 
-const openModal = ({
+const resolvedConfig = computed(() => config as ConfirmationModalConfig);
+
+const openModal = <T,>({
     withDelay = false,
     enableVerticalActions = false,
     title = 'Confirmation Required',
-    message = null,
-    entityName = null,
+    message,
+    entityName,
     cancelBtnText = 'cancel',
     submitBtnText = 'confirm',
     messageSlot = 'message',
     action,
     onSuccess,
-    onError = null,
-    onClose = null,
-}) => {
-    config.enableVerticalActions = enableVerticalActions;
-    config.title = title;
-    config.message = message;
-    config.entityName = entityName;
-    config.cancelBtnText = cancelBtnText;
-    config.submitBtnText = submitBtnText;
-    config.messageSlot = messageSlot;
-    config.action = action;
-    config.onSuccess = onSuccess;
-    config.onError = onError;
-    config.onClose = onClose;
+    onError,
+    onClose,
+}: OpenConfirmationModalConfig<T>) => {
+    config = {
+        enableVerticalActions,
+        title,
+        message,
+        entityName,
+        cancelBtnText,
+        submitBtnText,
+        messageSlot,
+        action,
+        onSuccess: (data) => onSuccess(data as T),
+        onError,
+        onClose,
+    };
 
     if (withDelay) {
         startConfirmationDelay();
@@ -96,29 +128,31 @@ const openModal = ({
 };
 
 const closeModal = (forceClose = false) => {
+    if (config === null) return;
+
     if (forceClose || !state.isSubmitting) {
-        if (typeof config.onClose === 'function') {
-            config.onClose();
-        }
+        config.onClose?.();
 
         state.isOpened = false;
         state.isSubmitting = false;
 
-        for (const key in config) {
-            config[key] = null;
-        }
+        config = null;
+
+        stopConfirmationDelay(true);
     }
 };
 
 const submitAction = () => {
-    if (!config.action || !config.onSuccess || isConfirmationDelayed.value) return;
+    if (config === null || isConfirmationDelayed.value) return;
+
+    const currentConfig = config;
 
     state.isSubmitting = true;
 
-    config
+    currentConfig
         .action()
-        .then((data) => config.onSuccess(data))
-        .catch((error) => config.onError?.(error));
+        .then((data) => currentConfig.onSuccess(data))
+        .catch((error) => currentConfig.onError?.(error));
 };
 
 defineExpose({
@@ -136,31 +170,31 @@ defineExpose({
         <Modal.Dialog
             enable-centered-content
             class="ml-confirmation-modal-dialog"
-            :enable-vertical-actions="config.enableVerticalActions"
+            :enable-vertical-actions="resolvedConfig.enableVerticalActions"
         >
-            <template #title>{{ config.title }}</template>
+            <template #title>{{ resolvedConfig.title }}</template>
 
             <template #content>
-                <p v-if="config.entityName !== null || config.message !== null">
-                    <template v-if="config.entityName !== null">
-                        <b>"{{ config.entityName }}"</b>
+                <p v-if="resolvedConfig.entityName !== undefined || resolvedConfig.message !== undefined">
+                    <template v-if="resolvedConfig.entityName !== undefined">
+                        <b>"{{ resolvedConfig.entityName }}"</b>
 
                         {{ ' ' }}
                     </template>
 
-                    <span v-if="config.message !== null">{{ config.message }}</span>
+                    <span v-if="resolvedConfig.message !== undefined">{{ resolvedConfig.message }}</span>
                 </p>
 
-                <slot :name="config.messageSlot" />
+                <slot :name="resolvedConfig.messageSlot" />
             </template>
 
             <template #actions>
                 <button
                     type="button"
                     :disabled="state.isSubmitting"
-                    @click="closeModal"
+                    @click="closeModal(true)"
                 >
-                    {{ config.cancelBtnText }}
+                    {{ resolvedConfig.cancelBtnText }}
                 </button>
 
                 <button
@@ -174,7 +208,11 @@ defineExpose({
                         @before-enter="handleConfirmationDelayCompleted"
                     >
                         <span :key="confirmationDelayCountdown">
-                            {{ confirmationDelayCountdown > 0 ? confirmationDelayCountdown : config.submitBtnText }}
+                            {{
+                                confirmationDelayCountdown > 0
+                                    ? confirmationDelayCountdown
+                                    : resolvedConfig.submitBtnText
+                            }}
                         </span>
                     </transition>
                 </button>

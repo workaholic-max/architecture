@@ -5,6 +5,7 @@ import eslintPluginSimpleImportSort from 'eslint-plugin-simple-import-sort';
 import eslintPluginUnusedImports from 'eslint-plugin-unused-imports';
 import eslintPluginVue from 'eslint-plugin-vue';
 import globals from 'globals';
+import typescriptEslint from 'typescript-eslint';
 
 import { importRules, importSettings } from './configuration/eslint/plugins/import.js';
 import { simpleImportSortRules } from './configuration/eslint/plugins/simple-import-sort.js';
@@ -13,14 +14,16 @@ import { noRestrictedImportsRules } from './configuration/eslint/rules/no-restri
 
 export default [
     ...eslintPluginVue.configs['flat/recommended'],
+    ...typescriptEslint.configs.recommended,
 
     {
-        files: ['**/*.js', '**/*.vue'],
+        files: ['**/*.{js,ts,vue}'],
         languageOptions: {
             ecmaVersion: 'latest',
             sourceType: 'module',
             parser: vueParser,
             parserOptions: {
+                parser: typescriptEslint.parser,
                 ecmaVersion: 'latest',
                 sourceType: 'module',
                 extraFileExtensions: ['.vue'],

@@ -1,5 +1,5 @@
-<script setup>
-import { useResolvedRoutes } from '@router/composables/useResolvedRoutes.js';
+<script setup lang="ts">
+import { useResolvedRoutes } from '@router/composables/useResolvedRoutes.ts';
 
 import BaseLayout from '@shared/layouts/BaseLayout.vue';
 
@@ -14,7 +14,7 @@ const { getResolvedMeta } = useResolvedRoutes();
 const deniedRoute = computed(() => {
     const { deniedPath, deniedName } = route.query;
 
-    if (!deniedPath || !deniedName) {
+    if (!deniedPath || !deniedName || typeof deniedPath !== 'string' || typeof deniedName !== 'string') {
         return null;
     }
 
@@ -35,7 +35,7 @@ const accessDeniedMessage = computed(() => {
 
     const { title } = getResolvedMeta(name, path);
 
-    return `${baseMessage} to "${title || path}"`;
+    return `${baseMessage} to "${title}"`;
 });
 </script>
 

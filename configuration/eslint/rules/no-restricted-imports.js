@@ -4,7 +4,7 @@ export const noRestrictedImportsRules = {
         {
             patterns: [
                 {
-                    group: ['@/router/**', '@/api/**', '@/domains/**', '@/features/**', '@/shared/**'],
+                    group: ['@/app/**', '@/router/**', '@/api/**', '@/domains/**', '@/features/**', '@/shared/**'],
                     message: 'Root-level @/ imports are forbidden. Always use the specific alias instead.',
                 },
 

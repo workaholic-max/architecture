@@ -1,8 +1,6 @@
-import { PATH_PATTERNS } from '@router/utils/path-patterns.js';
-
 import { EMPLOYEES_ROUTE_NAMES } from '@domains/employees/routes/route-names.js';
 
-import { EMPLOYEES_PERMISSION_KEYS } from '@domains/employees/configs/permissions.js';
+import { EMPLOYEES_PERMISSION_KEYS } from '@domains/employees/configs/permissions.ts';
 
 import EmployeeCreateView from '@domains/employees/views/create/EmployeeCreateView.vue';
 import EmployeeEditView from '@domains/employees/views/edit/EmployeeEditView.vue';
@@ -35,7 +33,7 @@ export const employeesRoute = {
         },
 
         {
-            path: `:employeeId${PATH_PATTERNS.NUMERIC}/edit`,
+            path: ':employeeId/edit',
             name: EMPLOYEES_ROUTE_NAMES.EDIT,
             component: EmployeeEditView,
             props: true,

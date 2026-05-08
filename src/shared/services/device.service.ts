@@ -1,0 +1,73 @@
+import { Nullable } from '@shared/types/nullable.ts';
+
+const DEVICE_BREAKPOINTS = {
+    MOBILE_MAX: 768,
+    DESKTOP_MIN: 1024,
+};
+
+const DEVICE_TYPES = {
+    MOBILE: 'mobile',
+    TABLET: 'tablet',
+    DESKTOP: 'desktop',
+} as const;
+
+type DeviceType = (typeof DEVICE_TYPES)[keyof typeof DEVICE_TYPES];
+
+type DeviceMediaQueries = Record<DeviceType, MediaQueryList>;
+
+let deviceType: Nullable<DeviceType> = null;
+let mediaQueries: Nullable<DeviceMediaQueries> = null;
+
+const ensureInitialized = (): DeviceMediaQueries => {
+    if (mediaQueries === null) {
+        throw new Error('deviceService is not initialized.');
+    }
+
+    return mediaQueries;
+};
+
+const updateDeviceType = () => {
+    const mediaQueryEntries = Object.entries(ensureInitialized()) as [DeviceType, MediaQueryList][];
+
+    for (const [type, mediaQuery] of mediaQueryEntries) {
+        if (mediaQuery.matches) {
+            deviceType = type;
+
+            break;
+        }
+    }
+};
+
+const initMediaQueries = () => {
+    mediaQueries = {
+        [DEVICE_TYPES.MOBILE]: window.matchMedia(`(max-width: ${DEVICE_BREAKPOINTS.MOBILE_MAX}px)`),
+        [DEVICE_TYPES.TABLET]: window.matchMedia(
+            `(min-width: ${DEVICE_BREAKPOINTS.MOBILE_MAX + 1}px) and (max-width: ${DEVICE_BREAKPOINTS.DESKTOP_MIN - 1}px)`
+        ),
+        [DEVICE_TYPES.DESKTOP]: window.matchMedia(`(min-width: ${DEVICE_BREAKPOINTS.DESKTOP_MIN}px)`),
+    };
+
+    Object.values(mediaQueries).forEach((mediaQuery) => {
+        mediaQuery.addEventListener('change', updateDeviceType);
+    });
+};
+
+const init = () => {
+    initMediaQueries();
+    updateDeviceType();
+};
+
+const getState = () => {
+    ensureInitialized();
+
+    return {
+        isMobile: deviceType === DEVICE_TYPES.MOBILE,
+        isTablet: deviceType === DEVICE_TYPES.TABLET,
+        isDesktop: deviceType === DEVICE_TYPES.DESKTOP,
+    };
+};
+
+export const deviceService = {
+    init,
+    getState,
+};

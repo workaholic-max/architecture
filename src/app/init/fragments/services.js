@@ -1,4 +1,4 @@
-const serviceModules = import.meta.glob('/src/**/*.service.js', { eager: true });
+const serviceModules = import.meta.glob(['/src/**/*.service.js', '/src/**/*.service.ts'], { eager: true });
 
 export const initServices = () => {
     Object.values(serviceModules ?? {}).forEach((module) => {

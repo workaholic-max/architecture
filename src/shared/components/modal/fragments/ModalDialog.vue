@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 defineProps({
     enableCenteredContent: {
         type: Boolean,
@@ -10,7 +10,11 @@ defineProps({
     },
 });
 
-const slots = defineSlots();
+const slots = defineSlots<{
+    title?: () => unknown;
+    content?: () => unknown;
+    actions?: () => unknown;
+}>();
 </script>
 
 <template>

@@ -1,3 +1,3 @@
-export { default as AppApi } from './resources/app.js';
-export { default as AuthApi } from './resources/auth.js';
-export { default as EmployeesApi } from './resources/employees.js';
+export { default as AppApi } from './resources/app.ts';
+export { default as AuthApi } from '@domains/auth/api.ts';
+export { default as EmployeesApi } from '@domains/employees/api.ts';

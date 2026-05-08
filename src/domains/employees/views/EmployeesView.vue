@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { EMPLOYEES_ROUTE_NAMES } from '@domains/employees/routes/route-names.js';
 
 import BaseLayout from '@shared/layouts/BaseLayout.vue';
@@ -11,7 +11,7 @@ import BaseLayout from '@shared/layouts/BaseLayout.vue';
         <router-link
             :to="{
                 name: EMPLOYEES_ROUTE_NAMES.EDIT,
-                params: { employeeId: 7 },
+                params: { employeeId: 'uuid' },
             }"
         >
             Edit Employee

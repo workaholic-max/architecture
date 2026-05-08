@@ -19,6 +19,6 @@ export const autoImportPlugin = () =>
                 'vue-router': ['useRouter', 'useRoute'],
             },
         ],
-        include: [/\.js$/, /\.vue$/, /\.vue\?vue/],
+        include: [/\.js$/, /\.ts$/, /\.vue$/, /\.vue\?vue/],
         dts: 'dts/auto-imports.d.ts',
     });

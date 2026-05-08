@@ -1,4 +1,6 @@
 const TYPE_ORDER = [
+    'types',
+    'mocks',
     'routes',
     'services',
     'utils',
@@ -12,6 +14,9 @@ const TYPE_ORDER = [
 ];
 
 const createTypeGroup = (type) => [
+    `^@app/${type}`,
+    `^@router/${type}`,
+
     `^@domains/.*/${type}`,
     `^@features/.*/${type}`,
     `^@shared/${type}`,
@@ -28,9 +33,9 @@ export const simpleImportSortRules = {
                 ['^vue', '^@?\\w'],
 
                 ['^@/'],
+                ['^@app'],
                 ['^@router'],
                 ['^@api'],
-                ['^@domains'],
 
                 ...TYPE_ORDER.map(createTypeGroup),
 

@@ -331,6 +331,30 @@ It exposes focused helpers for retrieving commonly needed information, such as:
 
 ---
 
+### [shared/composables/useEntitySearch.ts](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/shared/composables/useEntitySearch.ts)
+
+Provides a minimal reusable search composable for filtering flat entity collections by one or multiple string fields.
+
+The composable is intentionally designed for simple entity filtering scenarios where entities consist of flat searchable
+properties such as `name`, `email`, `code`, etc.
+
+Search keys are fully type-safe and restricted to string-based entity fields.
+
+Usage example:
+
+```ts
+const { searchModel, getFilteredEntities } = useEntitySearch<Department>({
+    searchKeys: ['name'],
+});
+
+const filteredDepartments = computed(() => getFilteredEntities(departments.value));
+```
+
+This composable is intentionally limited to flat collections and simple string matching to keep behavior predictable and
+implementation lightweight.
+
+---
+
 ### [shared/directives/click-outside.ts](https://github.com/workaholic-max/architecture/blob/typescript-migration/src/shared/directives/click-outside.ts)
 
 In this project, directives are not globally registered. They must be explicitly imported and used only where needed.

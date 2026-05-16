@@ -508,7 +508,7 @@ avoiding redundant configuration and keeping navigation logic centralized and pr
 
 ---
 
-### [shared/services/device.ts](https://github.com/workaholic-max/architecture/blob/main/src/shared/services/device.ts)
+### [shared/services/device.ts](https://github.com/workaholic-max/architecture/blob/main/src/shared/services/device.service.ts)
 
 This service is responsible for determining and exposing information about the current device environment.
 

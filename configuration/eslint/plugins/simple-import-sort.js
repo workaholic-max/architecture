@@ -39,6 +39,8 @@ export const simpleImportSortRules = {
 
                 ...TYPE_ORDER.map(createTypeGroup),
 
+                ['^@shared/icons'],
+
                 ['^\\.'],
             ],
         },

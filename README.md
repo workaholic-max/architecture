@@ -370,6 +370,21 @@ is used in templates, automatically mapping to kebab-case.
 
 ---
 
+### [shared/icons/](https://github.com/workaholic-max/architecture/tree/main/src/shared/icons)
+
+This module provides a centralized icon rendering system based on CSS `mask-image` and `background-image`, designed to
+reduce DOM and rendering overhead caused by large amounts of inline SVG components in repeated lists and dynamic UI
+sections.
+
+Icons are rendered through a single base component `Icon.vue` using CSS-driven image masking rather than inline SVG
+nodes. This keeps the DOM lightweight while still supporting runtime color customization, contextual size overrides, and
+multicolor icon rendering.
+
+All icon names, rendering modes, and directional logic are defined in a typed
+registry: [docs/icons.md](https://github.com/workaholic-max/architecture/blob/main/docs/icons.md)
+
+---
+
 ### [shared/components/modal/](https://github.com/workaholic-max/architecture/tree/main/src/shared/components/modal)
 
 This implementation is what I refer to as a `construction`

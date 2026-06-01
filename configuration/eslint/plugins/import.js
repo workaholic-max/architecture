@@ -1,13 +1,7 @@
-import { eslintAliases } from '../../aliases.js';
-
 export const importSettings = {
     'import/resolver': {
-        node: {
-            extensions: ['.js', '.ts', '.vue', '.scss'],
-        },
-        alias: {
-            map: Object.entries(eslintAliases),
-            extensions: ['.js', '.ts', '.vue', '.scss'],
+        typescript: {
+            alwaysTryTypes: true,
         },
     },
 };

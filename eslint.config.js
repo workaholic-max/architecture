@@ -46,7 +46,11 @@ export default [
             'no-console': 'warn',
             'no-debugger': 'warn',
 
+            '@typescript-eslint/no-unused-vars': 'off',
+
             'vue/multi-word-component-names': 'off',
+            'vue/block-order': ['error', { order: ['script', 'template', 'style'] }],
+            'vue/component-api-style': ['error', ['script-setup']],
             'vue/attributes-order': [
                 'error',
                 {

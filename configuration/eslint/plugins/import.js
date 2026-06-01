@@ -20,6 +20,7 @@ export const importRules = {
             scss: 'always',
         },
     ],
+    'import/no-cycle': ['error', { maxDepth: Infinity }],
     'import/no-unresolved': [
         'error',
         {

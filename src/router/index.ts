@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-import routes from '@router/routes.js';
+import routes from '@router/routes.ts';
 
 import { env } from '@shared/configs/env.ts';
 

@@ -1,8 +1,10 @@
-import { SETTINGS_ROUTE_NAME } from '@domains/settings/routes/route-names.js';
+import type { RouteRecordRaw } from 'vue-router';
+
+import { SETTINGS_ROUTE_NAME } from '@domains/settings/routes/route-names.ts';
 
 import SettingsView from '@domains/settings/views/SettingsView.vue';
 
-export const settingsRoute = {
+export const settingsRoute: RouteRecordRaw = {
     path: '/settings',
     children: [
         {

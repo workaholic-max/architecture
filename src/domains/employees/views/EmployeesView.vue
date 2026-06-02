@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { EMPLOYEES_ROUTE_NAMES } from '@domains/employees/routes/route-names.js';
+import { EMPLOYEES_ROUTE_NAMES } from '@domains/employees/routes/route-names.ts';
 
 import BaseLayout from '@shared/layouts/BaseLayout.vue';
 </script>

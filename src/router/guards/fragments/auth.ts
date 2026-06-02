@@ -1,7 +1,7 @@
 import type { Guard } from '@router/types/guard.ts';
 
-import { AUTH_ROUTE_NAMES } from '@domains/auth/routes/route-names.js';
-import { DASHBOARD_ROUTE_NAME } from '@domains/dashboard/routes/route-names.js';
+import { AUTH_ROUTE_NAMES } from '@domains/auth/routes/route-names.ts';
+import { DASHBOARD_ROUTE_NAME } from '@domains/dashboard/routes/route-names.ts';
 
 export const authGuard: Guard = ({ to, employee }) => {
     if (to.name === AUTH_ROUTE_NAMES.JOIN) {

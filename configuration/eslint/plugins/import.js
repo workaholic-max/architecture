@@ -1,3 +1,10 @@
+import { eslintAliases } from '../../aliases.js';
+
+const aliasPathGroupOverrides = eslintAliases.map(([alias]) => ({
+    pattern: `${alias}/**`,
+    action: 'enforce',
+}));
+
 export const importSettings = {
     'import/resolver': {
         typescript: {
@@ -14,10 +21,13 @@ export const importRules = {
         'error',
         'ignorePackages',
         {
-            js: 'always',
-            ts: 'always',
-            vue: 'always',
-            scss: 'always',
+            pattern: {
+                js: 'always',
+                ts: 'always',
+                vue: 'always',
+                scss: 'always',
+            },
+            pathGroupOverrides: aliasPathGroupOverrides,
         },
     ],
     'import/no-cycle': ['error', { maxDepth: Infinity }],

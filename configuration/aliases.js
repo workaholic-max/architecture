@@ -22,3 +22,5 @@ export const viteAliases = {
     ...baseAliases,
     ...scssAliases,
 };
+
+export const eslintAliases = Object.entries(baseAliases);

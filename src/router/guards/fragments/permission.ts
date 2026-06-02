@@ -1,4 +1,4 @@
-import { FALLBACK_ROUTE_NAMES } from '@router/fallback/route-names.js';
+import { FALLBACK_ROUTE_NAMES } from '@router/fallback/route-names.ts';
 
 import type { Guard } from '@router/types/guard.ts';
 

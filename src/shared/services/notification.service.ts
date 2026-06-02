@@ -1,4 +1,4 @@
-const notify = (text) => {
+const notify = (text: string): void => {
     alert(`Mock notification: ${text}`);
 };
 

@@ -70,10 +70,10 @@ Features are intended to be consumed by `domains` and higher-level application l
 Contains everything that is reusable and shared across the application — from generic utilities and components to
 cross-cutting aggregations that require knowledge of other layers.
 
+- `types`
 - `services`
 - `utils`
 - `configs`
-- `types`
 - `enums`
 - `composables`
 - `layouts`
@@ -141,7 +141,7 @@ such as guards and other routing concerns.
 
 ---
 
-## [`router/`routes.js](https://github.com/workaholic-max/architecture/blob/main/src/router/routes.js)
+## [`router/`routes.ts](https://github.com/workaholic-max/architecture/blob/main/src/router/routes.ts)
 
 Responsible for composing the application routing.
 
@@ -468,7 +468,7 @@ const openEmployeeDeleteModal = (employee) => {
 
 ---
 
-### [shared/configs/limits.js](https://github.com/workaholic-max/architecture/blob/main/src/shared/configs/limits.js)
+### [shared/configs/limits.ts](https://github.com/workaholic-max/architecture/blob/main/src/shared/configs/limits.ts)
 
 Centralized business limits for the application.
 

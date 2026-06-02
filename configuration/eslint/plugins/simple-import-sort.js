@@ -14,7 +14,6 @@ const TYPE_ORDER = [
 ];
 
 const createTypeGroup = (type) => [
-    `^@app/${type}`,
     `^@router/${type}`,
 
     `^@domains/.*/${type}`,

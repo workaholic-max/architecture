@@ -1,4 +1,6 @@
-import { EMPLOYEES_ROUTE_NAMES } from '@domains/employees/routes/route-names.js';
+import type { RouteRecordRaw } from 'vue-router';
+
+import { EMPLOYEES_ROUTE_NAMES } from '@domains/employees/routes/route-names.ts';
 
 import { EMPLOYEES_PERMISSION_KEYS } from '@domains/employees/configs/permissions.ts';
 
@@ -6,7 +8,7 @@ import EmployeeCreateView from '@domains/employees/views/create/EmployeeCreateVi
 import EmployeeEditView from '@domains/employees/views/edit/EmployeeEditView.vue';
 import EmployeesView from '@domains/employees/views/EmployeesView.vue';
 
-export const employeesRoute = {
+export const employeesRoute: RouteRecordRaw = {
     path: 'employees',
     children: [
         {

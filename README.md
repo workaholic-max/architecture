@@ -152,7 +152,6 @@ represents all available application routes.
 
 ## Possible Improvements
 
-- Pinia
 - Lazy Loading
 - PWA
 - Unit tests

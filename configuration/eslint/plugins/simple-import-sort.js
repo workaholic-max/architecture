@@ -2,6 +2,7 @@ const TYPE_ORDER = [
     'types',
     'mocks',
     'routes',
+    'stores',
     'services',
     'utils',
     'configs',

@@ -1,21 +1,16 @@
 import { Nullable } from '@shared/types/nullable.ts';
 
+import { useDeviceTypeStore } from '@shared/stores/device-type.store.ts';
+
+import { DEVICE_TYPES, DeviceType } from '@shared/enums/device.ts';
+
 const DEVICE_BREAKPOINTS = {
     MOBILE_MAX: 768,
     DESKTOP_MIN: 1024,
 };
 
-const DEVICE_TYPES = {
-    MOBILE: 'mobile',
-    TABLET: 'tablet',
-    DESKTOP: 'desktop',
-} as const;
-
-type DeviceType = (typeof DEVICE_TYPES)[keyof typeof DEVICE_TYPES];
-
 type DeviceMediaQueries = Record<DeviceType, MediaQueryList>;
 
-let deviceType: Nullable<DeviceType> = null;
 let mediaQueries: Nullable<DeviceMediaQueries> = null;
 
 const ensureInitialized = (): DeviceMediaQueries => {
@@ -27,11 +22,13 @@ const ensureInitialized = (): DeviceMediaQueries => {
 };
 
 const updateDeviceType = () => {
+    const deviceTypeStore = useDeviceTypeStore();
+
     const mediaQueryEntries = Object.entries(ensureInitialized()) as [DeviceType, MediaQueryList][];
 
     for (const [type, mediaQuery] of mediaQueryEntries) {
         if (mediaQuery.matches) {
-            deviceType = type;
+            deviceTypeStore.set(type);
 
             break;
         }
@@ -57,17 +54,6 @@ const init = () => {
     updateDeviceType();
 };
 
-const getState = () => {
-    ensureInitialized();
-
-    return {
-        isMobile: deviceType === DEVICE_TYPES.MOBILE,
-        isTablet: deviceType === DEVICE_TYPES.TABLET,
-        isDesktop: deviceType === DEVICE_TYPES.DESKTOP,
-    };
-};
-
 export const deviceService = {
     init,
-    getState,
 };

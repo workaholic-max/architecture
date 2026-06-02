@@ -9,9 +9,9 @@ export const initRouter = (app: App) => {
     router.beforeEach((to, from) => {
         if (to.name === from.name) return;
 
-        const { account } = useAccountStore();
+        const accountStore = useAccountStore();
 
-        return resolveGuards({ to, employee: account });
+        return resolveGuards({ to, employee: accountStore.account });
     });
 
     app.use(router);

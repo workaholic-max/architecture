@@ -10,7 +10,11 @@ import typescriptEslint from 'typescript-eslint';
 import { importRules, importSettings } from './configuration/eslint/plugins/import.js';
 import { simpleImportSortRules } from './configuration/eslint/plugins/simple-import-sort.js';
 import { unusedImportsRules } from './configuration/eslint/plugins/unused-imports.js';
-import { noRestrictedImportsRules } from './configuration/eslint/rules/no-restricted-imports.js';
+import {
+    noRestrictedImportsAppRules,
+    noRestrictedImportsFeatureRules,
+    noRestrictedImportsRules,
+} from './configuration/eslint/rules/no-restricted-imports.js';
 
 export default [
     ...eslintPluginVue.configs['flat/recommended'],
@@ -75,6 +79,21 @@ export default [
             ...noRestrictedImportsRules,
             ...importRules,
             ...simpleImportSortRules,
+        },
+    },
+
+    {
+        files: ['src/**/*.{js,ts,vue}'],
+        ignores: ['src/main.ts'],
+        rules: {
+            ...noRestrictedImportsAppRules,
+        },
+    },
+
+    {
+        files: ['src/features/**/*.{js,ts,vue}'],
+        rules: {
+            ...noRestrictedImportsFeatureRules,
         },
     },
 

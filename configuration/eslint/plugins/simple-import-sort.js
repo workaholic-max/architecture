@@ -33,7 +33,6 @@ export const simpleImportSortRules = {
                 ['^vue', '^@?\\w'],
 
                 ['^@/'],
-                ['^@app'],
                 ['^@router'],
                 ['^@api'],
 

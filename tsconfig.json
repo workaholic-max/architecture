@@ -17,7 +17,6 @@
         "paths": {
             "@/*": ["src/*"],
 
-            "@app/*": ["src/app/*"],
             "@router": ["src/router/index.ts"],
             "@router/*": ["src/router/*"],
             "@api": ["src/api/index.js"],

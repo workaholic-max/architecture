@@ -4,7 +4,7 @@ export const noRestrictedImportsRules = {
         {
             patterns: [
                 {
-                    group: ['@/app/**', '@/router/**', '@/api/**', '@/domains/**', '@/features/**', '@/shared/**'],
+                    group: ['@/router/**', '@/api/**', '@/domains/**', '@/features/**', '@/shared/**'],
                     message: 'Root-level @/ imports are forbidden. Always use the specific alias instead.',
                 },
 
@@ -17,6 +17,36 @@ export const noRestrictedImportsRules = {
                     group: ['@/**/fragments/**', '@*/**/fragments/**'],
                     message:
                         'Fragments are local only intended for use within the same module. Always use relative imports. Absolute imports are forbidden.',
+                },
+            ],
+        },
+    ],
+};
+
+export const noRestrictedImportsAppRules = {
+    'no-restricted-imports': [
+        'error',
+        {
+            patterns: [
+                {
+                    group: ['@/app/**'],
+                    message:
+                        'The app layer is the top of the dependency graph and must never be imported by other layers.',
+                },
+            ],
+        },
+    ],
+};
+
+export const noRestrictedImportsFeatureRules = {
+    'no-restricted-imports': [
+        'error',
+        {
+            patterns: [
+                {
+                    group: ['@domains/**'],
+                    message:
+                        'Features must not import from domains. Features are consumed by domains, not the other way around.',
                 },
             ],
         },

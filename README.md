@@ -155,7 +155,6 @@ represents all available application routes.
 - Lazy Loading
 - PWA
 - Unit tests
-- Extend ESLint rules to enforce architectural boundaries more strictly if the codebase grows
 
 ---
 

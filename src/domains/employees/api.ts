@@ -5,7 +5,7 @@ import type { EmployeeForm } from '@domains/employees/types/employee-form.ts';
 import type { EmployeeImportRow } from '@domains/employees/types/employee-import-row.ts';
 import type { EmployeeProfile } from '@domains/employees/types/employee-profile.ts';
 
-import { HTTP_METHODS, HTTP_RESPONSE_TYPES } from '@shared/constants/http.ts';
+import { HTTP_METHODS, HTTP_RESPONSE_TYPES } from '@shared/enums/http.ts';
 
 export default {
     getAll: (params?: Record<string, unknown>) =>

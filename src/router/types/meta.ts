@@ -1,4 +1,4 @@
-import type { PermissionKey } from '@app/types/permission.ts';
+import type { PermissionKey } from '@shared/types/permission.ts';
 
 export type PermissionMeta =
     | {

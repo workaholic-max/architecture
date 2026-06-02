@@ -7,12 +7,13 @@ structure, and high codebase readability.
 
 ## [`app`/](https://github.com/workaholic-max/architecture/tree/main/src/app)
 
-Defines how the application starts.
+Responsible exclusively for application bootstrapping and startup.
 
 - Expected to be imported once, and only
   from [main.ts](https://github.com/workaholic-max/architecture/blob/main/src/main.ts)
+- **Never imported by any other layer** — it is the top of the dependency graph
 - Allowed to import all other layers: `router` `api` `domains` `features` `shared` etc
-- May contain local-only modules: `services` `utils` `constants` `composables` `components` etc
+- May contain local-only modules: `services` `utils` `enums` `composables` `components` etc
 
 ---
 
@@ -35,7 +36,7 @@ Encapsulates a specific responsibility and fully owns its internal implementatio
 - `services`
 - `utils`
 - `configs`
-- `constants`
+- `enums`
 - `composables`
 - `views`
 - `layouts`
@@ -47,14 +48,14 @@ cyclic dependencies between business areas
 
 ---
 
-## [`features`/](https://github.com/workaholic-max/architecture/tree/main/src/featurues)
+## [`features`/](https://github.com/workaholic-max/architecture/tree/main/src/features)
 
 Encapsulates a specific reusable concern and owns its internal implementation.
 
 - `services`
 - `utils`
 - `configs`
-- `constants`
+- `enums`
 - `composables`
 - `layouts`
 - `components`
@@ -66,21 +67,21 @@ Features are intended to be consumed by `domains` and higher-level application l
 
 ## [`shared`/](https://github.com/workaholic-max/architecture/tree/main/src/shared)
 
-Encapsulates generic, independent, reusable functionality and owns its internal implementation.
+Contains everything that is reusable and shared across the application — from generic utilities and components to
+cross-cutting aggregations that require knowledge of other layers.
 
 - `services`
 - `utils`
 - `configs`
-- `constants`
+- `types`
+- `enums`
 - `composables`
 - `layouts`
 - `components`
 - etc
 
-Shared represents the lowest-level layer and may be freely consumed by higher-level application layers.
-
-- `shared` must not import `domains`
-- Modules within `shared` may depend on other `shared` modules as needed
+`shared` may be freely consumed by all higher-level layers and may itself import from any layer when needed for
+cross-cutting concerns such as aggregated types or application-wide configurations.
 
 ---
 
@@ -366,7 +367,7 @@ is used in templates, automatically mapping to kebab-case.
 
 - Example: exported `vClickOutside`, usage `v-click-outside`
 - Naming must be predictable and kebab-case compatible
-- Directives may expose additional configuration (e.g. constants)
+- Directives may expose additional configuration (e.g. enums)
 
 ---
 

@@ -5,7 +5,7 @@ import { AbortablePromise } from '@api/types/abortable-promise.ts';
 
 import { env } from '@shared/configs/env.ts';
 
-import { HTTP_RESPONSE_TYPES, HttpMethod, HttpResponseType } from '@shared/constants/http.ts';
+import { HTTP_RESPONSE_TYPES, HttpMethod, HttpResponseType } from '@shared/enums/http.ts';
 
 interface RequestConfig {
     method: HttpMethod;

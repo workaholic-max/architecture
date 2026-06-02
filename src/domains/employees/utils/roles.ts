@@ -1,6 +1,6 @@
 import type { Employee } from '@domains/employees/types/employee.ts';
 
-import { EMPLOYEE_ROLES, EmployeeRole } from '@domains/employees/constants/roles.ts';
+import { EMPLOYEE_ROLES, EmployeeRole } from '@domains/employees/enums/roles.ts';
 
 const hasRole = (account: Employee, role: EmployeeRole) => account.role === role;
 

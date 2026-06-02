@@ -1,4 +1,4 @@
-import type { EmployeeRole } from '@domains/employees/constants/roles.ts';
+import type { EmployeeRole } from '@domains/employees/enums/roles.ts';
 
 export interface EmployeeForm {
     name: string;

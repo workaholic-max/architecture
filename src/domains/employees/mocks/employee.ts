@@ -2,7 +2,7 @@ import type { Employee } from '@domains/employees/types/employee.ts';
 
 import { EMPLOYEES_PERMISSION_KEYS } from '@domains/employees/configs/permissions.ts';
 
-import { EMPLOYEE_ROLES } from '@domains/employees/constants/roles.ts';
+import { EMPLOYEE_ROLES } from '@domains/employees/enums/roles.ts';
 
 export const EMPLOYEE_MOCK_DATA: Employee = {
     id: 'uuid',

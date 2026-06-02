@@ -5,7 +5,7 @@ const TYPE_ORDER = [
     'services',
     'utils',
     'configs',
-    'constants',
+    'enums',
     'composables',
     'directives',
     'views',

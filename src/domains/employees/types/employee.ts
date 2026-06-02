@@ -1,6 +1,6 @@
-import { PermissionKey } from '@app/types/permission.ts';
+import { PermissionKey } from '@shared/types/permission.ts';
 
-import type { EmployeeRole } from '@domains/employees/constants/roles.ts';
+import type { EmployeeRole } from '@domains/employees/enums/roles.ts';
 
 export interface Employee {
     id: string;

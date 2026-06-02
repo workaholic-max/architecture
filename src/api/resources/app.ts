@@ -1,6 +1,6 @@
 import { apiClient } from '@api/client.ts';
 
-import { HTTP_METHODS } from '@shared/constants/http.ts';
+import { HTTP_METHODS } from '@shared/enums/http.ts';
 
 export default {
     get: () =>

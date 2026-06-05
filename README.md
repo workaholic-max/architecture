@@ -43,8 +43,8 @@ Encapsulates a specific responsibility and fully owns its internal implementatio
 - `components`
 - etc
 
-Domains may depend on other `domains/` and such dependencies must remain strictly one-directional to avoid coupling and
-cyclic dependencies between business areas
+Domains may depend on other `domains/` when the dependency represents a real relationship between business areas.
+Cross-domain dependencies must remain one-directional and file-level circular dependencies are forbidden.
 
 ---
 
@@ -61,14 +61,12 @@ Encapsulates a specific reusable concern and owns its internal implementation.
 - `components`
 - etc
 
-Features are intended to be consumed by `domains` and higher-level application layers.
-
 ---
 
 ## [`shared`/](https://github.com/workaholic-max/architecture/tree/main/src/shared)
 
-Contains everything that is reusable and shared across the application — from generic utilities and components to
-cross-cutting aggregations that require knowledge of other layers.
+Contains reusable and cross-cutting modules shared across the application — from generic utilities and components to
+application-wide aggregations that require knowledge of other areas.
 
 - `types`
 - `services`
@@ -80,8 +78,13 @@ cross-cutting aggregations that require knowledge of other layers.
 - `components`
 - etc
 
-`shared` may be freely consumed by all higher-level layers and may itself import from any layer when needed for
-cross-cutting concerns such as aggregated types or application-wide configurations.
+`shared` is intentionally not treated as a strict foundational layer. It may consume modules from other application
+areas and expose reusable modules back to them when needed for cross-cutting concerns such as aggregated types,
+application-wide configurations, layouts, and reusable behavior.
+
+This flexibility must remain intentional. A module belongs in `shared` when it is meaningfully reused or centralizes an
+application-wide concern, not only because its final owner is unclear. File-level circular dependencies remain
+forbidden.
 
 ---
 
@@ -232,6 +235,29 @@ structure and conventions are applied consistently.
 - Explicit file extensions are required for JavaScript, Vue, and SCSS imports to keep dependencies clear
 - Layer-specific aliases (`@router`, `@api`, `@domains`, `@features`, `@shared`) are enforced, while root-level `@/`
   imports into these layers are intentionally forbidden.
+- Imports from `app` are forbidden outside the application entry point
+- `features` are forbidden from importing `domains`
+- Local-only `fragments` cannot be imported through absolute aliases
+- File-level circular dependencies are forbidden
+
+Aliases are preferred for cross-folder dependencies. Relative imports remain appropriate for nearby implementation
+details and are not required for every internal module.
+
+---
+
+### CI
+
+Continuous integration runs on every push to `main` and on every pull request
+via [GitHub Actions](https://github.com/workaholic-max/architecture/blob/main/.github/workflows/ci.yml).
+
+It installs dependencies from the lockfile and runs three required checks:
+
+- `format:check` — Prettier
+- `lint:check` — ESLint (architecture boundaries + code quality)
+- `build` — type-checks with `vue-tsc`, then builds for production
+
+Husky runs the same checks locally on commit for fast feedback; CI is the authoritative
+gate that cannot be bypassed.
 
 ---
 

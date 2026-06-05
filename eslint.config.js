@@ -11,9 +11,10 @@ import { importRules, importSettings } from './configuration/eslint/plugins/impo
 import { simpleImportSortRules } from './configuration/eslint/plugins/simple-import-sort.js';
 import { unusedImportsRules } from './configuration/eslint/plugins/unused-imports.js';
 import {
-    noRestrictedImportsAppRules,
-    noRestrictedImportsFeatureRules,
-    noRestrictedImportsRules,
+    appRestrictedImportPatterns,
+    baseRestrictedImportPatterns,
+    buildNoRestrictedImports,
+    featureRestrictedImportPatterns,
 } from './configuration/eslint/rules/no-restricted-imports.js';
 
 export default [
@@ -76,7 +77,7 @@ export default [
             ],
 
             ...unusedImportsRules,
-            ...noRestrictedImportsRules,
+            ...buildNoRestrictedImports(baseRestrictedImportPatterns),
             ...importRules,
             ...simpleImportSortRules,
         },
@@ -86,14 +87,18 @@ export default [
         files: ['src/**/*.{js,ts,vue}'],
         ignores: ['src/main.ts'],
         rules: {
-            ...noRestrictedImportsAppRules,
+            ...buildNoRestrictedImports(baseRestrictedImportPatterns, appRestrictedImportPatterns),
         },
     },
 
     {
         files: ['src/features/**/*.{js,ts,vue}'],
         rules: {
-            ...noRestrictedImportsFeatureRules,
+            ...buildNoRestrictedImports(
+                baseRestrictedImportPatterns,
+                appRestrictedImportPatterns,
+                featureRestrictedImportPatterns
+            ),
         },
     },
 

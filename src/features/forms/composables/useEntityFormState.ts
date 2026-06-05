@@ -1,5 +1,3 @@
-import { reactive } from 'vue';
-
 import { Nullable } from '@shared/types/nullable.ts';
 
 interface EntityFormState<T> {

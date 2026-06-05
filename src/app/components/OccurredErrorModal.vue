@@ -18,7 +18,7 @@ const reloadApp = () => window.location.reload();
 
 <template>
     <Modal.Overlay :is-opened="!!errorMessage">
-        <Modal.Dialog enable-centered-content#>
+        <Modal.Dialog enable-centered-content>
             <template #title>{{ modalTitle }}</template>
 
             <template #content>

@@ -271,7 +271,7 @@ The API client can be further extended with better response interceptors:
 
 ---
 
-### [assets/styles/variables/](https://github.com/workaholic-max/architecture/tree/main/src/assets/styles/abstracts/variables)
+### [assets/styles/abstracts/variables/](https://github.com/workaholic-max/architecture/tree/main/src/assets/styles/abstracts/variables)
 
 Variables are grouped by concern (spacing, colors, breakpoints, etc.) and exposed through a single entry point using
 Sass `@forward`. Each group is namespaced at the entry level to keep usage explicit and prevent naming collisions.
@@ -288,14 +288,14 @@ Usage example:
 h2 {
   margin-bottom: vars.$space-base;
   font-size: vars.$font-size-md;
-  color: vars.$color-primry;
+  color: vars.$color-primary;
 }
 </style>
 ```
 
 ---
 
-### [assets/styles/functions/\index.scss](https://github.com/workaholic-max/architecture/blob/main/src/assets/styles/abstracts/functions/_index.scss)
+### [assets/styles/abstracts/functions/\_index.scss](https://github.com/workaholic-max/architecture/blob/main/src/assets/styles/abstracts/functions/_index.scss)
 
 Usage example:
 
@@ -540,7 +540,7 @@ avoiding redundant configuration and keeping navigation logic centralized and pr
 
 ---
 
-### [shared/services/device.ts](https://github.com/workaholic-max/architecture/blob/main/src/shared/services/device.service.ts)
+### [shared/services/device.service.ts](https://github.com/workaholic-max/architecture/blob/main/src/shared/services/device.service.ts)
 
 This service is responsible for determining and exposing information about the current device environment.
 
@@ -552,7 +552,7 @@ as part of the app initialization flow.
 
 ---
 
-### [shared/services/local-storage.ts](https://github.com/workaholic-max/architecture/blob/main/src/shared/services/local-storage.service.ts)
+### [shared/services/local-storage.service.ts](https://github.com/workaholic-max/architecture/blob/main/src/shared/services/local-storage.service.ts)
 
 This service centralizes access to `localStorage` to ensure safe, predictable behavior and avoid scattering direct
 storage

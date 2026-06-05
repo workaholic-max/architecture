@@ -10,4 +10,15 @@ export default defineConfig({
         alias: viteAliases,
         extensions: ['.js', '.ts', '.vue'],
     },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: (id) => {
+                    if (id.includes('node_modules')) {
+                        return 'vendor';
+                    }
+                },
+            },
+        },
+    },
 });

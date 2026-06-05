@@ -152,7 +152,6 @@ represents all available application routes.
 
 ## Possible Improvements
 
-- Lazy Loading
 - PWA
 - Unit tests
 
@@ -193,6 +192,25 @@ configuration: [docs/section-comments.md](https://github.com/workaholic-max/arch
 // Employees state
 // ───────────────────────────────────────────────────────
 ```
+
+---
+
+### Lazy Loading
+
+All domain views are lazy-loaded at the route level using dynamic imports. Fallback views `NotFoundView` &
+`AccessDeniedView` stay eager — they must always be available regardless of network conditions.
+
+```ts
+component: () => import('@domains/dashboard/views/DashboardView.vue');
+```
+
+`router.onError()` handler
+in [router/init.ts](https://github.com/workaholic-max/architecture/blob/main/src/router/init.ts) catches chunk load
+failures and reloads the page, recovering from transient network issues without leaving the user on a broken state.
+
+All `node_modules` are consolidated into a single `vendor` chunk via `manualChunks`
+in [vite.config.ts](https://github.com/workaholic-max/architecture/blob/main/vite.config.ts), keeping it independently
+cached from application code.
 
 ---
 

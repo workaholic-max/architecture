@@ -19,7 +19,9 @@ const get = <T>(key: string, defaultValue: Nullable<T> = null): Nullable<T> => {
 const set = <T>(key: string, value: T) => {
     try {
         window.localStorage.setItem(getPrefixedKey(key), JSON.stringify(value));
-    } catch {}
+    } catch {
+        // Best-effort write: ignore failures such as exceeded quota or disabled storage.
+    }
 };
 
 const remove = (key: string) => {

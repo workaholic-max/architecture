@@ -1,4 +1,5 @@
 import vueParser from 'vue-eslint-parser';
+import js from '@eslint/js';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import eslintPluginImport from 'eslint-plugin-import';
 import eslintPluginSimpleImportSort from 'eslint-plugin-simple-import-sort';
@@ -18,6 +19,7 @@ import {
 } from './configuration/eslint/rules/no-restricted-imports.js';
 
 export default [
+    js.configs.recommended,
     ...eslintPluginVue.configs['flat/recommended'],
     ...typescriptEslint.configs.recommended,
 
@@ -50,7 +52,11 @@ export default [
         rules: {
             'no-console': 'warn',
             'no-debugger': 'warn',
+            eqeqeq: ['error', 'always'],
 
+            // handled already
+            'no-undef': 'off',
+            'no-unused-vars': 'off',
             '@typescript-eslint/no-unused-vars': 'off',
 
             'vue/multi-word-component-names': 'off',

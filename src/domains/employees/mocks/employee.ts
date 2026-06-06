@@ -6,7 +6,7 @@ import { EMPLOYEE_ROLES } from '@domains/employees/enums/roles.ts';
 
 export const EMPLOYEE_MOCK_DATA: Employee = {
     id: 'uuid',
-    name: 'Mamskym Lukian',
+    name: 'Maksym Lukian',
     created_at: '2002-04-30T22:20:00.000Z',
     role: EMPLOYEE_ROLES.MANAGER,
     permissions: {

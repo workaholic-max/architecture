@@ -1,7 +1,7 @@
 <script setup>
 import BaseLayout from '@shared/layouts/BaseLayout.vue';
 
-import Progress from '@shared/components/Progress.vue';
+import ProgressBar from '@shared/components/ProgressBar.vue';
 import TaskList from './components/TaskList.vue';
 </script>
 
@@ -9,6 +9,6 @@ import TaskList from './components/TaskList.vue';
     <BaseLayout>
         <TaskList />
 
-        <Progress :value="50" />
+        <ProgressBar :value="50" />
     </BaseLayout>
 </template>

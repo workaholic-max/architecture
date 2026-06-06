@@ -5,6 +5,7 @@ import eslintPluginImport from 'eslint-plugin-import';
 import eslintPluginSimpleImportSort from 'eslint-plugin-simple-import-sort';
 import eslintPluginUnusedImports from 'eslint-plugin-unused-imports';
 import eslintPluginVue from 'eslint-plugin-vue';
+import eslintPluginVueA11y from 'eslint-plugin-vuejs-accessibility';
 import globals from 'globals';
 import typescriptEslint from 'typescript-eslint';
 
@@ -21,6 +22,7 @@ import {
 export default [
     js.configs.recommended,
     ...eslintPluginVue.configs['flat/recommended'],
+    ...eslintPluginVueA11y.configs['flat/recommended'],
     ...typescriptEslint.configs.recommended,
 
     {

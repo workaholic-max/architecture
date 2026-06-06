@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { vClickOutside } from '@shared/directives/click-outside.ts';
-
 interface Percentages {
     value: number;
     overlayValue: number;
@@ -25,10 +23,6 @@ const props = defineProps({
 // Progress state
 // ───────────────────────────────────────────────────────
 
-const onClickOutside = () => {
-    console.log('onClickOutside');
-};
-
 const percentages = computed<Percentages>(() => {
     const { value, max } = props;
 
@@ -47,10 +41,7 @@ const percentages = computed<Percentages>(() => {
 </script>
 
 <template>
-    <div
-        v-click-outside="onClickOutside"
-        class="ml-progress"
-    >
+    <div class="ml-progress">
         <div
             role="progressbar"
             class="ml-progress__bar"

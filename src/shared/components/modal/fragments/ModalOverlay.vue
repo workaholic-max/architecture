@@ -124,6 +124,8 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onEscapeKeydown));
             @after-enter="onTransitionEnd"
             @after-leave="onTransitionEnd"
         >
+            <!-- Backdrop click-to-close is a supplementary affordance; Escape (handled in script) is the keyboard equivalent. -->
+            <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events, vuejs-accessibility/no-static-element-interactions -->
             <div
                 v-if="isOpened"
                 class="ml-modal-dialog-overlay"

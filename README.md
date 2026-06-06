@@ -184,7 +184,6 @@ represents all available application routes.
 ## Possible Improvements
 
 - Type-aware ESLint rules
-- Accessibility linting
 - Unit tests
 - PWA
 
@@ -284,6 +283,7 @@ structure and conventions are applied consistently.
 - `features` are forbidden from importing `domains`
 - Local-only `fragments` cannot be imported through absolute aliases
 - File-level circular dependencies are forbidden
+- Vue template accessibility (labels, keyboard interaction, valid ARIA) is linted via `eslint-plugin-vuejs-accessibility`
 
 Aliases are preferred for cross-folder dependencies. Relative imports remain appropriate for nearby implementation
 details and are not required for every internal module.

@@ -10,7 +10,7 @@ const get = <T>(key: string, defaultValue: Nullable<T> = null): Nullable<T> => {
     }
 
     try {
-        return JSON.parse(value);
+        return JSON.parse(value) as T;
     } catch {
         return defaultValue;
     }

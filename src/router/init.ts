@@ -14,8 +14,8 @@ export const initRouter = (app: App) => {
         return resolveGuards({ to, employee: accountStore.account });
     });
 
-    router.onError((error) => {
-        const { message } = error;
+    router.onError((error: unknown) => {
+        const message = error instanceof Error ? error.message : '';
 
         const isChunkLoadError =
             message.includes('Failed to fetch dynamically imported module') ||

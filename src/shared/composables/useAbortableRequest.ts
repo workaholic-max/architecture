@@ -20,7 +20,7 @@ export const useAbortableRequest = () => {
                     return null;
                 }
 
-                return Promise.reject(error);
+                throw error;
             })
             .finally(() => requests.delete(requestId));
     };

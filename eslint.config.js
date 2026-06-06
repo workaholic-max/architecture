@@ -5,7 +5,7 @@ import eslintPluginImport from 'eslint-plugin-import';
 import eslintPluginSimpleImportSort from 'eslint-plugin-simple-import-sort';
 import eslintPluginUnusedImports from 'eslint-plugin-unused-imports';
 import eslintPluginVue from 'eslint-plugin-vue';
-import eslintPluginVueA11y from 'eslint-plugin-vuejs-accessibility';
+import eslintPluginVuejsA11y from 'eslint-plugin-vuejs-accessibility';
 import globals from 'globals';
 import typescriptEslint from 'typescript-eslint';
 
@@ -19,12 +19,13 @@ import {
     featureRestrictedImportPatterns,
 } from './configuration/eslint/rules/no-restricted-imports.js';
 
-export default [
+export default typescriptEslint.config(
     js.configs.recommended,
     ...eslintPluginVue.configs['flat/recommended'],
-    ...eslintPluginVueA11y.configs['flat/recommended'],
-    ...typescriptEslint.configs.recommended,
+    ...eslintPluginVuejsA11y.configs['flat/recommended'],
 
+    // Base rules for all source files: parser, plugins, import hygiene + sorting,
+    // and the architectural import boundaries shared by every layer.
     {
         files: ['**/*.{js,ts,vue}'],
         languageOptions: {
@@ -56,10 +57,11 @@ export default [
             'no-debugger': 'warn',
             eqeqeq: ['error', 'always'],
 
-            // handled already
+            // Off because: TypeScript already resolves identifiers, and auto-imported composables
+            // (ref, computed, useRouter, ...) are not known to ESLint, so it only false-positives.
             'no-undef': 'off',
+            // Off because: reported by the unused-imports plugin below (with the _-prefix ignore).
             'no-unused-vars': 'off',
-            '@typescript-eslint/no-unused-vars': 'off',
 
             'vue/multi-word-component-names': 'off',
             'vue/block-order': ['error', { order: ['script', 'template', 'style'] }],
@@ -91,6 +93,7 @@ export default [
         },
     },
 
+    // src/** (except the entry point) additionally must not import the app layer.
     {
         files: ['src/**/*.{js,ts,vue}'],
         ignores: ['src/main.ts'],
@@ -99,6 +102,7 @@ export default [
         },
     },
 
+    // features/** additionally must not import domains (features are consumed by domains, never the reverse).
     {
         files: ['src/features/**/*.{js,ts,vue}'],
         rules: {
@@ -110,5 +114,44 @@ export default [
         },
     },
 
-    eslintConfigPrettier,
-];
+    // Vue SFC scripts: TypeScript's non-type-aware recommended rules.
+    // `extends` supplies the rules; vueParser must stay the parser so <script setup lang="ts"> parses.
+    // Full type-checking of .vue is done by vue-tsc (pnpm type:check), not here.
+    {
+        files: ['src/**/*.vue'],
+        extends: [typescriptEslint.configs.recommended],
+        languageOptions: {
+            parser: vueParser,
+            parserOptions: {
+                parser: typescriptEslint.parser,
+                extraFileExtensions: ['.vue'],
+            },
+        },
+        rules: {
+            // Off because: unused vars/imports are reported by the unused-imports plugin (base config).
+            '@typescript-eslint/no-unused-vars': 'off',
+        },
+    },
+
+    // TypeScript source files: type-aware ("type-checked") rules, which need the TS program
+    // via projectService. .vue is intentionally excluded — typed linting of SFCs needs heavier
+    // wiring and vue-tsc already type-checks them.
+    {
+        files: ['src/**/*.ts'],
+        extends: [typescriptEslint.configs.recommendedTypeChecked],
+        languageOptions: {
+            parser: typescriptEslint.parser,
+            parserOptions: {
+                projectService: true,
+                tsconfigRootDir: import.meta.dirname,
+            },
+        },
+        rules: {
+            // Off here too: unused vars/imports are reported by the unused-imports plugin (base config).
+            '@typescript-eslint/no-unused-vars': 'off',
+        },
+    },
+
+    // Must be last: turns off rules that would conflict with Prettier formatting.
+    eslintConfigPrettier
+);

@@ -10,3 +10,12 @@ interface ImportMetaEnv {
 interface ImportMeta {
     readonly env: ImportMetaEnv;
 }
+
+// Lets the ESLint TypeScript program type `.vue` imports (vue-tsc keeps its precise types).
+declare module '*.vue' {
+    import type { DefineComponent } from 'vue';
+
+    const component: DefineComponent<{}, {}, any>;
+
+    export default component;
+}

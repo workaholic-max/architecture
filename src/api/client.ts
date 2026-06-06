@@ -93,7 +93,7 @@ class ApiClient {
             return Promise.reject(error);
         }
 
-        return Promise.reject(error);
+        throw error;
     }
 
     _addResponseInterceptor() {

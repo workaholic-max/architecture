@@ -1,7 +1,10 @@
 # Architecture
 
-A scalable solution for **Vue** applications, designed for long-term maintainability, clear boundaries, predictable
-structure, and high codebase readability.
+A reference architecture for **Vue 3** applications — built with TypeScript, Vite, Pinia, and Vue Router — designed for
+long-term maintainability, clear boundaries, predictable structure, and high codebase readability.
+
+It scales from small to large projects and is meant as a blueprint to build on: the layered structure below defines
+where code lives and how layers may depend on one another, with the core boundaries enforced by ESLint.
 
 ---
 
@@ -22,9 +25,13 @@ Responsible exclusively for application bootstrapping and startup.
 Responsible for executing all required initialization steps before the application is mounted.
 
 - `router`
+- `pinia`
 - `packages`
 - `services`
 - etc
+
+Services that need startup setup expose an `init()` method. The `services` step discovers every `*.service.ts` and runs
+its `init()`, so adding a new service to startup just means following the naming convention — no central registration.
 
 ---
 
@@ -32,7 +39,15 @@ Responsible for executing all required initialization steps before the applicati
 
 Encapsulates a specific responsibility and fully owns its internal implementation and business logic.
 
+A domain represents an area of the product — a set of related pages and the logic behind them (`dashboard`,
+`onboarding`, `settings`, `employees`, …) — not a backend-style data model. The name reflects a user-facing area rather
+than an entity, so it is fine for a domain such as `settings` not to map to any single model.
+
+- `api`
+- `types`
+- `mocks`
 - `routes`
+- `stores`
 - `services`
 - `utils`
 - `configs`
@@ -52,6 +67,10 @@ Cross-domain dependencies must remain one-directional and file-level circular de
 
 Encapsulates a specific reusable concern and owns its internal implementation.
 
+- `api`
+- `types`
+- `mocks`
+- `stores`
 - `services`
 - `utils`
 - `configs`
@@ -61,6 +80,8 @@ Encapsulates a specific reusable concern and owns its internal implementation.
 - `components`
 - etc
 
+Features are consumed by `domains` and higher-level layers; they must never depend on `domains`.
+
 ---
 
 ## [`shared`/](https://github.com/workaholic-max/architecture/tree/main/src/shared)
@@ -68,12 +89,16 @@ Encapsulates a specific reusable concern and owns its internal implementation.
 Contains reusable and cross-cutting modules shared across the application — from generic utilities and components to
 application-wide aggregations that require knowledge of other areas.
 
+- `controls`
+- `icons`
 - `types`
+- `stores`
 - `services`
 - `utils`
 - `configs`
 - `enums`
 - `composables`
+- `directives`
 - `layouts`
 - `components`
 - etc
@@ -96,7 +121,9 @@ Defines interaction with backend APIs and other external services.
   is [index.js](https://github.com/workaholic-max/architecture/blob/main/src/api/index.js), which
   aggregates and exports all available APIs
 - APIs are grouped by resource and represent available operations
-- API resource may expose nested structures
+- Cross-cutting (non-domain) resources live in `resources/`; `domains` and `features` define their own `api.ts`, all
+  surfaced through the same entry point
+- An API resource may expose nested structures
 
 ---
 
@@ -112,6 +139,7 @@ API communication.
 Responsible for routing in system-level cases.
 
 - not found page
+- access denied page
 - error page
 - maintenance page
 - etc
@@ -155,8 +183,10 @@ represents all available application routes.
 
 ## Possible Improvements
 
-- PWA
+- Type-aware ESLint rules
+- Accessibility linting
 - Unit tests
+- PWA
 
 ---
 
@@ -184,7 +214,7 @@ especially on slower connections.
 
 ### Section Comments
 
-It's recommended to use reusable section comment blocks to visually separate group-related logic. This improves
+It's recommended to use reusable section comment blocks to visually separate related blocks of logic. This improves
 readability, helps structure complex code, and makes responsibilities clearer.
 
 For setup instructions and IDE
@@ -209,7 +239,7 @@ component: () => import('@domains/dashboard/views/DashboardView.vue');
 
 `router.onError()` handler
 in [router/init.ts](https://github.com/workaholic-max/architecture/blob/main/src/router/init.ts) catches chunk load
-failures and reloads the page, recovering from transient network issues without leaving the user on a broken state.
+failures and reloads the page, recovering from transient network issues without leaving the user in a broken state.
 
 All `node_modules` are consolidated into a single `vendor` chunk via `manualChunks`
 in [vite.config.ts](https://github.com/workaholic-max/architecture/blob/main/vite.config.ts), keeping it independently
@@ -227,12 +257,27 @@ centralized and predictable styling structure.
 
 ---
 
+### [configuration/vite/plugins/auto-import.js](https://github.com/workaholic-max/architecture/blob/main/configuration/vite/plugins/auto-import.js)
+
+A curated set of frequently used Vue and Vue Router APIs is auto-imported via unplugin-auto-import, so they are
+available without an explicit import statement:
+
+- `vue` — `ref`, `reactive`, `computed`, `watch`, `nextTick`, `useTemplateRef`, and the lifecycle hooks
+- `vue-router` — `useRouter`, `useRoute`
+
+The list is an intentional allowlist; anything outside it is imported normally. Type declarations are generated into
+[dts/auto-imports.d.ts](https://github.com/workaholic-max/architecture/blob/main/dts/auto-imports.d.ts), keeping
+TypeScript and the editor aware of the injected globals.
+
+---
+
 ### [eslint.config.js](https://github.com/workaholic-max/architecture/blob/main/eslint.config.js)
 
 This configuration helps maintain a clean codebase, prevents architectural violations, and ensures that project
 structure and conventions are applied consistently.
 
-- Explicit file extensions are required for JavaScript, Vue, and SCSS imports to keep dependencies clear
+- Explicit file extensions are required for JavaScript, TypeScript, Vue, and SCSS imports to keep dependencies clear
+- Imports are sorted into a consistent order, grouped by layer and module type
 - Layer-specific aliases (`@router`, `@api`, `@domains`, `@features`, `@shared`) are enforced, while root-level `@/`
   imports into these layers are intentionally forbidden.
 - Imports from `app` are forbidden outside the application entry point
@@ -245,10 +290,9 @@ details and are not required for every internal module.
 
 ---
 
-### CI
+### [.github/workflows/ci.yml](https://github.com/workaholic-max/architecture/blob/main/.github/workflows/ci.yml)
 
-Continuous integration runs on every push to `main` and on every pull request
-via [GitHub Actions](https://github.com/workaholic-max/architecture/blob/main/.github/workflows/ci.yml).
+Continuous integration runs on every push to `main` and on every pull request via GitHub Actions.
 
 It installs dependencies from the lockfile and runs three required checks:
 
@@ -256,17 +300,15 @@ It installs dependencies from the lockfile and runs three required checks:
 - `lint:check` — ESLint (architecture boundaries + code quality)
 - `build` — type-checks with `vue-tsc`, then builds for production
 
-Husky runs the same checks locally on commit for fast feedback; CI is the authoritative
-gate that cannot be bypassed.
+Husky runs formatting, linting, and type-checking locally on commit (staged files) for fast feedback; CI re-runs them
+across the whole project, adds the production build, and is the authoritative gate that cannot be bypassed.
 
 ---
 
 ### [api/](https://github.com/workaholic-max/architecture/tree/main/src/api)
 
-Serves as a single reference for all available interactions with backend and external services.
-
-Endpoints are organized by resource and exported through a single entry point, enforcing consistent naming and
-predictable usage.
+Serves as the single reference for all available interactions with backend and external services, keeping their naming
+and usage consistent and predictable.
 
 ---
 
@@ -276,7 +318,7 @@ The API client supports abortable requests.
 
 Request cancellation is handled
 via [shared/composables/useAbortableRequest.ts](https://github.com/workaholic-max/architecture/blob/main/src/shared/composables/useAbortableRequest.ts)
-allowing requests to be automatically aborted when the user leaves a page or manually cancelled using `abortRequests`
+allowing requests to be automatically aborted when the user leaves a page or manually cancelled using `abortRequests`,
 for example when a newer request replaces a previous one.
 
 ```
@@ -300,10 +342,10 @@ The API client can be further extended with better response interceptors:
 ### [assets/styles/abstracts/variables/](https://github.com/workaholic-max/architecture/tree/main/src/assets/styles/abstracts/variables)
 
 Variables are grouped by concern (spacing, colors, breakpoints, etc.) and exposed through a single entry point using
-Sass `@forward`. Each group is namespaced at the entry level to keep usage explicit and prevent naming collisions.
-Inside individual variable files, names are intentionally kept simple and none prefixed (e.g. `base`, `md`, `lg`).
-Context is provided by the namespace rather than repeating prefixes within each file, improving readability and
-maintainability.
+Sass `@forward`. Each group is prefixed at the entry level (e.g. `@forward './spacing.scss' as space-*`) to keep usage
+explicit and prevent naming collisions. Inside individual variable files, names are intentionally kept simple and
+unprefixed (e.g. `base`, `md`, `lg`). Context is provided by that prefix rather than repeating prefixes within each
+file, improving readability and maintainability.
 
 Usage example:
 
@@ -327,6 +369,7 @@ Usage example:
 
 ```
 <style lang="scss">
+@use '@scss-vars' as vars;
 @use '@scss-functions' as functions;
 
 ul {
@@ -337,7 +380,7 @@ ul {
 
 ---
 
-### [assets/styles/mixins/\_index.scss](https://github.com/workaholic-max/architecture/blob/main/src/assets/styles/abstracts/mixins/_index.scss)
+### [assets/styles/abstracts/mixins/\_index.scss](https://github.com/workaholic-max/architecture/blob/main/src/assets/styles/abstracts/mixins/_index.scss)
 
 Usage example:
 
@@ -424,13 +467,14 @@ nodes. This keeps the DOM lightweight while still supporting runtime color custo
 multicolor icon rendering.
 
 All icon names, rendering modes, and directional logic are defined in a typed
-registry: [docs/icons.md](https://github.com/workaholic-max/architecture/blob/main/docs/icons.md)
+registry ([registry.ts](https://github.com/workaholic-max/architecture/blob/main/src/shared/icons/registry.ts)) and
+documented in detail in [docs/icons.md](https://github.com/workaholic-max/architecture/blob/main/docs/icons.md)
 
 ---
 
 ### [shared/components/modal/](https://github.com/workaholic-max/architecture/tree/main/src/shared/components/modal)
 
-This implementation is what I refer to as a `construction`
+This implementation is what this project calls a `construction`
 
 Exposes a single public entry
 point [index.js](https://github.com/workaholic-max/architecture/blob/main/src/shared/components/modal/index.js)
@@ -541,7 +585,7 @@ Its responsibility is strictly limited to coordinating scroll state, not managin
 
 Controls user interaction with the document in a predictable and temporary way.
 
-This `control` is responsible for disabling all user interactions for example when overlays, modals, or transitional UI
+This `control` is responsible for disabling all user interactions, for example when overlays, modals, or transitional UI
 states are active and accidental interaction must be prevented.
 
 Interaction locking is expected to be short-lived and intentional. It is designed to protect user experience during
@@ -581,8 +625,7 @@ as part of the app initialization flow.
 ### [shared/services/local-storage.service.ts](https://github.com/workaholic-max/architecture/blob/main/src/shared/services/local-storage.service.ts)
 
 This service centralizes access to `localStorage` to ensure safe, predictable behavior and avoid scattering direct
-storage
-usage across the application.
+storage usage across the application.
 
 Stored values are automatically namespaced using a predefined prefix, preventing key collisions with other applications
 or environments and keeping stored data clearly identifiable.

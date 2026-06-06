@@ -40,8 +40,8 @@ its `init()`, so adding a new service to startup just means following the naming
 Encapsulates a specific responsibility and fully owns its internal implementation and business logic.
 
 A domain represents an area of the product — a set of related pages and the logic behind them (`dashboard`,
-`onboarding`, `settings`, `employees`, …) — not a backend-style data model. The name reflects a user-facing area rather
-than an entity, so it is fine for a domain such as `settings` not to map to any single model.
+`onboarding`, `settings`, `employees`, ...) — not a backend-style data model. The name reflects a user-facing area
+rather than an entity, so it is fine for a domain such as `settings` not to map to any single model.
 
 - `api`
 - `types`
@@ -183,7 +183,7 @@ represents all available application routes.
 
 ## Possible Improvements
 
-- Unit tests
+- Tailwind
 - PWA
 
 ---
@@ -245,6 +245,32 @@ cached from application code.
 
 ---
 
+### Testing
+
+Unit and component testing is configured with [Vitest](https://vitest.dev/),
+[@vue/test-utils](https://test-utils.vuejs.org/) (jsdom environment), and
+[@pinia/testing](https://pinia.vuejs.org/cookbook/testing.html) for stubbing stores when testing components — reusing
+the Vite config so path aliases resolve in tests.
+
+Tests are co-located with the code they verify: each layer keeps them in a local `tests/` folder
+(`domains/<domain>/tests/`, `features/<feature>/tests/`, `shared/tests/`, `router/tests/`, ...), next to the module
+under test. This mirrors how the architecture is organized — by area, not by technical type — so a domain or feature
+stays self-contained: its tests live with it, move with it, and are deleted with it. The natural units to cover are
+stores, composables, and components.
+
+Because tests live inside the layer they belong to, they are ordinary source files: they obey the same ESLint rules,
+import boundaries, and type-checking as everything else — nothing is excluded. A unit test imports its module exactly
+as production code would, so it never needs to cross a boundary in the first place.
+
+Global, cross-cutting test configuration lives in
+[tests/setup.ts](https://github.com/workaholic-max/architecture/blob/main/tests/setup.ts), wired through Vitest's
+`setupFiles` in [vite.config.ts](https://github.com/workaholic-max/architecture/blob/main/vite.config.ts); it runs once
+before the suite and is the place for global stubs, plugins, mocks, or custom matchers. The top-level `tests/` folder
+holds only this configuration — never test files. `passWithNoTests` keeps the test step green when none exist, so the
+project never forces you to have any.
+
+---
+
 ### [vite.config.ts](https://github.com/workaholic-max/architecture/blob/main/vite.config.ts)
 
 The configuration is intentionally minimal and primarily focused on declaring module resolution aliases that reflect the
@@ -282,7 +308,8 @@ structure and conventions are applied consistently.
 - `features` are forbidden from importing `domains`
 - Local-only `fragments` cannot be imported through absolute aliases
 - File-level circular dependencies are forbidden
-- Vue template accessibility (labels, keyboard interaction, valid ARIA) is linted via `eslint-plugin-vuejs-accessibility`
+- Vue template accessibility (labels, keyboard interaction, valid ARIA) is linted via
+  `eslint-plugin-vuejs-accessibility`
 - Type-aware rules run on TypeScript files via `recommendedTypeChecked`
 
 Aliases are preferred for cross-folder dependencies. Relative imports remain appropriate for nearby implementation
@@ -294,10 +321,11 @@ details and are not required for every internal module.
 
 Continuous integration runs on every push to `main` and on every pull request via GitHub Actions.
 
-It installs dependencies from the lockfile and runs three required checks:
+It installs dependencies from the lockfile and runs four required checks:
 
 - `format:check` — Prettier
 - `lint:check` — ESLint (architecture boundaries + code quality)
+- `test` — the Vitest suite (passes when there are no test files)
 - `build` — type-checks with `vue-tsc`, then builds for production
 
 Husky runs formatting, linting, and type-checking locally on commit (staged files) for fast feedback; CI re-runs them

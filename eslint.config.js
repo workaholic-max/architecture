@@ -147,7 +147,7 @@ export default typescriptEslint.config(
             },
         },
         rules: {
-            // Off here too: unused vars/imports are reported by the unused-imports plugin (base config).
+            // Off because: unused vars/imports are reported by the unused-imports plugin (base config).
             '@typescript-eslint/no-unused-vars': 'off',
         },
     },

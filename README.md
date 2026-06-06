@@ -4,7 +4,7 @@ A reference architecture for **Vue 3** applications — built with TypeScript, V
 long-term maintainability, clear boundaries, predictable structure, and high codebase readability.
 
 It scales from small to large projects and is meant as a blueprint to build on: the layered structure below defines
-where code lives and how layers may depend on one another, with the core boundaries enforced by ESLint.
+where code lives and how layers may depend on one another, with key import boundaries supported by ESLint.
 
 ---
 
@@ -30,8 +30,9 @@ Responsible for executing all required initialization steps before the applicati
 - `services`
 - etc
 
-Services that need startup setup expose an `init()` method. The `services` step discovers every `*.service.ts` and runs
-its `init()`, so adding a new service to startup just means following the naming convention — no central registration.
+Services that need startup setup expose an `init()` method. The `services` step discovers every `*.service.ts` and
+`*.service.js` file and runs its `init()`, so adding a new service to startup just means following the naming convention
+— no central registration.
 
 ---
 
@@ -183,8 +184,39 @@ represents all available application routes.
 
 ## Possible Improvements
 
-- Tailwind
-- PWA
+This template is the clean base architecture: Vue 3, Vite, TypeScript, Pinia, Vue Router, Axios, SCSS, tests, CI, and
+AI guidance. Possible improvements should be added only when they are implemented intentionally and documented clearly.
+
+### PWA
+
+Add PWA infrastructure on top of the base architecture: manifest, installability, service worker strategy, application
+update flow, offline fallback, cache handling, and mobile-friendly behavior such as pull-to-refresh where appropriate.
+
+### Showcase
+
+Build a richer demo application on top of the PWA direction. The showcase should demonstrate how the architecture
+behaves under real feature pressure: domains, routes, guards, permissions, stores, API resources, shared components,
+local persistence, charts, forms, and tests.
+
+### Tailwind
+
+Create a dedicated style variant where SCSS is fully replaced by Tailwind. This should be a production-ready Tailwind
+setup, not a partial mix with the current SCSS baseline.
+
+### Tailwind + PWA
+
+Combine the Tailwind style variant with the PWA direction after both directions are stable. The architecture should stay
+the same; only styling and PWA-specific infrastructure should differ.
+
+### Tailwind Showcase
+
+Build the showcase application on top of the Tailwind + PWA direction so both styling approaches can demonstrate the
+same architectural ideas.
+
+### Template Scripts
+
+Cross-platform template scripts may be added later if repeated template work reveals stable, predictable operations.
+They are optional and should not replace manual validation too early.
 
 ---
 
@@ -197,15 +229,34 @@ reason about as it grows.
 
 ---
 
+### AI-Assisted Development
+
+AI guidance is included in the base template because modern frontend work increasingly involves coding agents, code
+review agents, and assistant-driven scaffolding.
+
+The setup is intentionally lightweight:
+
+- [AGENTS.md](https://github.com/workaholic-max/architecture/blob/main/AGENTS.md) contains shared repository guidance
+  for AI agents
+- [CLAUDE.md](https://github.com/workaholic-max/architecture/blob/main/CLAUDE.md) imports `AGENTS.md` for Claude Code
+- [.github/copilot-instructions.md](https://github.com/workaholic-max/architecture/blob/main/.github/copilot-instructions.md)
+  provides GitHub Copilot repository instructions
+- [docs/ai-agents.md](https://github.com/workaholic-max/architecture/blob/main/docs/ai-agents.md) documents the setup
+  and removal path
+- `.agents/skills` contains repo-scoped skills for repeatable architecture workflows
+
+The always-loaded guidance stays concise to reduce context cost. Longer workflows belong in docs or skills so agents
+load them only when relevant.
+
+---
+
 ### Fonts
 
-Fonts are placed in [public/](https://github.com/workaholic-max/architecture/tree/main/public) and
-preloaded
-in [index.html](https://github.com/workaholic-max/architecture/blob/main/index.html) to prevent FOUT (
-Flash of Unstyled
-Text) during application startup.
+Fonts are placed in [public/](https://github.com/workaholic-max/architecture/tree/main/public) and preloaded in
+[index.html](https://github.com/workaholic-max/architecture/blob/main/index.html) to reduce the chance of FOUT (Flash of
+Unstyled Text) during application startup.
 
-Preloading fonts ensures they are available before initial render, improving visual stability and perceived performance,
+Preloading fonts tells the browser to request them early, improving visual stability and perceived performance,
 especially on slower connections.
 
 ---
@@ -252,10 +303,10 @@ Unit and component testing is configured with [Vitest](https://vitest.dev/),
 [@pinia/testing](https://pinia.vuejs.org/cookbook/testing.html) for stubbing stores when testing components — reusing
 the Vite config so path aliases resolve in tests.
 
-Tests are co-located with the code they verify: each layer keeps them in a local `tests/` folder
+Tests are co-located with the code they verify. When a layer needs tests, it keeps them in a local `tests/` folder
 (`domains/<domain>/tests/`, `features/<feature>/tests/`, `shared/tests/`, `router/tests/`, ...), next to the module
 under test. This mirrors how the architecture is organized — by area, not by technical type — so a domain or feature
-stays self-contained: its tests live with it, move with it, and are deleted with it. The natural units to cover are
+can stay self-contained: its tests live with it, move with it, and are deleted with it. The natural units to cover are
 stores, composables, and components.
 
 Because tests live inside the layer they belong to, they are ordinary source files: they obey the same ESLint rules,
@@ -297,7 +348,7 @@ TypeScript and the editor aware of the injected globals.
 
 ### [eslint.config.js](https://github.com/workaholic-max/architecture/blob/main/eslint.config.js)
 
-This configuration helps maintain a clean codebase, prevents architectural violations, and ensures that project
+This configuration helps maintain a clean codebase, helps prevent architectural violations, and ensures that project
 structure and conventions are applied consistently.
 
 - Explicit file extensions are required for JavaScript, TypeScript, Vue, and SCSS imports to keep dependencies clear
@@ -305,7 +356,7 @@ structure and conventions are applied consistently.
 - Layer-specific aliases (`@router`, `@api`, `@domains`, `@features`, `@shared`) are enforced, while root-level `@/`
   imports into these layers are intentionally forbidden.
 - Imports from `app` are forbidden outside the application entry point
-- `features` are forbidden from importing `domains`
+- Feature-to-domain alias imports are forbidden
 - Local-only `fragments` cannot be imported through absolute aliases
 - File-level circular dependencies are forbidden
 - Vue template accessibility (labels, keyboard interaction, valid ARIA) is linted via
@@ -328,8 +379,9 @@ It installs dependencies from the lockfile and runs four required checks:
 - `test` — the Vitest suite (passes when there are no test files)
 - `build` — type-checks with `vue-tsc`, then builds for production
 
-Husky runs formatting, linting, and type-checking locally on commit (staged files) for fast feedback; CI re-runs them
-across the whole project, adds the production build, and is the authoritative gate that cannot be bypassed.
+Husky runs formatting and linting through `lint-staged`, then runs a full type-check locally on commit for fast
+feedback. CI re-runs the required checks across the whole project, adds the production build, and is the authoritative
+gate that cannot be bypassed.
 
 ---
 

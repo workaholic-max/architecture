@@ -1,16 +1,17 @@
 ---
 name: create-domain
-description: Add or extend a user-facing domain in this Vue architecture template while preserving route ownership, API boundaries, permissions, colocated tests, and SCSS conventions.
+description: Add or extend a user-facing domain in this Vue application architecture while preserving route ownership, API boundaries, permissions, colocated tests, and SCSS conventions.
 ---
 
 # Create Domain
 
-Use this skill when adding a new domain under `src/domains` or expanding an existing domain with views, routes, stores, API calls, types, mocks, permissions, or tests.
+Use this skill when adding a new domain under `src/domains` or expanding an existing domain with views, routes, stores,
+API calls, types, mocks, permissions, or tests.
 
 ## Workflow
 
 1. Confirm the domain is a user-facing product area, not only a backend entity.
-2. Follow the existing domain structure:
+2. Follow `ARCHITECTURE.md` and the existing domain structure:
     - `routes`
     - `views`
     - `types`
@@ -25,4 +26,5 @@ Use this skill when adding a new domain under `src/domains` or expanding an exis
 
 ## Verification
 
-Run the narrowest relevant checks first. For shared route, permission, or API changes, run lint, tests, and a build before finishing.
+Run the narrowest relevant checks first. For shared route, permission, or API changes, run lint, tests, and a build
+before finishing.

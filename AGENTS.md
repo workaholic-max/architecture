@@ -1,12 +1,13 @@
 # AGENTS.md
 
-Repository guidance for AI coding agents working in this Vue architecture template.
+Repository guidance for AI coding agents working in this Vue application architecture.
 
 ## Operating Principles
 
-- Treat this repository as a reference architecture first and a demo application second.
-- Keep the architecture readable, predictable, and easy to explain to another senior frontend engineer.
-- Ask concise questions when a decision changes the public architecture, dependency set, or template philosophy.
+- Use `ARCHITECTURE.md` as the default project structure and build product features inside its boundaries.
+- Preserve layer ownership, dependency direction, route metadata conventions, and colocated tests unless the user
+  explicitly asks for an architectural change.
+- Ask concise questions when a decision changes the documented architecture, dependency set, or project direction.
 - Make reasonable local implementation choices when the existing code clearly establishes a pattern.
 - Prefer small, reviewable changes over broad rewrites.
 - Do not push, publish, merge, or create pull requests unless explicitly asked.
@@ -27,7 +28,7 @@ Repository guidance for AI coding agents working in this Vue architecture templa
 - Package manager: pnpm.
 - Source root: `src`.
 - Main architectural layers: `app`, `router`, `api`, `domains`, `features`, `shared`.
-- Architectural boundaries are supported by ESLint import rules and documented project conventions. Do not bypass them.
+- Architectural boundaries are documented in `ARCHITECTURE.md` and supported by ESLint import rules. Do not bypass them.
 
 ## Commands
 
@@ -58,12 +59,13 @@ Before finishing code changes, run the smallest reliable verification set and re
 - Prefer scoped component styles unless a style is intentionally global.
 - Future theme work should prefer runtime CSS variables for colors so light/dark mode works reliably.
 
-## AI Files
+## Project And AI Files
 
+- `ARCHITECTURE.md`: detailed project structure, layer boundaries, and implementation conventions.
 - `AGENTS.md`: shared source of truth for agent behavior.
 - `CLAUDE.md`: Claude Code bridge that imports `AGENTS.md`.
 - `.github/copilot-instructions.md`: GitHub Copilot bridge and summary.
 - `docs/ai-agents.md`: human-readable explanation of the AI setup.
 - `.agents/skills`: repo-scoped Codex skills for repeatable workflows.
 
-To remove the AI layer from a cloned project, delete those files and folders. They do not affect runtime code.
+To remove the AI layer from a cloned project, delete the AI-specific files and folders. They do not affect runtime code.

@@ -4,7 +4,7 @@ Follow `AGENTS.md` as the repository source of truth. This file exists so Copilo
 
 ## Core Rules
 
-- Preserve the Vue/Vite architecture boundaries described in `README.md` and `AGENTS.md`.
+- Preserve the Vue/Vite architecture boundaries described in `ARCHITECTURE.md` and `AGENTS.md`.
 - Keep changes small, typed, and aligned with the existing layer ownership.
 - Use pnpm scripts from `package.json`; do not invent parallel command flows.
 - Prefer focused verification first, then broader checks when shared behavior or tooling changes.
@@ -21,4 +21,4 @@ Follow `AGENTS.md` as the repository source of truth. This file exists so Copilo
 - Cross-cutting shared modules live in `src/shared`.
 - Base styling lives in `src/assets/styles`.
 
-When unsure, ask a concise question before changing public architecture or template direction.
+When unsure, ask a concise question before changing documented architecture or project direction.

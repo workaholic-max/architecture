@@ -6,18 +6,23 @@ with coding agents.
 The AI layer is documentation and workflow only. It does not affect the runtime bundle, Vite build, lint rules, tests,
 or application architecture.
 
+Agents should use [ARCHITECTURE.md](../ARCHITECTURE.md) as the detailed source for project structure, layer ownership,
+dependency rules, and implementation conventions.
+
 ## Files
 
-- `AGENTS.md` is the shared source of truth for AI coding agents.
+- `ARCHITECTURE.md` documents the project structure and architectural conventions that agents should preserve.
+- `AGENTS.md` is the shared source of truth for AI coding agent behavior.
 - `CLAUDE.md` imports `AGENTS.md` so Claude Code reads the same guidance without duplicated content.
 - `.github/copilot-instructions.md` gives GitHub Copilot a repository-level bridge and short project summary.
-- `.agents/skills` contains repo-scoped Codex skills for repeatable architecture workflows.
+- `.agents/skills` contains repo-scoped Codex skills for repeatable architecture workflows, including the `architecture`
+  skill for loading `ARCHITECTURE.md` only when a task needs deeper project structure context.
 
 ## Design Goals
 
 - Reduce repeated explanation of the architecture.
 - Keep agent context cost low by keeping always-loaded files concise.
-- Make agents ask questions when a decision changes architecture, dependencies, or public template direction.
+- Make agents ask questions when a decision changes architecture, dependencies, or project direction.
 - Keep deterministic workflows in skills or docs instead of large always-loaded instruction files.
 - Make the AI layer removable without touching source code.
 

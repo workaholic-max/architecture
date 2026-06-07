@@ -8,19 +8,19 @@ where code lives and how layers may depend on one another, with key import bound
 
 ---
 
-## [`app`/](https://github.com/workaholic-max/architecture/tree/main/src/app)
+## [`app`/](src/app)
 
 Responsible exclusively for application bootstrapping and startup.
 
 - Expected to be imported once, and only
-  from [main.ts](https://github.com/workaholic-max/architecture/blob/main/src/main.ts)
+  from [main.ts](src/main.ts)
 - **Never imported by any other layer** — it is the top of the dependency graph
 - Allowed to import all other layers: `router` `api` `domains` `features` `shared` etc
 - May contain local-only modules: `services` `utils` `enums` `composables` `components` etc
 
 ---
 
-## [`app/`init/](https://github.com/workaholic-max/architecture/tree/main/src/app/init)
+## [`app/`init/](src/app/init)
 
 Responsible for executing all required initialization steps before the application is mounted.
 
@@ -36,7 +36,7 @@ Services that need startup setup expose an `init()` method. The `services` step 
 
 ---
 
-## [`domains`/](https://github.com/workaholic-max/architecture/tree/main/src/domains)
+## [`domains`/](src/domains)
 
 Encapsulates a specific responsibility and fully owns its internal implementation and business logic.
 
@@ -64,7 +64,7 @@ Cross-domain dependencies must remain one-directional and file-level circular de
 
 ---
 
-## [`features`/](https://github.com/workaholic-max/architecture/tree/main/src/features)
+## [`features`/](src/features)
 
 Encapsulates a specific reusable concern and owns its internal implementation.
 
@@ -85,7 +85,7 @@ Features are consumed by `domains` and higher-level layers; they must never depe
 
 ---
 
-## [`shared`/](https://github.com/workaholic-max/architecture/tree/main/src/shared)
+## [`shared`/](src/shared)
 
 Contains reusable and cross-cutting modules shared across the application — from generic utilities and components to
 application-wide aggregations that require knowledge of other areas.
@@ -114,12 +114,12 @@ forbidden.
 
 ---
 
-## [`api`/](https://github.com/workaholic-max/architecture/tree/main/src/api)
+## [`api`/](src/api)
 
 Defines interaction with backend APIs and other external services.
 
 - The entry point
-  is [index.js](https://github.com/workaholic-max/architecture/blob/main/src/api/index.js), which
+  is [index.js](src/api/index.js), which
   aggregates and exports all available APIs
 - APIs are grouped by resource and represent available operations
 - Cross-cutting (non-domain) resources live in `resources/`; `domains` and `features` define their own `api.ts`, all
@@ -128,14 +128,14 @@ Defines interaction with backend APIs and other external services.
 
 ---
 
-## [`api/`client.ts](https://github.com/workaholic-max/architecture/blob/main/src/api/client.ts)
+## [`api/`client.ts](src/api/client.ts)
 
 Responsible for configuring and executing requests to external services, providing a single, consistent entry point for
 API communication.
 
 ---
 
-## [`router/`fallback/](https://github.com/workaholic-max/architecture/tree/main/src/router/fallback)
+## [`router/`fallback/](src/router/fallback)
 
 Responsible for routing in system-level cases.
 
@@ -147,12 +147,12 @@ Responsible for routing in system-level cases.
 
 ---
 
-## [`router/`guards/](https://github.com/workaholic-max/architecture/tree/main/src/router/guards)
+## [`router/`guards/](src/router/guards)
 
 Responsible for controlling navigation flow.
 
 The entry point
-is [index.ts](https://github.com/workaholic-max/architecture/blob/main/src/router/guards/index.ts),
+is [index.ts](src/router/guards/index.ts),
 which provides a function for running route guards in a defined order. The order of guards is significant and directly
 affects how navigation decisions are resolved.
 
@@ -164,7 +164,7 @@ Guards are checked one by one to determine how navigation proceeds:
 
 ---
 
-## [`router/`init.ts](https://github.com/workaholic-max/architecture/blob/main/src/router/init.ts)
+## [`router/`init.ts](src/router/init.ts)
 
 Responsible for initializing the application router.
 
@@ -173,7 +173,7 @@ such as guards and other routing concerns.
 
 ---
 
-## [`router/`routes.ts](https://github.com/workaholic-max/architecture/blob/main/src/router/routes.ts)
+## [`router/`routes.ts](src/router/routes.ts)
 
 Responsible for composing the application routing.
 
@@ -236,12 +236,12 @@ review agents, and assistant-driven scaffolding.
 
 The setup is intentionally lightweight:
 
-- [AGENTS.md](https://github.com/workaholic-max/architecture/blob/main/AGENTS.md) contains shared repository guidance
+- [AGENTS.md](AGENTS.md) contains shared repository guidance
   for AI agents
-- [CLAUDE.md](https://github.com/workaholic-max/architecture/blob/main/CLAUDE.md) imports `AGENTS.md` for Claude Code
-- [.github/copilot-instructions.md](https://github.com/workaholic-max/architecture/blob/main/.github/copilot-instructions.md)
+- [CLAUDE.md](CLAUDE.md) imports `AGENTS.md` for Claude Code
+- [.github/copilot-instructions.md](.github/copilot-instructions.md)
   provides GitHub Copilot repository instructions
-- [docs/ai-agents.md](https://github.com/workaholic-max/architecture/blob/main/docs/ai-agents.md) documents the setup
+- [docs/ai-agents.md](docs/ai-agents.md) documents the setup
   and removal path
 - `.agents/skills` contains repo-scoped skills for repeatable architecture workflows
 
@@ -252,8 +252,8 @@ load them only when relevant.
 
 ### Fonts
 
-Fonts are placed in [public/](https://github.com/workaholic-max/architecture/tree/main/public) and preloaded in
-[index.html](https://github.com/workaholic-max/architecture/blob/main/index.html) to reduce the chance of FOUT (Flash of
+Fonts are placed in [public/](public) and preloaded in
+[index.html](index.html) to reduce the chance of FOUT (Flash of
 Unstyled Text) during application startup.
 
 Preloading fonts tells the browser to request them early, improving visual stability and perceived performance,
@@ -267,7 +267,7 @@ It's recommended to use reusable section comment blocks to visually separate rel
 readability, helps structure complex code, and makes responsibilities clearer.
 
 For setup instructions and IDE
-configuration: [docs/section-comments.md](https://github.com/workaholic-max/architecture/blob/main/docs/section-comments.md)
+configuration: [docs/section-comments.md](docs/section-comments.md)
 
 ```
 // ───────────────────────────────────────────────────────
@@ -287,11 +287,11 @@ component: () => import('@domains/dashboard/views/DashboardView.vue');
 ```
 
 `router.onError()` handler
-in [router/init.ts](https://github.com/workaholic-max/architecture/blob/main/src/router/init.ts) catches chunk load
+in [router/init.ts](src/router/init.ts) catches chunk load
 failures and reloads the page, recovering from transient network issues without leaving the user in a broken state.
 
 All `node_modules` are consolidated into a single `vendor` chunk via `manualChunks`
-in [vite.config.ts](https://github.com/workaholic-max/architecture/blob/main/vite.config.ts), keeping it independently
+in [vite.config.ts](vite.config.ts), keeping it independently
 cached from application code.
 
 ---
@@ -314,15 +314,15 @@ import boundaries, and type-checking as everything else — nothing is excluded.
 as production code would, so it never needs to cross a boundary in the first place.
 
 Global, cross-cutting test configuration lives in
-[tests/setup.ts](https://github.com/workaholic-max/architecture/blob/main/tests/setup.ts), wired through Vitest's
-`setupFiles` in [vite.config.ts](https://github.com/workaholic-max/architecture/blob/main/vite.config.ts); it runs once
+[tests/setup.ts](tests/setup.ts), wired through Vitest's
+`setupFiles` in [vite.config.ts](vite.config.ts); it runs once
 before the suite and is the place for global stubs, plugins, mocks, or custom matchers. The top-level `tests/` folder
 holds only this configuration — never test files. `passWithNoTests` keeps the test step green when none exist, so the
 project never forces you to have any.
 
 ---
 
-### [vite.config.ts](https://github.com/workaholic-max/architecture/blob/main/vite.config.ts)
+### [vite.config.ts](vite.config.ts)
 
 The configuration is intentionally minimal and primarily focused on declaring module resolution aliases that reflect the
 architectural structure of the project.
@@ -332,7 +332,7 @@ centralized and predictable styling structure.
 
 ---
 
-### [configuration/vite/plugins/auto-import.js](https://github.com/workaholic-max/architecture/blob/main/configuration/vite/plugins/auto-import.js)
+### [configuration/vite/plugins/auto-import.js](configuration/vite/plugins/auto-import.js)
 
 A curated set of frequently used Vue and Vue Router APIs is auto-imported via unplugin-auto-import, so they are
 available without an explicit import statement:
@@ -341,12 +341,12 @@ available without an explicit import statement:
 - `vue-router` — `useRouter`, `useRoute`
 
 The list is an intentional allowlist; anything outside it is imported normally. Type declarations are generated into
-[dts/auto-imports.d.ts](https://github.com/workaholic-max/architecture/blob/main/dts/auto-imports.d.ts), keeping
+[dts/auto-imports.d.ts](dts/auto-imports.d.ts), keeping
 TypeScript and the editor aware of the injected globals.
 
 ---
 
-### [eslint.config.js](https://github.com/workaholic-max/architecture/blob/main/eslint.config.js)
+### [eslint.config.js](eslint.config.js)
 
 This configuration helps maintain a clean codebase, helps prevent architectural violations, and ensures that project
 structure and conventions are applied consistently.
@@ -368,7 +368,7 @@ details and are not required for every internal module.
 
 ---
 
-### [.github/workflows/ci.yml](https://github.com/workaholic-max/architecture/blob/main/.github/workflows/ci.yml)
+### [.github/workflows/ci.yml](.github/workflows/ci.yml)
 
 Continuous integration runs on every push to `main` and on every pull request via GitHub Actions.
 
@@ -385,19 +385,19 @@ gate that cannot be bypassed.
 
 ---
 
-### [api/](https://github.com/workaholic-max/architecture/tree/main/src/api)
+### [api/](src/api)
 
 Serves as the single reference for all available interactions with backend and external services, keeping their naming
 and usage consistent and predictable.
 
 ---
 
-### [api/client.ts](https://github.com/workaholic-max/architecture/blob/main/src/api/client.ts)
+### [api/client.ts](src/api/client.ts)
 
 The API client supports abortable requests.
 
 Request cancellation is handled
-via [shared/composables/useAbortableRequest.ts](https://github.com/workaholic-max/architecture/blob/main/src/shared/composables/useAbortableRequest.ts)
+via [shared/composables/useAbortableRequest.ts](src/shared/composables/useAbortableRequest.ts)
 allowing requests to be automatically aborted when the user leaves a page or manually cancelled using `abortRequests`,
 for example when a newer request replaces a previous one.
 
@@ -419,7 +419,7 @@ The API client can be further extended with better response interceptors:
 
 ---
 
-### [assets/styles/abstracts/variables/](https://github.com/workaholic-max/architecture/tree/main/src/assets/styles/abstracts/variables)
+### [assets/styles/abstracts/variables/](src/assets/styles/abstracts/variables)
 
 Variables are grouped by concern (spacing, colors, breakpoints, etc.) and exposed through a single entry point using
 Sass `@forward`. Each group is prefixed at the entry level (e.g. `@forward './spacing.scss' as space-*`) to keep usage
@@ -443,7 +443,7 @@ h2 {
 
 ---
 
-### [assets/styles/abstracts/functions/\_index.scss](https://github.com/workaholic-max/architecture/blob/main/src/assets/styles/abstracts/functions/_index.scss)
+### [assets/styles/abstracts/functions/\_index.scss](src/assets/styles/abstracts/functions/_index.scss)
 
 Usage example:
 
@@ -460,7 +460,7 @@ ul {
 
 ---
 
-### [assets/styles/abstracts/mixins/\_index.scss](https://github.com/workaholic-max/architecture/blob/main/src/assets/styles/abstracts/mixins/_index.scss)
+### [assets/styles/abstracts/mixins/\_index.scss](src/assets/styles/abstracts/mixins/_index.scss)
 
 Usage example:
 
@@ -484,7 +484,7 @@ button {
 
 ---
 
-### [router/composables/useResolvedRoutes.ts](https://github.com/workaholic-max/architecture/blob/main/src/router/composables/useResolvedRoutes.ts)
+### [router/composables/useResolvedRoutes.ts](src/router/composables/useResolvedRoutes.ts)
 
 This composable centralizes access to `router.resolve()` results and avoids repeated resolution of the same route.
 Resolved values are cached by route name and reused across the application to ensure consistent access to route metadata
@@ -497,7 +497,7 @@ It exposes focused helpers for retrieving commonly needed information, such as:
 
 ---
 
-### [shared/composables/useEntitySearch.ts](https://github.com/workaholic-max/architecture/blob/main/src/shared/composables/useEntitySearch.ts)
+### [shared/composables/useEntitySearch.ts](src/shared/composables/useEntitySearch.ts)
 
 Provides a minimal reusable search composable for filtering flat entity collections by one or multiple string fields.
 
@@ -521,7 +521,7 @@ implementation lightweight.
 
 ---
 
-### [shared/directives/click-outside.ts](https://github.com/workaholic-max/architecture/blob/main/src/shared/directives/click-outside.ts)
+### [shared/directives/click-outside.ts](src/shared/directives/click-outside.ts)
 
 In this project, directives are not globally registered. They must be explicitly imported and used only where needed.
 This keeps usage transparent and prevents hidden dependencies across the application.
@@ -536,7 +536,7 @@ is used in templates, automatically mapping to kebab-case.
 
 ---
 
-### [shared/icons/](https://github.com/workaholic-max/architecture/tree/main/src/shared/icons)
+### [shared/icons/](src/shared/icons)
 
 This module provides a centralized icon rendering system based on CSS `mask-image` and `background-image`, designed to
 reduce DOM and rendering overhead caused by large amounts of inline SVG components in repeated lists and dynamic UI
@@ -547,17 +547,17 @@ nodes. This keeps the DOM lightweight while still supporting runtime color custo
 multicolor icon rendering.
 
 All icon names, rendering modes, and directional logic are defined in a typed
-registry ([registry.ts](https://github.com/workaholic-max/architecture/blob/main/src/shared/icons/registry.ts)) and
-documented in detail in [docs/icons.md](https://github.com/workaholic-max/architecture/blob/main/docs/icons.md)
+registry ([registry.ts](src/shared/icons/registry.ts)) and
+documented in detail in [docs/icons.md](docs/icons.md)
 
 ---
 
-### [shared/components/modal/](https://github.com/workaholic-max/architecture/tree/main/src/shared/components/modal)
+### [shared/components/modal/](src/shared/components/modal)
 
 This implementation is what this project calls a `construction`
 
 Exposes a single public entry
-point [index.js](https://github.com/workaholic-max/architecture/blob/main/src/shared/components/modal/index.js)
+point [index.js](src/shared/components/modal/index.js)
 that
 exports an object containing all fragments.
 
@@ -586,7 +586,7 @@ flexible, consistent, and easy to reason about.
 
 ---
 
-### [shared/components/ConfirmationModal.vue](https://github.com/workaholic-max/architecture/blob/main/src/shared/components/ConfirmationModal.vue)
+### [shared/components/ConfirmationModal.vue](src/shared/components/ConfirmationModal.vue)
 
 Instead of rendering multiple confirmation modals or controlling them via props, this component exposes an `open` method
 and is intended to be instantiated **once per view** and reused for multiple confirmation scenarios (delete, edit,
@@ -634,7 +634,7 @@ const openEmployeeDeleteModal = (employee) => {
 
 ---
 
-### [shared/configs/limits.ts](https://github.com/workaholic-max/architecture/blob/main/src/shared/configs/limits.ts)
+### [shared/configs/limits.ts](src/shared/configs/limits.ts)
 
 Centralized business limits for the application.
 
@@ -644,7 +644,7 @@ evolve. It serves as a single source of truth for constraints that define what t
 
 ---
 
-### [shared/controls/body-scroll.js](https://github.com/workaholic-max/architecture/blob/main/src/shared/controls/body-scroll.js)
+### [shared/controls/body-scroll.js](src/shared/controls/body-scroll.js)
 
 Controls document body scroll locking in a predictable and safe way.
 
@@ -661,7 +661,7 @@ Its responsibility is strictly limited to coordinating scroll state, not managin
 
 ---
 
-### [shared/controls/interaction.js](https://github.com/workaholic-max/architecture/blob/main/src/shared/controls/interaction.js)
+### [shared/controls/interaction.js](src/shared/controls/interaction.js)
 
 Controls user interaction with the document in a predictable and temporary way.
 
@@ -678,19 +678,19 @@ Typical use cases include:
 
 ---
 
-### [shared/layouts/BaseLayout.vue](https://github.com/workaholic-max/architecture/blob/main/src/shared/layouts/BaseLayout.vue)
+### [shared/layouts/BaseLayout.vue](src/shared/layouts/BaseLayout.vue)
 
 This layout demonstrates how routing metadata is used as the single source of truth for page-level information such as
 titles.
 
 Navigation is rendered from a simple configuration containing only route names. All additional information (such as
 titles or permissions) is resolved dynamically
-via [router/composables/useResolvedRoutes.ts](https://github.com/workaholic-max/architecture/blob/main/src/router/composables/useResolvedRoutes.ts),
+via [router/composables/useResolvedRoutes.ts](src/router/composables/useResolvedRoutes.ts),
 avoiding redundant configuration and keeping navigation logic centralized and predictable.
 
 ---
 
-### [shared/services/device.service.ts](https://github.com/workaholic-max/architecture/blob/main/src/shared/services/device.service.ts)
+### [shared/services/device.service.ts](src/shared/services/device.service.ts)
 
 This service is responsible for determining and exposing information about the current device environment.
 
@@ -702,7 +702,7 @@ as part of the app initialization flow.
 
 ---
 
-### [shared/services/local-storage.service.ts](https://github.com/workaholic-max/architecture/blob/main/src/shared/services/local-storage.service.ts)
+### [shared/services/local-storage.service.ts](src/shared/services/local-storage.service.ts)
 
 This service centralizes access to `localStorage` to ensure safe, predictable behavior and avoid scattering direct
 storage usage across the application.

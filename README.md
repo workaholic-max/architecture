@@ -1,10 +1,22 @@
 # Architecture
 
-A reference architecture for **Vue 3** applications — built with TypeScript, Vite, Pinia, and Vue Router — designed for
-long-term maintainability, clear boundaries, predictable structure, and high codebase readability.
+A reference architecture for **Vue 3** applications — built with TypeScript, Vite, Pinia, and SCSS — with
+ESLint-enforced boundaries, tests, CI, and AI-agent guidance for long-term maintainability, predictable structure, and
+high codebase readability.
 
 It scales from small to large projects and is meant as a blueprint to build on: the layered structure below defines
 where code lives and how layers may depend on one another, with key import boundaries supported by ESLint.
+
+---
+
+## Other Variants
+
+- [PWA](https://github.com/workaholic-max/architecture/tree/pwa) — base architecture plus manifest, installability,
+  service worker update handling, and mobile-friendly behavior.
+- [Tailwind](https://github.com/workaholic-max/architecture/tree/tailwind) — base architecture with SCSS replaced by a
+  production-ready Tailwind CSS setup.
+- [Tailwind + PWA](https://github.com/workaholic-max/architecture/tree/tailwind-pwa) — Tailwind CSS setup combined with
+  the PWA infrastructure.
 
 ---
 
@@ -179,44 +191,6 @@ Responsible for composing the application routing.
 
 Aggregates and combines route definitions exposed by `domains` and `fallback` routing into a single structure that
 represents all available application routes.
-
----
-
-## Possible Improvements
-
-This template is the clean base architecture: Vue 3, Vite, TypeScript, Pinia, Vue Router, Axios, SCSS, tests, CI, and
-AI guidance. Possible improvements should be added only when they are implemented intentionally and documented clearly.
-
-### PWA
-
-Add PWA infrastructure on top of the base architecture: manifest, installability, service worker strategy, application
-update flow, offline fallback, cache handling, and mobile-friendly behavior such as pull-to-refresh where appropriate.
-
-### Showcase
-
-Build a richer demo application on top of the PWA direction. The showcase should demonstrate how the architecture
-behaves under real feature pressure: domains, routes, guards, permissions, stores, API resources, shared components,
-local persistence, charts, forms, and tests.
-
-### Tailwind
-
-Create a dedicated style variant where SCSS is fully replaced by Tailwind. This should be a production-ready Tailwind
-setup, not a partial mix with the current SCSS baseline.
-
-### Tailwind + PWA
-
-Combine the Tailwind style variant with the PWA direction after both directions are stable. The architecture should stay
-the same; only styling and PWA-specific infrastructure should differ.
-
-### Tailwind Showcase
-
-Build the showcase application on top of the Tailwind + PWA direction so both styling approaches can demonstrate the
-same architectural ideas.
-
-### Template Scripts
-
-Cross-platform template scripts may be added later if repeated template work reveals stable, predictable operations.
-They are optional and should not replace manual validation too early.
 
 ---
 

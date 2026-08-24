@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import { AbortablePromise } from '@api/types/abortable-promise.ts';
 
-import { Nullable } from '@shared/types/nullable.ts';
+import { Nullable } from '@shared/types/utility.ts';
 
 export const useAbortableRequest = () => {
     const requests = new Map<number, AbortablePromise<unknown>>();

@@ -3,9 +3,10 @@ import { defineConfig } from 'vitest/config';
 
 import { viteAliases } from './configuration/aliases.js';
 import { autoImportPlugin } from './configuration/vite/plugins/auto-import.js';
+import { pwaPlugin } from './configuration/vite/plugins/pwa.js';
 
 export default defineConfig({
-    plugins: [vuePlugin(), autoImportPlugin()],
+    plugins: [vuePlugin(), autoImportPlugin(), pwaPlugin()],
     resolve: {
         alias: viteAliases,
         extensions: ['.js', '.ts', '.vue'],

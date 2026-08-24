@@ -1,4 +1,4 @@
-import { Nullable } from '@shared/types/nullable.ts';
+import { Nullable } from '@shared/types/utility.ts';
 
 let originalTitle: Nullable<string> = null;
 

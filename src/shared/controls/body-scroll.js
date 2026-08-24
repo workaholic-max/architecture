@@ -18,7 +18,10 @@ const unlock = () => {
     }
 };
 
+const isLocked = () => lockCount > 0;
+
 export const bodyScrollControl = {
     lock,
     unlock,
+    isLocked,
 };

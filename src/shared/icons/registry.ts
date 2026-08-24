@@ -1,3 +1,5 @@
+import { ValueOf } from '@shared/types/utility.ts';
+
 // ───────────────────────────────────────────────────────
 // Icon names
 // ───────────────────────────────────────────────────────
@@ -14,7 +16,7 @@ export const ICON_NAMES = {
     USER_GROUP: 'user-group',
 } as const;
 
-export type IconName = (typeof ICON_NAMES)[keyof typeof ICON_NAMES];
+export type IconName = ValueOf<typeof ICON_NAMES>;
 
 // ───────────────────────────────────────────────────────
 // Icon modes
@@ -33,4 +35,4 @@ export const ICON_DIRECTIONS = {
     LEFT: 'left',
 } as const;
 
-export type IconDirection = (typeof ICON_DIRECTIONS)[keyof typeof ICON_DIRECTIONS];
+export type IconDirection = ValueOf<typeof ICON_DIRECTIONS>;

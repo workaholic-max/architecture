@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 
 import type { Employee } from '@domains/employees/types/employee.ts';
-import type { Nullable } from '@shared/types/nullable.ts';
+import { Nullable } from '@shared/types/utility.ts';
 
 import { EMPLOYEE_MOCK_DATA } from '@domains/employees/mocks/employee.ts';
 

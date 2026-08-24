@@ -1,0 +1,27 @@
+# Normalize every text file to LF in the repository, regardless of the OS or editor that touched it.
+* text=auto eol=lf
+
+# Explicit text types (kept LF even if auto-detection is ever wrong for one of them).
+*.js text eol=lf
+*.ts text eol=lf
+*.vue text eol=lf
+*.scss text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.svg text eol=lf
+*.txt text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Binary — never touched by line-ending normalization.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary

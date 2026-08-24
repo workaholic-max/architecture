@@ -4,6 +4,7 @@ const TYPE_ORDER = [
     'routes',
     'stores',
     'services',
+    'controls',
     'utils',
     'configs',
     'enums',

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Nullable } from '@shared/types/nullable.ts';
+import { Nullable } from '@shared/types/utility.ts';
 
 import Modal from '@shared/components/modal/index.js';
 
@@ -11,7 +11,8 @@ defineProps<{
 // Modal state
 // ───────────────────────────────────────────────────────
 
-const modalTitle = navigator.onLine ? 'An unexpected error occurred' : 'No internet connection';
+const isOnline = navigator.onLine;
+const modalTitle = isOnline ? 'An unexpected error occurred' : 'No internet connection';
 
 const reloadApp = () => window.location.reload();
 </script>
@@ -21,7 +22,10 @@ const reloadApp = () => window.location.reload();
         <Modal.Dialog enable-centered-content>
             <template #title>{{ modalTitle }}</template>
 
-            <template #content>
+            <template
+                v-if="isOnline"
+                #content
+            >
                 {{ errorMessage }}
             </template>
 

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-import { Nullable } from '@shared/types/nullable.ts';
+import { Nullable } from '@shared/types/utility.ts';
 
 import { DEVICE_TYPES, DeviceType } from '@shared/enums/device.ts';
 

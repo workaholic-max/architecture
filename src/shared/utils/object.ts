@@ -1,4 +1,4 @@
-import { Nullable } from '@shared/types/nullable.ts';
+import { Nullable } from '@shared/types/utility.ts';
 
 export const isObject = (value: unknown): value is Record<string, unknown> =>
     Object.prototype.toString.call(value) === '[object Object]';
@@ -30,4 +30,22 @@ export const setNestedObjectValue = <T>(source: Record<string, unknown>, path: s
     }, source);
 
     target[lastKey] = value;
+};
+
+export const extractFields = <T extends Record<string, unknown>, K extends keyof T>(
+    obj: T | null | undefined,
+    keys: K[]
+): Pick<T, K> | null => {
+    if (!obj) return null;
+
+    return keys.reduce(
+        (acc, key) => {
+            if (key in obj) {
+                acc[key] = obj[key];
+            }
+
+            return acc;
+        },
+        {} as Pick<T, K>
+    );
 };

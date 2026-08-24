@@ -1,10 +1,10 @@
-import type { RouteLocationNormalized, RouteLocationRaw } from 'vue-router';
+import type { RouteLocationGeneric, RouteLocationRaw } from 'vue-router';
 
 import type { Employee } from '@domains/employees/types/employee.ts';
-import { Nullable } from '@shared/types/nullable.ts';
+import { Nullable } from '@shared/types/utility.ts';
 
 export interface GuardContext {
-    to: RouteLocationNormalized;
+    to: RouteLocationGeneric;
     employee: Nullable<Employee>;
 }
 

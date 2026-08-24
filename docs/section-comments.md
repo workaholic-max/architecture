@@ -1,100 +1,24 @@
-## Section Comments
+# Section Comments
 
-This project uses section comments to separate logical blocks of code.
+A convention for separating logical blocks inside a file — types, state, handlers, lifecycle — so a file's structure
+is visible at a glance before reading a single line of logic.
 
----
-
-### WebStorm (Live Templates)
-
-**Open:** Settings → Editor → Live Templates
-
-Create a new template and fill in the fields as shown below.
-
----
-
-### Section Comment: Default
-
-- **Abbreviation:**
-
-```
-section-comment
-```
-
-- **Template text:**
-
-```
+```ts
 // ───────────────────────────────────────────────────────
-// $SECTION_TITLE$
+// Types
 // ───────────────────────────────────────────────────────
 ```
 
-- **Set expand with: `Tab`**
-- **Set applicable context: `JavaScript` and `Vue`**
+For the full reasoning and editor setup (a WebStorm Live Template that expands the divider on a keystroke), see
+[dev-lab/code-style/section-comments](https://github.com/workaholic-max/dev-lab/tree/main/code-style/section-comments).
 
----
+## Used in this project
 
-### Section Comment: Confirmation modal
+Applied to files with more than two or three distinct concerns — see `src/shared/components/modal/fragments/ModalOverlay.vue`,
+`src/shared/components/ProgressBar.vue`, `src/shared/icons/registry.ts`, `src/app/App.vue`,
+`src/app/components/OccurredErrorModal.vue` (its `// Modal state` divider), or `src/api/client.ts` (`// Types` /
+`// Implementation`) for real examples already in the codebase. Not every file needs it — a short single-purpose file
+gets nothing from a divider it doesn't have room to separate anything with.
 
-- **Abbreviation:**
-
-```
-section-comment-confirmation-modal
-```
-
-- **Template text:**
-
-```
-// ───────────────────────────────────────────────────────
-// Confirmation modal
-// ───────────────────────────────────────────────────────
-```
-
-- **Set expand with: `Tab`**
-- **Set applicable context: `JavaScript` and `Vue`**
-
----
-
-### Section Comment: General
-
-- **Abbreviation:**
-
-```
-section-comment-general
-```
-
-- **Template text:**
-
-```
-// ───────────────────────────────────────────────────────
-// General
-// ───────────────────────────────────────────────────────
-```
-
-- **Set expand with: `Tab`**
-- **Set applicable context: `JavaScript` and `Vue`**
-
----
-
-## Notes
-
-- Abbreviation naming can be chosen freely
-- Expand key can be chosen freely
-- Make sure to define the applicable context (JavaScript & Vue)
-- The IDE will suggest the abbreviation as you type, allowing quick insertion
-- Additional custom section comments can be added as needed (these are just the most commonly used ones)
-
----
-
-## Example Usage
-
-**Type**: `section-comment-confirmation-modal`
-
-**Press:** `tab`
-
-**Result:**
-
-```
-// ───────────────────────────────────────────────────────
-// Confirmation modal
-// ───────────────────────────────────────────────────────
-```
+Only add a named preset (beyond the default `section-comment` template) for a title that names one real, recurring
+block across the codebase — not one per component just because a component exists.

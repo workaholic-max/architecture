@@ -1,18 +1,4 @@
-export const HTTP_METHODS = {
-    GET: 'get',
-    POST: 'post',
-    PUT: 'put',
-    DELETE: 'delete',
-} as const;
-
-export type HttpMethod = (typeof HTTP_METHODS)[keyof typeof HTTP_METHODS];
-
-export const HTTP_RESPONSE_TYPES = {
-    JSON: 'json',
-    BLOB: 'blob',
-} as const;
-
-export type HttpResponseType = (typeof HTTP_RESPONSE_TYPES)[keyof typeof HTTP_RESPONSE_TYPES];
+import { ValueOf } from '@shared/types/utility.ts';
 
 export const HTTP_STATUS_CODES = {
     INTERNAL_SERVER_ERROR: 500,
@@ -23,4 +9,8 @@ export const HTTP_STATUS_CODES = {
     NOT_FOUND: 404,
     CONFLICT: 409,
     UNPROCESSABLE_ENTITY: 422,
-};
+} as const;
+
+export const HTTP_STATUS_CODE_VALUES = Object.values(HTTP_STATUS_CODES);
+
+export type HttpStatusCode = ValueOf<typeof HTTP_STATUS_CODES>;

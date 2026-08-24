@@ -1,9 +1,11 @@
+import { ValueOf } from '@shared/types/utility.ts';
+
 export const EMPLOYEE_ROLES = {
     ADMIN: 'admin',
     MANAGER: 'manager',
 } as const;
 
-export type EmployeeRole = (typeof EMPLOYEE_ROLES)[keyof typeof EMPLOYEE_ROLES];
+export type EmployeeRole = ValueOf<typeof EMPLOYEE_ROLES>;
 
 export const ROLE_OPTIONS = [
     { value: EMPLOYEE_ROLES.ADMIN, text: 'Admin' },

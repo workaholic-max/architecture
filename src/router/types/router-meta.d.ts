@@ -4,5 +4,6 @@ declare module 'vue-router' {
     interface RouteMeta {
         title: string;
         permission?: PermissionMeta;
+        ignoreLastVisited?: boolean;
     }
 }

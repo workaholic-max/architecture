@@ -3,9 +3,20 @@ import axios from 'axios';
 
 import { AbortablePromise } from '@api/types/abortable-promise.ts';
 
+import { useAppReloadStore } from '@shared/stores/app-reload.store.ts';
+
+import { isHttpBackendError } from '@shared/utils/http.ts';
+
 import { env } from '@shared/configs/env.ts';
 
-import { HTTP_RESPONSE_TYPES, HttpMethod, HttpResponseType } from '@shared/enums/http.ts';
+import { HTTP_STATUS_CODES } from '@shared/enums/http.ts';
+
+// ───────────────────────────────────────────────────────
+// Types
+// ───────────────────────────────────────────────────────
+
+type HttpMethod = 'get' | 'post' | 'put' | 'delete';
+type HttpResponseType = 'json' | 'blob';
 
 interface RequestConfig {
     method: HttpMethod;
@@ -18,6 +29,10 @@ interface RequestConfig {
 interface ResolvedRequestConfig extends RequestConfig {
     headers: Record<string, string>;
 }
+
+// ───────────────────────────────────────────────────────
+// Implementation
+// ───────────────────────────────────────────────────────
 
 class ApiClient {
     instance: AxiosInstance;
@@ -63,13 +78,7 @@ class ApiClient {
         return wrapped;
     }
 
-    request<T>({
-        method,
-        url,
-        responseType = HTTP_RESPONSE_TYPES.JSON,
-        data = {},
-        params = {},
-    }: RequestConfig): AbortablePromise<T> {
+    request<T>({ method, url, responseType = 'json', data = {}, params = {} }: RequestConfig): AbortablePromise<T> {
         const controller = new AbortController();
 
         const requestConfig = this._buildRequestConfig({
@@ -91,6 +100,12 @@ class ApiClient {
     _handleErrorResponse(error: unknown) {
         if (axios.isCancel(error)) {
             return Promise.reject(error);
+        }
+
+        if (isHttpBackendError(error) && error.response.status === HTTP_STATUS_CODES.UNAUTHORIZED) {
+            const appReloadStore = useAppReloadStore();
+
+            appReloadStore.trigger();
         }
 
         throw error;

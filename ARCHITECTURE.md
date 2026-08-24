@@ -6,6 +6,10 @@ application. Build product features inside these boundaries unless an architectu
 The structure scales from small to large projects and is meant as a blueprint to build on: the layered sections below
 define where code lives and how layers may depend on one another, with key import boundaries supported by ESLint.
 
+This guide documents the repository's concrete reference implementation. Choices such as SCSS and Progressive Web App
+support show how real application concerns fit within the structure; they can be adapted or replaced without changing
+the layer ownership and dependency rules that define the architecture.
+
 ---
 
 ## [`app`/](src/app)
@@ -33,6 +37,8 @@ Responsible for executing all required initialization steps before the applicati
 Services that need startup setup expose an `init()` method. The `services` step discovers every `*.service.ts` and
 `*.service.js` file and runs its `init()`, so adding a new service to startup just means following the naming convention
 — no central registration.
+
+Documented in full, including why the call order matters, in [docs/application-init.md](docs/application-init.md).
 
 ---
 
@@ -164,12 +170,14 @@ Guards are checked one by one to determine how navigation proceeds:
 
 ---
 
-## [`router/`init.ts](src/router/init.ts)
+## [`router/init/`](src/router/init)
 
 Responsible for initializing the application router.
 
-Provides a function responsible for preparing and configuring the `router`, including applying required setup
-such as guards and other routing concerns.
+A folder of fragments, one per Vue Router hook it wires up: `before-each.ts` runs the guard chain (and restores the
+last-visited route on first load, if it's still reachable), `after-each.ts` records the current route as
+last-visited, `on-error.ts` recovers from stale-chunk errors after a deploy. `index.ts` is the only file that
+imports any of them and wires all three plus `app.use(router)`.
 
 ---
 
@@ -188,27 +196,6 @@ This section highlights practical implementation choices, patterns, and conventi
 strictly defined by the architectural structure. It provides additional context around how certain concerns are handled
 in practice, capturing decisions and approaches that help keep the codebase consistent, predictable, and easier to
 reason about as it grows.
-
----
-
-### AI-Assisted Development
-
-AI guidance is included in the base template because modern frontend work increasingly involves coding agents, code
-review agents, and assistant-driven scaffolding.
-
-The setup is intentionally lightweight:
-
-- [AGENTS.md](AGENTS.md) contains shared repository guidance
-  for AI agents
-- [CLAUDE.md](CLAUDE.md) imports `AGENTS.md` for Claude Code
-- [.github/copilot-instructions.md](.github/copilot-instructions.md)
-  provides GitHub Copilot repository instructions
-- [docs/ai-agents.md](docs/ai-agents.md) documents the setup
-  and removal path
-- `.agents/skills` contains repo-scoped skills for repeatable architecture workflows
-
-The always-loaded guidance stays concise to reduce context cost. Longer workflows belong in docs or skills so agents
-load them only when relevant.
 
 ---
 
@@ -249,7 +236,7 @@ component: () => import('@domains/dashboard/views/DashboardView.vue');
 ```
 
 `router.onError()` handler
-in [router/init.ts](src/router/init.ts) catches chunk load
+in [router/init/fragments/on-error.ts](src/router/init/fragments/on-error.ts) catches chunk load
 failures and reloads the page, recovering from transient network issues without leaving the user in a broken state.
 
 All `node_modules` are consolidated into a single `vendor` chunk via `manualChunks`
@@ -284,13 +271,29 @@ project never forces you to have any.
 
 ---
 
+### Progressive Web App
+
+The application is installable and works offline via [vite-plugin-pwa](https://vite-pwa-org.netlify.app/), configured
+in [configuration/vite/plugins/pwa.js](configuration/vite/plugins/pwa.js) and wired into
+[vite.config.ts](vite.config.ts), plus a set of hand-authored `<head>` tags in [index.html](index.html) covering
+install presentation and social-link previews that the generated manifest can't reach on its own.
+
+Startup is gated on the service worker via
+[shared/services/service-worker.service.ts](src/shared/services/service-worker.service.ts), called from
+[app/App.vue](src/app/App.vue); an iOS-standalone pull-to-refresh replacement lives in
+[shared/services/pull-to-refresh.service.ts](src/shared/services/pull-to-refresh.service.ts); and
+[app/components/OccurredErrorModal.vue](src/app/components/OccurredErrorModal.vue) accounts for the offline case.
+
+Documented in full, with the reasoning behind each piece and the dev-lab entries it's drawn from, in
+[docs/progressive-web-app.md](docs/progressive-web-app.md).
+
+---
+
 ### [vite.config.ts](vite.config.ts)
 
-The configuration is intentionally minimal and primarily focused on declaring module resolution aliases that reflect the
-architectural structure of the project.
-
-Additional aliases are provided for shared styling resources (such as variables, mixins, and functions) to enforce a
-centralized and predictable styling structure.
+The configuration composes the Vue, auto-import, and PWA plugins; applies the module aliases that reflect the
+architectural layers and shared SCSS resources; keeps third-party dependencies in a separate `vendor` chunk; and shares
+the same aliases and jsdom setup with Vitest.
 
 ---
 
@@ -342,8 +345,8 @@ It installs dependencies from the lockfile and runs four required checks:
 - `build` — type-checks with `vue-tsc`, then builds for production
 
 Husky runs formatting and linting through `lint-staged`, then runs a full type-check locally on commit for fast
-feedback. CI re-runs the required checks across the whole project, adds the production build, and is the authoritative
-gate that cannot be bypassed.
+feedback. CI re-runs the required checks across the whole project, adds the production build, and provides the
+repository-wide verification result.
 
 ---
 
@@ -373,11 +376,8 @@ onBeforeMount(() => {
 });
 ```
 
-The API client can be further extended with better response interceptors:
-
-- redirect to error page on server errors
-- redirect to authentication flow when the user is not authorized
-- redirect to maintenance page when the backend is unavailable
+Documented in full — the shared instance, cancellation, 401-triggered reload flow, and the auth header that is not wired
+in yet — in [docs/api-client.md](docs/api-client.md).
 
 ---
 
@@ -388,6 +388,9 @@ Sass `@forward`. Each group is prefixed at the entry level (e.g. `@forward './sp
 explicit and prevent naming collisions. Inside individual variable files, names are intentionally kept simple and
 unprefixed (e.g. `base`, `md`, `lg`). Context is provided by that prefix rather than repeating prefixes within each
 file, improving readability and maintainability.
+
+For why this is split into per-category partials behind a prefixed barrel, and why the build-tool alias resolves to a
+Sass module path rather than just the equivalent JS one, see [docs/scss-tokens.md](docs/scss-tokens.md).
 
 Usage example:
 
@@ -548,54 +551,6 @@ flexible, consistent, and easy to reason about.
 
 ---
 
-### [shared/components/ConfirmationModal.vue](src/shared/components/ConfirmationModal.vue)
-
-Instead of rendering multiple confirmation modals or controlling them via props, this component exposes an `open` method
-and is intended to be instantiated **once per view** and reused for multiple confirmation scenarios (delete, edit,
-etc.).
-
-```
-// ───────────────────────────────────────────────────────
-// Confirmation modal
-// ───────────────────────────────────────────────────────
-
-const confirmationModalRef = ref(null);
-
-const openEmployeeEditModal = (employee) => {
-    confirmationModalRef.value.open({
-        title: "Edit Employee?",
-        message: 'will be unavailable to others during editing.',
-        entityName: employee.name,
-        submitBtnText: 'edit',
-        action: () => EmployeesApi.draft.create(employee.id),
-        onSuccess: (data) => {
-            ...
-
-            confirmationModalRef.value.close(true);
-        },
-    });
-};
-
-const openEmployeeDeleteModal = (employee) => {
-    confirmationModalRef.value.open({
-        title: "Delete Employee?",
-        message: "will be permanently deleted.",
-        entityName: employee.name,
-        submitBtnText: 'delete',
-        action: () => EmployeesApi.delete(employee.id),
-        onSuccess: (data) => {
-            ...
-
-            confirmationModalRef.value.close(true);
-        },
-    });
-};
-
-<ConfirmationModal ref="confirmationModalRef" />
-```
-
----
-
 ### [shared/configs/limits.ts](src/shared/configs/limits.ts)
 
 Centralized business limits for the application.
@@ -617,7 +572,7 @@ This logic is implemented as a `control` rather than a service because it:
 
 - manages a small, isolated piece of UI state
 - exposes explicit imperative actions `lock`, `unlock`
-- has no lifecycle, side effects, or dependencies beyond the document itself
+- has no startup lifecycle or dependencies beyond the document itself
 
 Its responsibility is strictly limited to coordinating scroll state, not managing application data or behavior.
 
@@ -645,10 +600,10 @@ Typical use cases include:
 This layout demonstrates how routing metadata is used as the single source of truth for page-level information such as
 titles.
 
-Navigation is rendered from a simple configuration containing only route names. All additional information (such as
-titles or permissions) is resolved dynamically
-via [router/composables/useResolvedRoutes.ts](src/router/composables/useResolvedRoutes.ts),
-avoiding redundant configuration and keeping navigation logic centralized and predictable.
+Navigation is rendered from a simple configuration containing only route names. Titles are resolved dynamically through
+[router/composables/useResolvedRoutes.ts](src/router/composables/useResolvedRoutes.ts), while the router guard chain
+enforces permissions from the same route metadata when navigation occurs. This avoids duplicating either value in the
+navigation configuration.
 
 ---
 
@@ -656,8 +611,7 @@ avoiding redundant configuration and keeping navigation logic centralized and pr
 
 This service is responsible for determining and exposing information about the current device environment.
 
-At the moment, this includes resolving the active device type. The service must be explicitly initialized before being
-used.
+At the moment, this includes resolving the active device type. The service must be initialized before it is used.
 
 Initialization prepares required media queries and listeners and is expected to be executed during application startup
 as part of the app initialization flow.

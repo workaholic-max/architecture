@@ -1,11 +1,19 @@
-import { RouteMeta } from 'vue-router';
+import type { RouteMeta } from 'vue-router';
 
-import { Nullable } from '@shared/types/nullable.ts';
+import { Nullable } from '@shared/types/utility.ts';
+
+// ───────────────────────────────────────────────────────
+// Types
+// ───────────────────────────────────────────────────────
 
 interface ResolvedRouteEntry {
     href: Nullable<string>;
     meta: RouteMeta;
 }
+
+// ───────────────────────────────────────────────────────
+// Implementation
+// ───────────────────────────────────────────────────────
 
 const resolvedRoutesCache = new Map<string, ResolvedRouteEntry>();
 

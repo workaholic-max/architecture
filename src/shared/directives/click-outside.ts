@@ -1,8 +1,16 @@
 import type { DirectiveBinding } from 'vue';
 
+// ───────────────────────────────────────────────────────
+// Types
+// ───────────────────────────────────────────────────────
+
 interface ClickOutsideElement extends HTMLElement {
     clickOutsideEvent: (event: MouseEvent) => void;
 }
+
+// ───────────────────────────────────────────────────────
+// Implementation
+// ───────────────────────────────────────────────────────
 
 export const vClickOutside = {
     beforeMount: (el: ClickOutsideElement, binding: DirectiveBinding<() => void>) => {

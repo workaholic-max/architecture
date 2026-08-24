@@ -6,14 +6,14 @@ defineOptions({
     inheritAttrs: false,
 });
 
+// ───────────────────────────────────────────────────────
+// Component API
+// ───────────────────────────────────────────────────────
+
 const props = defineProps({
     isOpened: {
         type: Boolean,
         required: true,
-    },
-    isHidden: {
-        type: Boolean,
-        default: false,
     },
     isCloseDisabled: {
         type: Boolean,
@@ -39,7 +39,8 @@ watch(
         } else {
             bodyScrollControl.unlock();
         }
-    }
+    },
+    { immediate: true }
 );
 
 onBeforeUnmount(() => {
@@ -102,7 +103,8 @@ watch(
         } else {
             document.removeEventListener('keydown', onEscapeKeydown);
         }
-    }
+    },
+    { immediate: true }
 );
 
 onBeforeUnmount(() => document.removeEventListener('keydown', onEscapeKeydown));
@@ -112,7 +114,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onEscapeKeydown));
     <teleport to="body">
         <transition name="modal-overlay">
             <div
-                v-if="isOpened && !isHidden"
+                v-if="isOpened"
                 class="ml-modal-overlay"
             />
         </transition>
@@ -129,9 +131,6 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onEscapeKeydown));
             <div
                 v-if="isOpened"
                 class="ml-modal-dialog-overlay"
-                :class="{
-                    'ml-modal-dialog-overlay--hidden': isHidden,
-                }"
                 @click="onClickOutside"
             >
                 <slot />
@@ -161,10 +160,6 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onEscapeKeydown));
     padding: vars.$space-safe-area;
     overflow: auto;
     z-index: vars.$z-index-modal-dialog;
-
-    &--hidden {
-        opacity: 0;
-    }
 
     @media screen and (max-width: vars.$breakpoint-mobile-sm) {
         padding: vars.$space-sm 0 0;

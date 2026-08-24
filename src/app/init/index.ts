@@ -1,6 +1,6 @@
 import type { App } from 'vue';
 
-import { initRouter } from '@router/init.ts';
+import { initRouter } from '@router/init/index.ts';
 
 import { initPackages } from './fragments/packages.js';
 import { initPinia } from './fragments/pinia.ts';

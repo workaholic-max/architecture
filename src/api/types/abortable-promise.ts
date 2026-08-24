@@ -1,3 +1,1 @@
-export interface AbortablePromise<T> extends Promise<T> {
-    abort: () => void;
-}
+export type AbortablePromise<T> = Promise<T> & { abort: () => void };

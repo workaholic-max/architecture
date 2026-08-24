@@ -1,10 +1,10 @@
 <script setup lang="ts">
+// ───────────────────────────────────────────────────────
+// Component API
+// ───────────────────────────────────────────────────────
+
 defineProps({
     enableCenteredContent: {
-        type: Boolean,
-        default: false,
-    },
-    enableVerticalActions: {
         type: Boolean,
         default: false,
     },
@@ -13,7 +13,7 @@ defineProps({
 const slots = defineSlots<{
     title?: () => unknown;
     content?: () => unknown;
-    actions?: () => unknown;
+    actions: () => unknown;
 }>();
 </script>
 
@@ -40,13 +40,7 @@ const slots = defineSlots<{
             </div>
         </div>
 
-        <div
-            v-if="slots['actions']"
-            class="ml-modal-dialog__actions"
-            :class="{
-                'ml-modal-dialog__actions--vertical': enableVerticalActions,
-            }"
-        >
+        <div class="ml-modal-dialog__actions">
             <slot name="actions" />
         </div>
     </div>
@@ -134,15 +128,6 @@ const slots = defineSlots<{
 
             &--filled {
                 box-shadow: none;
-            }
-        }
-
-        &--vertical {
-            flex-direction: column-reverse;
-
-            > .ml-btn {
-                flex: auto;
-                width: 100%;
             }
         }
     }

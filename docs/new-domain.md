@@ -1,35 +1,63 @@
 # Adding a Domain
 
-A domain is a user-facing product area — a set of related pages and the logic behind them (`dashboard`,
-`employees`, `settings`, ...) — not a backend entity. Confirm that first: if what you're adding doesn't map to a
-page or a set of pages a user navigates to, it's probably a [feature](./new-feature.md) instead.
-
-This walks through adding a domain end to end, using a hypothetical `invoices` domain as the running example.
+A domain owns a coherent user-facing product area: its pages, business rules, state, external operations, and local
+components. A domain does not need to map one-to-one to a backend entity.
 
 ---
 
-## 1. Create the folder
+## 1. Define the Boundary
 
-```
-src/domains/invoices/
-```
+Before creating files, describe the domain in one sentence and identify:
 
-Everything below is optional except `routes/` — add only the sub-folders this domain actually needs. See
-[ARCHITECTURE.md](../ARCHITECTURE.md#domains) for the full list of what a domain may contain (`api`, `types`,
-`mocks`, `stores`, `services`, `utils`, `configs`, `enums`, `composables`, `views`, `layouts`, `components`, `tests`).
+- which pages or workflows it owns;
+- which business rules belong to it;
+- which external resources it accesses;
+- whether it needs another domain and, if so, in which dependency direction.
+
+If the proposed module has no user-facing product boundary and is reusable across multiple domains, it may be a feature
+instead.
 
 ---
 
-## 2. Route names
+## 2. Create the Folder
 
-`routes/route-names.ts` — one constant object, prefixed with the domain's own root so names can never collide with
-another domain's:
+```text
+src/domains/<domain-name>/
+```
+
+Add only the structures the domain needs:
+
+```text
+<domain-name>/
+├─ api.ts
+├─ components/
+├─ composables/
+├─ configs/
+├─ enums/
+├─ layouts/
+├─ mocks/
+├─ routes/
+├─ services/
+├─ stores/
+├─ tests/
+├─ types/
+├─ utils/
+└─ views/
+```
+
+`routes/` and at least one route-level view form the domain baseline because a domain represents a navigable product
+area. Add the remaining structures when the domain owns those responsibilities.
+
+---
+
+## 3. Define Route Names
+
+Prefix route names with the domain name so they remain globally unique:
 
 ```ts
-// src/domains/invoices/routes/route-names.ts
-const ROOT = 'invoices';
+const ROOT = '<domain-name>';
 
-export const INVOICES_ROUTE_NAMES = {
+export const DOMAIN_ROUTE_NAMES = {
     INDEX: `${ROOT}.index`,
     CREATE: `${ROOT}.create`,
     EDIT: `${ROOT}.edit`,
@@ -38,157 +66,131 @@ export const INVOICES_ROUTE_NAMES = {
 
 ---
 
-## 3. Permission keys
+## 4. Add Permissions When Needed
 
-`configs/permissions.ts` — if any route needs access control, define the keys here first so `routes/index.ts` can
-reference them:
+Keep permission keys with the domain that owns them:
 
 ```ts
-// src/domains/invoices/configs/permissions.ts
-export const INVOICES_PERMISSION_KEYS = {
-    VIEW: 'invoices.view',
-    MANAGE: 'invoices.manage',
+export const DOMAIN_PERMISSION_KEYS = {
+    VIEW: '<domain-name>.view',
+    MANAGE: '<domain-name>.manage',
 } as const;
 
-export type InvoicePermissionKey = (typeof INVOICES_PERMISSION_KEYS)[keyof typeof INVOICES_PERMISSION_KEYS];
+export type DomainPermissionKey = (typeof DOMAIN_PERMISSION_KEYS)[keyof typeof DOMAIN_PERMISSION_KEYS];
 ```
 
----
-
-## 4. Views
-
-The actual page components, one per route. Keep them under `views/`, nesting a sub-folder per route when a view has
-its own supporting components (`views/create/`, `views/edit/`) — see `src/domains/employees/views/` for a real
-example of this shape.
+Route metadata may reference these keys, while the router owns permission evaluation.
 
 ---
 
-## 5. The route record
+## 5. Add Views and Routes
 
-`routes/index.ts` — one exported `RouteRecordRaw`, `path` scoped to the domain, `children` for each page. Every
-`component` is a dynamic import (lazy-loaded — see [ARCHITECTURE.md](../ARCHITECTURE.md#lazy-loading)), every route
-carries a `title` and, where it matters, a `permission.key`:
+Create one route-level view per page. Supporting components used by only one view may live beside that view; components
+shared across the domain belong in the domain-level `components/` folder.
+
+Expose the domain route record from its `routes/` module:
 
 ```ts
-// src/domains/invoices/routes/index.ts
 import type { RouteRecordRaw } from 'vue-router';
 
-import { INVOICES_ROUTE_NAMES } from '@domains/invoices/routes/route-names.ts';
+import { DOMAIN_PERMISSION_KEYS } from '../configs/permissions.ts';
+import { DOMAIN_ROUTE_NAMES } from './route-names.ts';
 
-import { INVOICES_PERMISSION_KEYS } from '@domains/invoices/configs/permissions.ts';
-
-export const invoicesRoute: RouteRecordRaw = {
-    path: 'invoices',
+export const domainRoute: RouteRecordRaw = {
+    path: '<domain-name>',
     children: [
         {
             path: '',
-            name: INVOICES_ROUTE_NAMES.INDEX,
-            component: () => import('@domains/invoices/views/InvoicesView.vue'),
+            name: DOMAIN_ROUTE_NAMES.INDEX,
+            component: () => import('../views/DomainView.vue'),
             meta: {
-                title: 'Invoices',
-                permission: { key: INVOICES_PERMISSION_KEYS.VIEW },
-            },
-        },
-        {
-            path: 'create',
-            name: INVOICES_ROUTE_NAMES.CREATE,
-            component: () => import('@domains/invoices/views/create/InvoiceCreateView.vue'),
-            meta: {
-                title: 'Create Invoice',
-                permission: { key: INVOICES_PERMISSION_KEYS.MANAGE },
+                title: 'Domain',
+                permission: { key: DOMAIN_PERMISSION_KEYS.VIEW },
             },
         },
     ],
 };
 ```
 
----
+Register the exported route in the router composition module. Nested product areas may be composed under a parent route
+without changing ownership of their source files.
 
-## 6. Wire it into the router
-
-`src/router/routes.ts` composes every domain's route export into one list — this is the **only** place that
-imports `@domains/*/routes` directly; nothing else does:
-
-```ts
-// src/router/routes.ts
-import { invoicesRoute } from '@domains/invoices/routes/index.ts';
-
-const routes: RouteRecordRaw[] = [authRoutes, dashboardRoute, invoicesRoute, /* ... */ ...fallbackRoutes];
-```
-
-A domain that's conceptually nested under another one (the way `employees` and `profile` nest under `settings`)
-gets spread into that parent route's `children` instead of added top-level — see the `resolvedSettingsRoute`
-pattern already in `routes.ts` for exactly that.
+The router composition module is the registry for domain routes. Other domains should not import route records merely
+to make them reachable.
 
 ---
 
-## 7. Navigation (optional)
+## 6. Add Navigation When Needed
 
-If the domain should appear in the main nav, add its route name to `MAIN_NAVIGATION_CONFIG` in
-`src/shared/configs/navigation.ts`:
-
-```ts
-// src/shared/configs/navigation.ts
-export const MAIN_NAVIGATION_CONFIG = [
-    DASHBOARD_ROUTE_NAME,
-    INVOICES_ROUTE_NAMES.INDEX,
-    // ...
-] as const;
-```
-
-Navigation titles are resolved from route metadata at render time through
-[`useResolvedRoutes`](../src/router/composables/useResolvedRoutes.ts). Route permissions remain in the same metadata and
-are enforced by the router guard chain when navigation occurs, so neither value is duplicated in the navigation config.
+Navigation configuration should reference route names rather than duplicate paths, titles, or permission rules. Keep
+route metadata as the source of truth for page-level information.
 
 ---
 
-## 8. API
+## 7. Add External API Operations When Needed
 
-If the domain talks to a backend resource, add `api.ts` at the domain root, one function per operation, using the
-shared `apiClient`:
+Keep domain-specific operations in the domain's `api.ts` module:
 
 ```ts
-// src/domains/invoices/api.ts
 import { apiClient } from '@api/client.ts';
 
-import type { Invoice } from '@domains/invoices/types/invoice.ts';
+import type { DomainEntity } from './types/entity.ts';
 
 export default {
-    getAll: (params?: Record<string, unknown>) =>
-        apiClient.request<Invoice[]>({ method: 'get', url: 'invoices', params }),
+    getAll: () => apiClient.request<DomainEntity[]>({ method: 'get', url: '<domain-resource>' }),
 };
 ```
 
-Then surface it through the single API entry point, `src/api/index.js` — this is what every call site actually
-imports from, never a domain's `api.ts` directly:
+Expose the module through the application-wide API entry point. This keeps external operations discoverable while the
+domain retains ownership of their implementation.
 
-```js
-// src/api/index.js
-export { default as InvoicesApi } from '@domains/invoices/api.ts';
+---
+
+## 8. Add State and Business Logic
+
+Place logic according to ownership:
+
+- stores own domain state;
+- services own domain runtime capabilities;
+- composables coordinate reusable reactive behavior within the domain;
+- utilities contain stateless operations;
+- configs and enums define stable domain rules and values;
+- types describe the domain's contracts.
+
+Do not create every folder preemptively.
+
+---
+
+## 9. Add Tests
+
+Colocate tests with the domain:
+
+```text
+src/domains/<domain-name>/tests/
 ```
 
----
-
-## 9. Everything else
-
-Add `types/`, `mocks/`, `stores/`, `enums/`, `utils/`, `composables/`, `components/`, `layouts/` only as the domain
-actually needs them — none of these are wired anywhere centrally, they're just conventional folder names a domain
-may use internally. `configs/restrictions.ts` (see `employees` for an example) is the place for business rules that
-aren't permission-shaped (e.g. "at most N of X").
+Test business rules, stores, composables, services, and important components through the same imports used by
+production code.
 
 ---
 
-## 10. Tests
+## Cross-Domain Dependencies
 
-Colocate tests in a local `tests/` folder inside the domain (`src/domains/invoices/tests/`), next to what they
-verify — see [ARCHITECTURE.md](../ARCHITECTURE.md#testing). Stores, composables, and route permission logic are the
-natural things to cover.
+A domain may depend on another domain only when the relationship represents the product. Keep the direction explicit
+and one-way. If two domains require the same independent capability, consider extracting a feature or shared primitive
+rather than making both domains depend on one another.
+
+Linting can detect prohibited imports and file-level cycles, but it cannot determine whether a technically one-way
+dependency represents a valid product relationship. That remains an architectural review decision.
 
 ---
 
-## Cross-domain dependencies
+## Completion Checklist
 
-A domain may depend on another domain only when it represents a real relationship between business areas, and only
-one-way — `employees` depending on `profile` is fine, the reverse creating a cycle is not. ESLint enforces the
-layer boundaries; it won't catch a cross-domain dependency that's technically one-way but doesn't represent an
-actual product relationship — that's a judgment call, not a lint rule.
+- The boundary describes a coherent product area.
+- Route names are globally unique.
+- Views and local components remain owned by the domain.
+- External operations and business rules have clear owners.
+- Cross-domain dependencies are justified and one-directional.
+- Only required folders were created.
+- Relevant behavior is covered by colocated tests.

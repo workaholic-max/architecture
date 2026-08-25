@@ -1,629 +1,467 @@
 # Architecture Guide
 
-This document defines the project structure, layer ownership, dependency rules, and implementation conventions for the
-application. Build product features inside these boundaries unless an architectural change is explicitly requested.
+This document is the architectural contract for a Vue application. It defines ownership, dependency direction,
+composition points, configuration, and verification. It is intentionally independent of product examples and of
+optional facilities such as a styling system, icon renderer, or Progressive Web App support.
 
-The structure scales from small to large projects and is meant as a blueprint to build on: the layered sections below
-define where code lives and how layers may depend on one another, with key import boundaries supported by ESLint.
+Folders described as optional are capabilities, not a checklist. Create one only when its owner has code of that kind.
 
-This guide documents the repository's concrete reference implementation. Choices such as SCSS and Progressive Web App
-support show how real application concerns fit within the structure; they can be adapted or replaced without changing
-the layer ownership and dependency rules that define the architecture.
+### How to Read This Guide
 
----
-
-## [`app`/](src/app)
-
-Responsible exclusively for application bootstrapping and startup.
-
-- Expected to be imported once, and only
-  from [main.ts](src/main.ts)
-- **Never imported by any other layer** — it is the top of the dependency graph
-- Allowed to import all other layers: `router` `api` `domains` `features` `shared` etc
-- May contain local-only modules: `services` `utils` `enums` `composables` `components` etc
+- Statements using **must** or **never** define boundaries that code and tooling are expected to preserve.
+- Statements using **may**, **can**, or **optional** describe supported shapes, not required folders.
+- The creation guides under [`docs/`](docs/README.md) apply this contract to common development tasks.
+- The files under [`references/`](references/README.md) are supplementary and cannot override this contract.
+- When the contract changes, update its documentation, examples, aliases, lint rules, and tests together.
 
 ---
 
-## [`app/`init/](src/app/init)
+## Principles
 
-Responsible for executing all required initialization steps before the application is mounted.
-
-- `router`
-- `pinia`
-- `packages`
-- `services`
-- etc
-
-Services that need startup setup expose an `init()` method. The `services` step discovers every `*.service.ts` and
-`*.service.js` file and runs its `init()`, so adding a new service to startup just means following the naming convention
-— no central registration.
-
-Documented in full, including why the call order matters, in [docs/application-init.md](docs/application-init.md).
+- Organize product code by ownership and responsibility, not only by technical type.
+- Keep dependencies directional and prohibit file-level cycles.
+- Compose application-wide behavior at explicit entry points.
+- Keep route metadata and external-service registration discoverable.
+- Prefer explicit imports and small public surfaces over hidden coupling.
+- Add abstractions when they express real reuse or ownership, not to make folder trees symmetrical.
+- Enforce mechanical rules with tools and preserve design decisions through review.
 
 ---
 
-## [`domains`/](src/domains)
+## Project Map
 
-Encapsulates a specific responsibility and fully owns its internal implementation and business logic.
+```text
+src/
+├─ app/       application composition and startup
+├─ api/       transport client and external-service aggregation
+├─ domains/   navigable product areas and business rules
+├─ features/  reusable product capabilities
+├─ router/    route composition and navigation policy
+├─ shared/    reusable primitives and cross-cutting modules
+├─ assets/    source-controlled assets processed by the build
+└─ main.ts    application entry point
 
-A domain represents an area of the product — a set of related pages and the logic behind them (`dashboard`,
-`onboarding`, `settings`, `employees`, ...) — not a backend-style data model. The name reflects a user-facing area
-rather than an entity, so it is fine for a domain such as `settings` not to map to any single model.
-
-- `api`
-- `types`
-- `mocks`
-- `routes`
-- `stores`
-- `services`
-- `utils`
-- `configs`
-- `enums`
-- `composables`
-- `views`
-- `layouts`
-- `components`
-- etc
-
-Domains may depend on other `domains/` when the dependency represents a real relationship between business areas.
-Cross-domain dependencies must remain one-directional and file-level circular dependencies are forbidden.
-
----
-
-## [`features`/](src/features)
-
-Encapsulates a specific reusable concern and owns its internal implementation.
-
-- `api`
-- `types`
-- `mocks`
-- `stores`
-- `services`
-- `utils`
-- `configs`
-- `enums`
-- `composables`
-- `layouts`
-- `components`
-- etc
-
-Features are consumed by `domains` and higher-level layers; they must never depend on `domains`.
-
----
-
-## [`shared`/](src/shared)
-
-Contains reusable and cross-cutting modules shared across the application — from generic utilities and components to
-application-wide aggregations that require knowledge of other areas.
-
-- `controls`
-- `icons`
-- `types`
-- `stores`
-- `services`
-- `utils`
-- `configs`
-- `enums`
-- `composables`
-- `directives`
-- `layouts`
-- `components`
-- etc
-
-`shared` is intentionally not treated as a strict foundational layer. It may consume modules from other application
-areas and expose reusable modules back to them when needed for cross-cutting concerns such as aggregated types,
-application-wide configurations, layouts, and reusable behavior.
-
-This flexibility must remain intentional. A module belongs in `shared` when it is meaningfully reused or centralizes an
-application-wide concern, not only because its final owner is unclear. File-level circular dependencies remain
-forbidden.
-
----
-
-## [`api`/](src/api)
-
-Defines interaction with backend APIs and other external services.
-
-- The entry point
-  is [index.js](src/api/index.js), which
-  aggregates and exports all available APIs
-- APIs are grouped by resource and represent available operations
-- Cross-cutting (non-domain) resources live in `resources/`; `domains` and `features` define their own `api.ts`, all
-  surfaced through the same entry point
-- An API resource may expose nested structures
-
----
-
-## [`api/`client.ts](src/api/client.ts)
-
-Responsible for configuring and executing requests to external services, providing a single, consistent entry point for
-API communication.
-
----
-
-## [`router/`fallback/](src/router/fallback)
-
-Responsible for routing in system-level cases.
-
-- not found page
-- access denied page
-- error page
-- maintenance page
-- etc
-
----
-
-## [`router/`guards/](src/router/guards)
-
-Responsible for controlling navigation flow.
-
-The entry point
-is [index.ts](src/router/guards/index.ts),
-which provides a function for running route guards in a defined order. The order of guards is significant and directly
-affects how navigation decisions are resolved.
-
-Guards are checked one by one to determine how navigation proceeds:
-
-- `null` — no decision is made and evaluation continues with the next guard
-- `true` — navigation is allowed and further guard evaluation stops
-- `object` — navigation is redirected and further guard evaluation stops
-
----
-
-## [`router/init/`](src/router/init)
-
-Responsible for initializing the application router.
-
-A folder of fragments, one per Vue Router hook it wires up: `before-each.ts` runs the guard chain (and restores the
-last-visited route on first load, if it's still reachable), `after-each.ts` records the current route as
-last-visited, `on-error.ts` recovers from stale-chunk errors after a deploy. `index.ts` is the only file that
-imports any of them and wires all three plus `app.use(router)`.
-
----
-
-## [`router/`routes.ts](src/router/routes.ts)
-
-Responsible for composing the application routing.
-
-Aggregates and combines route definitions exposed by `domains` and `fallback` routing into a single structure that
-represents all available application routes.
-
----
-
-## Implementation Notes
-
-This section highlights practical implementation choices, patterns, and conventions used across the project that are not
-strictly defined by the architectural structure. It provides additional context around how certain concerns are handled
-in practice, capturing decisions and approaches that help keep the codebase consistent, predictable, and easier to
-reason about as it grows.
-
----
-
-### Fonts
-
-Fonts are placed in [public/](public) and preloaded in
-[index.html](index.html) to reduce the chance of FOUT (Flash of
-Unstyled Text) during application startup.
-
-Preloading fonts tells the browser to request them early, improving visual stability and perceived performance,
-especially on slower connections.
-
----
-
-### Section Comments
-
-It's recommended to use reusable section comment blocks to visually separate related blocks of logic. This improves
-readability, helps structure complex code, and makes responsibilities clearer.
-
-For setup instructions and IDE
-configuration: [docs/section-comments.md](docs/section-comments.md)
-
-```
-// ───────────────────────────────────────────────────────
-// Employees state
-// ───────────────────────────────────────────────────────
+configuration/  reusable build and lint configuration fragments
+docs/           portable creation and verification guides
+references/     optional implementation provenance and notes
+tests/          global test setup only
 ```
 
+The top-level shape is stable. Structures inside a layer remain demand-driven.
+
 ---
 
-### Lazy Loading
+## Dependency Model
 
-All domain views are lazy-loaded at the route level using dynamic imports. Fallback views `NotFoundView` &
-`AccessDeniedView` stay eager — they must always be available regardless of network conditions.
+This is a directed ownership model rather than a strict foundational pyramid. Most dependencies point from application
+composition and product areas toward reusable capabilities. A small number of documented composition points
+intentionally aggregate modules from several areas.
+
+| Importing area    | May depend on                                                       | Restrictions                                                                          |
+| ----------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| application entry | `app` and global assets                                             | It creates and starts the application.                                                |
+| `app`             | every lower area                                                    | No lower area may import `app`.                                                       |
+| `router`          | domain route exports, router-local modules, shared modules          | Domains do not own the final route tree.                                              |
+| API aggregation   | the client, cross-cutting resources, domain and feature API modules | Aggregation does not transfer ownership of operations.                                |
+| `domains`         | shared modules, features, API infrastructure, justified domains     | Cross-domain dependencies must be one-directional.                                    |
+| `features`        | shared modules, API infrastructure, independent features            | Features must never import domains.                                                   |
+| `shared`          | reusable modules and intentional application-wide aggregations      | It never imports `app`; any broader knowledge must have a clear coordinating purpose. |
+
+Every area may use external packages. Permission to import something does not make the dependency appropriate:
+ownership and cohesion still decide where it belongs.
+
+File-level circular dependencies are forbidden everywhere. Two domains must also avoid conceptual two-way coupling,
+even when their individual files do not form a detectable cycle. Extract a smaller feature or shared contract when two
+areas would otherwise need each other.
+
+---
+
+## Application Composition: `app/`
+
+`app/` owns the application shell, bootstrapping, and startup sequence. It is imported once by the application entry
+and may import all lower areas; lower areas never import it.
+
+Application-local capabilities can include `components/`, `init/`, `services/`, `configs/`, `utils/`, `enums/`, and
+`composables/`. They remain here when they are meaningful only during application composition.
+
+### Initialization
+
+The entry point creates the application, calls one initialization function, and mounts only after required synchronous
+setup has completed.
+
+```text
+app/init/
+├─ fragments/
+│  ├─ packages.*
+│  ├─ state.*
+│  └─ services.*
+└─ index.*
+```
+
+A typical order is:
+
+1. install state management;
+2. initialize and register the router;
+3. configure third-party packages;
+4. initialize runtime services.
+
+The order is part of the contract: guards may need stores, and startup services may need a registered router. Keep
+order-dependent steps visible in the initialization entry point.
+
+Independent services may be discovered by a `*.service.ts` or `*.service.js` naming convention and initialized when
+they expose `init()`. Discovery removes a manual registry, but a misnamed file is silently excluded and discovery order
+must not be used to express dependencies. Register ordered services explicitly.
+
+This convention is based on the
+[Dev Lab application-initialization pattern](https://github.com/workaholic-max/dev-lab/tree/main/code/application-init).
+
+---
+
+## Product Domains: `domains/`
+
+A domain owns a coherent user-facing product area: its pages, business rules, state, external operations, and local
+components. It does not need to map one-to-one to a backend entity.
+
+```text
+domains/<domain-name>/
+├─ routes/       baseline route records and names
+├─ views/        baseline route-level screens
+├─ api.ts        optional domain-owned external operations
+├─ components/   optional domain-wide components
+├─ composables/  optional reactive coordination
+├─ configs/      optional rules and configuration
+├─ enums/        optional closed vocabularies
+├─ layouts/      optional domain layouts
+├─ mocks/        optional test or development data
+├─ services/     optional runtime capabilities
+├─ stores/       optional domain state
+├─ tests/        optional colocated tests
+├─ types/        optional domain contracts
+└─ utils/        optional stateless logic
+```
+
+Routes and at least one route-level view are the baseline because a domain is navigable. Supporting components used by
+one view may live beside it; components reused throughout the domain belong at the domain root.
+
+Route names are globally unique and should be prefixed by their domain. A domain exports route records, but the router
+owns their final composition. A domain may depend on another domain only when that direction expresses a real product
+relationship and does not create reverse coupling.
+
+See [Adding a Domain](docs/new-domain.md) for the creation workflow.
+
+---
+
+## Reusable Features: `features/`
+
+A feature owns a reusable product capability with a domain-independent contract. Domains and higher composition layers
+consume it; it never imports a domain.
+
+```text
+features/<feature-name>/
+├─ api.ts
+├─ components/
+├─ composables/
+├─ configs/
+├─ enums/
+├─ layouts/
+├─ mocks/
+├─ services/
+├─ stores/
+├─ tests/
+├─ types/
+└─ utils/
+```
+
+All entries are optional. A feature commonly begins with one useful contract—a composable, store, service, utility, or
+component group—and grows only as its responsibility grows. Features do not own route-level views or route
+registration.
+
+If behavior is meaningful only inside one product area, keep it in that domain. If a proposed feature needs a domain
+type or rule, pass a smaller generic contract or reconsider its ownership; do not move domain concepts into `shared`
+merely to make an import compile.
+
+See [Adding a Feature](docs/new-feature.md) for the creation workflow.
+
+---
+
+## Shared Capabilities: `shared/`
+
+`shared/` owns reusable primitives and cross-cutting modules. It may include `components/`, `composables/`, `configs/`,
+`controls/`, `directives/`, `enums/`, `icons/`, `layouts/`, `services/`, `stores/`, `tests/`, `types/`, and `utils/`.
+
+`shared` is intentionally not treated as a perfectly isolated bottom layer. Alongside domain-independent primitives,
+it may contain an application-wide coordinator that knows about routes, permissions, or product contracts when no
+narrower owner can perform that coordination. Such knowledge must be deliberate, one-directional, and cycle-free.
+
+Do not use `shared` as a temporary home for code with unclear ownership. A module belongs here only when it is genuinely
+reusable or centralizes a cross-cutting concern.
+
+### Environment Configuration
+
+Client environment access is centralized in a typed shared configuration module. Application code reads that module
+instead of scattering `import.meta.env` access through the source tree.
+
+- Declare client variables in the environment type file.
+- Use the build tool's required public prefix, such as `VITE_`.
+- Document required names in `.env.example` without committing real values.
+- Mirror environment files locally or in deployment configuration; keep them out of version control.
+- Treat every variable embedded in a browser bundle as public. API keys that must remain secret belong on a server,
+  regardless of the variable name.
+
+---
+
+## External Communication: `api/`
+
+`api/` owns transport infrastructure and the discoverable external-service surface.
+
+```text
+api/
+├─ client.*      configured transport and common request behavior
+├─ index.*       aggregation of externally callable modules
+├─ resources/    cross-cutting operations with no domain or feature owner
+└─ types/        transport-specific contracts
+```
+
+Domain- and feature-specific operations stay in their owner's `api.ts`; the API entry point may re-export them without
+taking ownership. This separates operation ownership from discoverability.
+
+The client centralizes the base URL, credentials, headers, serialization, cancellation, and truly global response
+behavior. Business-specific error handling remains at the call site or in the owning area. Requests should return
+typed data rather than leaking the transport library's full response shape through product code.
+
+When requests are cancellable, cancellation has two layers:
+
+- the client creates and exposes a cancellation mechanism per request;
+- a component-scoped composable tracks requests and cancels pending work on unmount.
+
+Intentional cancellation and genuine failure must remain distinguishable. A cancelled request may resolve to a known
+sentinel such as `null`; other failures continue to reject.
+
+The single-client and abortable-request conventions are based on
+[Dev Lab's Axios client](https://github.com/workaholic-max/dev-lab/tree/main/code/axios-api-client) and
+[abortable request tracking](https://github.com/workaholic-max/dev-lab/tree/main/code/use-abortable-request).
+
+---
+
+## Navigation: `router/`
+
+`router/` owns route composition and system-level navigation behavior.
+
+```text
+router/
+├─ composables/  reusable route resolution helpers
+├─ enums/        optional router-wide names and patterns
+├─ fallback/     system routes and always-available fallback views
+├─ guards/       ordered navigation policies
+│  ├─ fragments/
+│  └─ index.*
+├─ init/         router lifecycle registration
+│  ├─ fragments/
+│  └─ index.*
+├─ tests/        guard and navigation-policy tests
+├─ types/        route metadata and guard contracts
+├─ utils/        route persistence and permission helpers
+├─ index.*       router instance
+└─ routes.*      final route tree
+```
+
+### Route Composition and Metadata
+
+Each domain owns and exports its route records. The central route module combines them with system fallbacks and may
+nest domain routes without changing ownership of their source files.
+
+Route metadata is the source of truth for page-level information such as titles and permission requirements.
+Navigation configuration references route names and resolves metadata through the router instead of duplicating paths,
+titles, or access rules. Product views are lazy-loaded; small system fallbacks may remain eager so an error state does
+not depend on another dynamic request.
+
+### Guards
+
+Guards are small policy fragments evaluated in a declared order. A guard contract distinguishes three outcomes:
+
+- `null` — no decision; continue to the next guard;
+- `true` — explicitly accept and stop;
+- a route location — redirect and stop.
+
+The resolver adapts those outcomes to the router's expected return value. Authentication runs before authorization
+when authorization assumes an authenticated account. Whether same-name navigation should skip guard evaluation is a
+product policy; if used, document it because parameter or query changes will not trigger revalidation.
+
+### Router Initialization
+
+One initialization function registers lifecycle hooks and installs the router:
+
+- `beforeEach` runs guards and optional first-navigation restoration;
+- `afterEach` records successful navigation state or performs post-navigation work;
+- `onError` handles router-level failures.
+
+Hook fragments are private to the initializer. Recovery for a stale lazy-loaded chunk should match only known chunk
+load failures; unrelated router errors must remain visible instead of being converted into reloads.
+
+### Fallbacks
+
+Not-found, access-denied, generic-error, and maintenance screens are system navigation states, so they belong to the
+router rather than a product domain. Include only the states the application uses and place the catch-all route last.
+
+These conventions are based on the Dev Lab entries for
+[router initialization](https://github.com/workaholic-max/dev-lab/tree/main/code/router-init),
+[ordered guards](https://github.com/workaholic-max/dev-lab/tree/main/code/router-guards), and
+[resolved route metadata](https://github.com/workaholic-max/dev-lab/tree/main/code/resolved-route-meta).
+
+---
+
+## Services
+
+A service owns one runtime capability behind an explicit public API. It lives in the narrowest domain, feature, or
+shared area that owns that capability.
+
+Services requiring startup work expose `init()`. Initialization should be idempotent when repeated calls are possible,
+and a service should fail clearly if a required initialization step was skipped. A service with no startup work can be
+used directly even if it follows the `*.service.*` naming convention.
+
+See [Adding a Service](docs/new-service.md) for placement, initialization, and testing guidance.
+
+---
+
+## Public Modules and Private Fragments
+
+A complex module may split one coordinated whole into focused files under `fragments/`. Only the assembling entry point
+imports those fragments; consumers use the public module.
+
+```text
+<module>/
+├─ fragments/
+│  ├─ first-part.*
+│  └─ second-part.*
+└─ index.*
+```
+
+Fragments use relative imports internally and are never imported through layer aliases. This is useful for ordered
+startup steps, guard chains, router hooks, and compound components whose pieces are not meaningful independently. Two
+trivial functions do not need a fragments directory.
+
+The convention is based on
+[Dev Lab fragments](https://github.com/workaholic-max/dev-lab/tree/main/code-style/fragments-convention).
+
+---
+
+## Imports, Aliases, and Boundaries
+
+Dedicated aliases make layer crossings visible:
+
+- `@router` and `@router/*`
+- `@api` and `@api/*`
+- `@domains/*`
+- `@features/*`
+- `@shared/*`
+
+The root `@/` alias is reserved for source paths without a dedicated layer alias, such as the `app` import from the
+entry point. It must not bypass a specific alias.
+
+Keep runtime aliases aligned across Vite, TypeScript, and ESLint resolution. In this repository Vite and ESLint share
+the JavaScript alias definition, while TypeScript mirrors it in `paths`. Adding or renaming an alias requires updating
+every resolver before code begins using it.
+
+Import rules:
+
+- use aliases across layers and relative imports for nearby private files;
+- import `app` only from the application entry point;
+- never import domains from features;
+- keep fragments private and relative;
+- use a public entry point when consumers should not know a module's internals;
+- include explicit extensions for local source and stylesheet imports;
+- sort imports consistently and remove unused imports;
+- reject unresolved imports, duplicate imports, and file-level cycles.
+
+### ESLint as Architectural Enforcement
+
+Linting enforces the mechanical portion of the model: dedicated aliases, the application boundary, the
+feature-to-domain prohibition, fragment privacy, module entry points where declared, extensions, ordering, and cycle
+detection. It also applies Vue and accessibility rules, with type-aware linting for TypeScript source files.
+
+Vue Single-File Components receive Vue-appropriate linting and are type-checked by `vue-tsc`. Prettier compatibility
+must be applied last so style rules do not conflict with formatting. Linting cannot decide whether a permitted
+cross-domain dependency is good design; that remains a review decision.
+
+---
+
+## Build Configuration and Auto-Imports
+
+Build and lint configuration is split into named fragments under `configuration/` so the root configuration files show
+composition rather than implementation detail.
+
+Vite composes the Vue plugin, aliases, test configuration, and any optional plugins. Optional plugins should remain in
+their own configuration modules so they can be removed without rewriting the architecture.
+
+Auto-imports are intentionally allowlisted. Reserve them for stable, frequently used framework primitives and generate
+their TypeScript declarations into a checked or generated declarations folder. Project modules, business logic, and
+less common framework APIs use explicit imports. A curated list keeps source readable and prevents a plugin from
+silently turning broad libraries into globals.
+
+TypeScript uses strict checking and bundler-compatible resolution. JavaScript may coexist during migration, but Vue and
+TypeScript correctness is verified by `vue-tsc`; IDE inference alone is not the verification contract.
+
+---
+
+## Testing
+
+Tests are colocated in a local `tests/` folder under the area they verify. They follow the same aliases and dependency
+rules as production code, preserving ownership during refactors.
+
+Natural units include stores, composables, business utilities, permission policies, guards, services, and reusable
+components. Test public behavior rather than private fragments.
+
+The top-level `tests/` folder contains global setup only: shared stubs, package configuration, matchers, or environment
+polyfills. The test runner uses a browser-like environment for component behavior and reuses build aliases so test and
+production resolution do not drift.
+
+---
+
+## Development and Delivery Safeguards
+
+Repository safeguards provide feedback at different scopes:
+
+1. editor formatting and lint integration gives immediate feedback;
+2. the Husky-managed pre-commit hook formats and lints staged files, then runs a project type-check;
+3. local verification runs formatting, linting, type-checking, tests, and a production build;
+4. continuous integration repeats the repository-wide contract from a locked dependency graph.
+
+The GitHub Actions workflow runs for pull requests and pushes to the main branch, uses read-only repository contents,
+cancels superseded runs for the same ref, installs the pinned package-manager and Node versions, and installs from the
+lockfile before verification. The production build includes type-checking, so CI cannot publish a bundle that failed
+the declared type contract.
+
+Pre-commit checks optimize developer feedback; they do not replace the full suite because staged-file checks cannot
+cover unchanged dependencies, all tests, or production bundling.
+
+See [Code Style and Verification](docs/code-style.md) for the command-level workflow.
+
+---
+
+## Code Organization Preferences
+
+Preferences improve scanability without changing layer ownership.
+
+Section comments are useful in a file with several real concerns—types, state, lifecycle, handlers, and implementation.
+Short, single-purpose files should not receive artificial dividers.
 
 ```ts
-component: () => import('@domains/dashboard/views/DashboardView.vue');
+// ───────────────────────────────────────────────────────
+// State
+// ───────────────────────────────────────────────────────
 ```
 
-`router.onError()` handler
-in [router/init/fragments/on-error.ts](src/router/init/fragments/on-error.ts) catches chunk load
-failures and reloads the page, recovering from transient network issues without leaving the user in a broken state.
-
-All `node_modules` are consolidated into a single `vendor` chunk via `manualChunks`
-in [vite.config.ts](vite.config.ts), keeping it independently
-cached from application code.
+The convention comes from
+[Dev Lab section comments](https://github.com/workaholic-max/dev-lab/tree/main/code-style/section-comments).
 
 ---
 
-### Testing
-
-Unit and component testing is configured with [Vitest](https://vitest.dev/),
-[@vue/test-utils](https://test-utils.vuejs.org/) (jsdom environment), and
-[@pinia/testing](https://pinia.vuejs.org/cookbook/testing.html) for stubbing stores when testing components — reusing
-the Vite config so path aliases resolve in tests.
-
-Tests are co-located with the code they verify. When a layer needs tests, it keeps them in a local `tests/` folder
-(`domains/<domain>/tests/`, `features/<feature>/tests/`, `shared/tests/`, `router/tests/`, ...), next to the module
-under test. This mirrors how the architecture is organized — by area, not by technical type — so a domain or feature
-can stay self-contained: its tests live with it, move with it, and are deleted with it. The natural units to cover are
-stores, composables, and components.
-
-Because tests live inside the layer they belong to, they are ordinary source files: they obey the same ESLint rules,
-import boundaries, and type-checking as everything else — nothing is excluded. A unit test imports its module exactly
-as production code would, so it never needs to cross a boundary in the first place.
-
-Global, cross-cutting test configuration lives in
-[tests/setup.ts](tests/setup.ts), wired through Vitest's
-`setupFiles` in [vite.config.ts](vite.config.ts); it runs once
-before the suite and is the place for global stubs, plugins, mocks, or custom matchers. The top-level `tests/` folder
-holds only this configuration — never test files. `passWithNoTests` keeps the test step green when none exist, so the
-project never forces you to have any.
-
----
-
-### Progressive Web App
-
-The application is installable and works offline via [vite-plugin-pwa](https://vite-pwa-org.netlify.app/), configured
-in [configuration/vite/plugins/pwa.js](configuration/vite/plugins/pwa.js) and wired into
-[vite.config.ts](vite.config.ts), plus a set of hand-authored `<head>` tags in [index.html](index.html) covering
-install presentation and social-link previews that the generated manifest can't reach on its own.
-
-Startup is gated on the service worker via
-[shared/services/service-worker.service.ts](src/shared/services/service-worker.service.ts), called from
-[app/App.vue](src/app/App.vue); an iOS-standalone pull-to-refresh replacement lives in
-[shared/services/pull-to-refresh.service.ts](src/shared/services/pull-to-refresh.service.ts); and
-[app/components/OccurredErrorModal.vue](src/app/components/OccurredErrorModal.vue) accounts for the offline case.
-
-Documented in full, with the reasoning behind each piece and the dev-lab entries it's drawn from, in
-[docs/progressive-web-app.md](docs/progressive-web-app.md).
-
----
-
-### [vite.config.ts](vite.config.ts)
-
-The configuration composes the Vue, auto-import, and PWA plugins; applies the module aliases that reflect the
-architectural layers and shared SCSS resources; keeps third-party dependencies in a separate `vendor` chunk; and shares
-the same aliases and jsdom setup with Vitest.
-
----
-
-### [configuration/vite/plugins/auto-import.js](configuration/vite/plugins/auto-import.js)
-
-A curated set of frequently used Vue and Vue Router APIs is auto-imported via unplugin-auto-import, so they are
-available without an explicit import statement:
-
-- `vue` — `ref`, `reactive`, `computed`, `watch`, `nextTick`, `useTemplateRef`, and the lifecycle hooks
-- `vue-router` — `useRouter`, `useRoute`
-
-The list is an intentional allowlist; anything outside it is imported normally. Type declarations are generated into
-[dts/auto-imports.d.ts](dts/auto-imports.d.ts), keeping
-TypeScript and the editor aware of the injected globals.
-
----
-
-### [eslint.config.js](eslint.config.js)
-
-This configuration helps maintain a clean codebase, helps prevent architectural violations, and ensures that project
-structure and conventions are applied consistently.
-
-- Explicit file extensions are required for JavaScript, TypeScript, Vue, and SCSS imports to keep dependencies clear
-- Imports are sorted into a consistent order, grouped by layer and module type
-- Layer-specific aliases (`@router`, `@api`, `@domains`, `@features`, `@shared`) are enforced, while root-level `@/`
-  imports into these layers are intentionally forbidden.
-- Imports from `app` are forbidden outside the application entry point
-- Feature-to-domain alias imports are forbidden
-- Local-only `fragments` cannot be imported through absolute aliases
-- File-level circular dependencies are forbidden
-- Vue template accessibility (labels, keyboard interaction, valid ARIA) is linted via
-  `eslint-plugin-vuejs-accessibility`
-- Type-aware rules run on TypeScript files via `recommendedTypeChecked`
-
-Aliases are preferred for cross-folder dependencies. Relative imports remain appropriate for nearby implementation
-details and are not required for every internal module.
-
----
-
-### [.github/workflows/ci.yml](.github/workflows/ci.yml)
-
-Continuous integration runs on every push to `main` and on every pull request via GitHub Actions.
-
-It installs dependencies from the lockfile and runs four required checks:
-
-- `format:check` — Prettier
-- `lint:check` — ESLint (architecture boundaries + code quality)
-- `test` — the Vitest suite (passes when there are no test files)
-- `build` — type-checks with `vue-tsc`, then builds for production
-
-Husky runs formatting and linting through `lint-staged`, then runs a full type-check locally on commit for fast
-feedback. CI re-runs the required checks across the whole project, adds the production build, and provides the
-repository-wide verification result.
-
----
-
-### [api/](src/api)
-
-Serves as the single reference for all available interactions with backend and external services, keeping their naming
-and usage consistent and predictable.
-
----
-
-### [api/client.ts](src/api/client.ts)
-
-The API client supports abortable requests.
-
-Request cancellation is handled
-via [shared/composables/useAbortableRequest.ts](src/shared/composables/useAbortableRequest.ts)
-allowing requests to be automatically aborted when the user leaves a page or manually cancelled using `abortRequests`,
-for example when a newer request replaces a previous one.
-
-```
-const { sendAbortableRequest } = useAbortableRequest();
-
-onBeforeMount(() => {
-    sendAbortableRequest(EmployeesApi.getAll())
-        .then(() => {})
-        .catch(() => {});
-});
-```
-
-Documented in full — the shared instance, cancellation, 401-triggered reload flow, and the auth header that is not wired
-in yet — in [docs/api-client.md](docs/api-client.md).
-
----
-
-### [assets/styles/abstracts/variables/](src/assets/styles/abstracts/variables)
-
-Variables are grouped by concern (spacing, colors, breakpoints, etc.) and exposed through a single entry point using
-Sass `@forward`. Each group is prefixed at the entry level (e.g. `@forward './spacing.scss' as space-*`) to keep usage
-explicit and prevent naming collisions. Inside individual variable files, names are intentionally kept simple and
-unprefixed (e.g. `base`, `md`, `lg`). Context is provided by that prefix rather than repeating prefixes within each
-file, improving readability and maintainability.
-
-For why this is split into per-category partials behind a prefixed barrel, and why the build-tool alias resolves to a
-Sass module path rather than just the equivalent JS one, see [docs/scss-tokens.md](docs/scss-tokens.md).
-
-Usage example:
-
-```
-<style lang="scss">
-@use '@scss-vars' as vars;
-
-h2 {
-  margin-bottom: vars.$space-base;
-  font-size: vars.$font-size-md;
-  color: vars.$color-primary;
-}
-</style>
-```
-
----
-
-### [assets/styles/abstracts/functions/\_index.scss](src/assets/styles/abstracts/functions/_index.scss)
-
-Usage example:
-
-```
-<style lang="scss">
-@use '@scss-vars' as vars;
-@use '@scss-functions' as functions;
-
-ul {
-  flex-basis: functions.flex-basis(4, vars.$space-sm);
-}
-</style>
-```
-
----
-
-### [assets/styles/abstracts/mixins/\_index.scss](src/assets/styles/abstracts/mixins/_index.scss)
-
-Usage example:
-
-```
-<style lang="scss">
-@use '@scss-vars' as vars;
-@use '@scss-mixins' as mixins;
-
-button {
-  border: 1px solid transparent;
-
-  @include mixins.transition(border-color, color);
-
-  @include mixins.hover {
-    border-color: vars.$color-primary;
-    color: vars.$color-primary;
-  }
-}
-</style>
-```
-
----
-
-### [router/composables/useResolvedRoutes.ts](src/router/composables/useResolvedRoutes.ts)
-
-This composable centralizes access to `router.resolve()` results and avoids repeated resolution of the same route.
-Resolved values are cached by route name and reused across the application to ensure consistent access to route metadata
-and generated URLs.
-
-It exposes focused helpers for retrieving commonly needed information, such as:
-
-- resolved route metadata (e.g. title, permissions)
-- resolved route hrefs for navigation (e.g. window.location.href = ...)
-
----
-
-### [shared/composables/useEntitySearch.ts](src/shared/composables/useEntitySearch.ts)
-
-Provides a minimal reusable search composable for filtering flat entity collections by one or multiple string fields.
-
-The composable is intentionally designed for simple entity filtering scenarios where entities consist of flat searchable
-properties such as `name`, `email`, `code`, etc.
-
-Search keys are fully type-safe and restricted to string-based entity fields.
-
-Usage example:
-
-```ts
-const { searchModel, getFilteredEntities } = useEntitySearch<Department>({
-    searchKeys: ['name'],
-});
-
-const filteredDepartments = computed(() => getFilteredEntities(departments.value));
-```
-
-This composable is intentionally limited to flat collections and simple string matching to keep behavior predictable and
-implementation lightweight.
-
----
-
-### [shared/directives/click-outside.ts](src/shared/directives/click-outside.ts)
-
-In this project, directives are not globally registered. They must be explicitly imported and used only where needed.
-This keeps usage transparent and prevents hidden dependencies across the application.
-
-To keep directives predictable and reusable, they must follow a consistent export pattern. Each directive is exported as
-a named constant, using the `v` prefix followed by a PascalCase name. The export name directly defines how the directive
-is used in templates, automatically mapping to kebab-case.
-
-- Example: exported `vClickOutside`, usage `v-click-outside`
-- Naming must be predictable and kebab-case compatible
-- Directives may expose additional configuration (e.g. enums)
-
----
-
-### [shared/icons/](src/shared/icons)
-
-This module provides a centralized icon rendering system based on CSS `mask-image` and `background-image`, designed to
-reduce DOM and rendering overhead caused by large amounts of inline SVG components in repeated lists and dynamic UI
-sections.
-
-Icons are rendered through a single base component `Icon.vue` using CSS-driven image masking rather than inline SVG
-nodes. This keeps the DOM lightweight while still supporting runtime color customization, contextual size overrides, and
-multicolor icon rendering.
-
-All icon names, rendering modes, and directional logic are defined in a typed
-registry ([registry.ts](src/shared/icons/registry.ts)) and
-documented in detail in [docs/icons.md](docs/icons.md)
-
----
-
-### [shared/components/modal/](src/shared/components/modal)
-
-This implementation is what this project calls a `construction`
-
-Exposes a single public entry
-point [index.js](src/shared/components/modal/index.js)
-that
-exports an object containing all fragments.
-
-- Fragments are not intended to be imported directly
-- Fragments have a defined role and composition order
-
-In this case, the modal is composed of an overlay and a dialog. These parts are designed to work together and are
-meaningful only as a whole. Separating them into fragments allows responsibilities to be clearly divided while keeping
-their composition controlled and predictable.
-
-```
-import Modal from '@shared/components/modal/index.js';
-
-<Modal.Overlay>
-  <Modal.Dialog>
-    ...
-  </Modal.Dialog>
-</Modal.Overlay>
-```
-
-A similar approach can be applied to other complex UI elements, such as form fields. For example, a form field may be
-composed of a label, input control, validation message, icons, hints, or overlays. While these parts can vary in
-placement and configuration, they are most meaningful when used together as a single constructed unit. Implementing them
-as a construction allows each fragment to focus on its own responsibility while keeping the overall composition
-flexible, consistent, and easy to reason about.
-
----
-
-### [shared/configs/limits.ts](src/shared/configs/limits.ts)
-
-Centralized business limits for the application.
-
-This configuration defines global constraints such as text length boundaries, numeric ranges, and entity-level limits.
-These values represent business rules, not implementation details, and are expected to change as product requirements
-evolve. It serves as a single source of truth for constraints that define what the system allows.
-
----
-
-### [shared/controls/body-scroll.js](src/shared/controls/body-scroll.js)
-
-Controls document body scroll locking in a predictable and safe way.
-
-This `control` is responsible for enabling and disabling body scrolling when required, for example when modals,
-overlays, or other blocking UI elements are displayed.
-
-This logic is implemented as a `control` rather than a service because it:
-
-- manages a small, isolated piece of UI state
-- exposes explicit imperative actions `lock`, `unlock`
-- has no startup lifecycle or dependencies beyond the document itself
-
-Its responsibility is strictly limited to coordinating scroll state, not managing application data or behavior.
-
----
-
-### [shared/controls/interaction.js](src/shared/controls/interaction.js)
-
-Controls user interaction with the document in a predictable and temporary way.
-
-This `control` is responsible for disabling all user interactions, for example when overlays, modals, or transitional UI
-states are active and accidental interaction must be prevented.
-
-Interaction locking is expected to be short-lived and intentional. It is designed to protect user experience during
-critical UI moments.
-
-Typical use cases include:
-
-- preventing interaction with the rest of the page while an overlay is active
-- avoiding accidental clicks during modal opening
-
----
-
-### [shared/layouts/BaseLayout.vue](src/shared/layouts/BaseLayout.vue)
-
-This layout demonstrates how routing metadata is used as the single source of truth for page-level information such as
-titles.
-
-Navigation is rendered from a simple configuration containing only route names. Titles are resolved dynamically through
-[router/composables/useResolvedRoutes.ts](src/router/composables/useResolvedRoutes.ts), while the router guard chain
-enforces permissions from the same route metadata when navigation occurs. This avoids duplicating either value in the
-navigation configuration.
-
----
-
-### [shared/services/device.service.ts](src/shared/services/device.service.ts)
-
-This service is responsible for determining and exposing information about the current device environment.
-
-At the moment, this includes resolving the active device type. The service must be initialized before it is used.
-
-Initialization prepares required media queries and listeners and is expected to be executed during application startup
-as part of the app initialization flow.
-
----
-
-### [shared/services/local-storage.service.ts](src/shared/services/local-storage.service.ts)
-
-This service centralizes access to `localStorage` to ensure safe, predictable behavior and avoid scattering direct
-storage usage across the application.
-
-Stored values are automatically namespaced using a predefined prefix, preventing key collisions with other applications
-or environments and keeping stored data clearly identifiable.
-
-Also handles common edge cases, such as invalid JSON data or unavailable storage capacity.
+## Optional Facilities
+
+Styling tokens, icon rendering, PWA support, fonts, favicons, social metadata, UI controls, directives, and individual
+shared utilities can demonstrate good implementations without defining the layer model. Keep them in the layer that
+owns them, document non-obvious behavior near the implementation, and remove them freely when a product does not need
+them.
+
+Repository-specific provenance and optional choices live under [`references/`](references/README.md). The architecture
+and the portable guides under [`docs/`](docs/README.md) remain complete without that folder.

@@ -1,17 +1,76 @@
 # Adding a Service
 
-A service owns a cross-cutting runtime concern — device detection, local storage access, service-worker coordination,
-that kind of behavior. Services that need startup initialization participate in the project's auto-discovery mechanism,
-so adding one does not require a central registration list.
+A service owns a runtime capability behind an explicit public API. It belongs to the narrowest layer that owns that
+capability: a domain, a feature, or `shared`.
 
 ---
 
-## 1. Naming convention drives startup registration
+## 1. Choose the Owner
 
-Any file matching `*.service.ts` or `*.service.js`, anywhere under `src/`, is discovered automatically:
+Use the location that matches responsibility:
+
+- `src/domains/<domain-name>/services/` for domain-specific behavior;
+- `src/features/<feature-name>/services/` for behavior owned by a reusable feature;
+- `src/shared/services/` for application-wide or domain-independent behavior.
+
+Do not place a service in `shared` only because its final owner is unclear.
+
+---
+
+## 2. Decide Whether Startup Initialization Is Required
+
+A service that can operate immediately needs only its public methods:
 
 ```ts
-// src/app/init/fragments/services.ts
+const execute = () => {
+    // Perform the owned runtime operation.
+};
+
+export const exampleService = {
+    execute,
+};
+```
+
+A service that requires listeners, external state, or package setup exposes an `init()` method:
+
+```ts
+let isInitialized = false;
+
+const init = () => {
+    if (isInitialized) return;
+
+    isInitialized = true;
+    // Perform one-time setup.
+};
+
+const execute = () => {
+    if (!isInitialized) {
+        throw new Error('exampleService is not initialized.');
+    }
+
+    // Perform the owned runtime operation.
+};
+
+export const exampleService = {
+    init,
+    execute,
+};
+```
+
+Initialization should be idempotent unless repeated initialization is explicitly unsupported.
+
+Failing loudly when a required service is used before initialization is deliberate. Returning a silent fallback hides
+an invalid startup order and usually produces a less understandable downstream failure.
+
+---
+
+## 3. Participate in Startup Discovery
+
+Files matching `*.service.ts` or `*.service.js` may be discovered during application startup:
+
+```ts
+type ServiceExport = { init?: () => void };
+
 const serviceModules = import.meta.glob<Record<string, ServiceExport>>(
     ['/src/**/*.service.js', '/src/**/*.service.ts'],
     { eager: true }
@@ -26,74 +85,46 @@ export const initServices = () => {
 };
 ```
 
-This runs once, during app startup (see `app/init`). Adding a new service that needs setup work means naming the file
-`*.service.ts` and exporting something with an `init()` method; there is no central registration list to update.
+The naming convention makes a service discoverable. Exports without `init()` are safely skipped. Services with
+ordering requirements should be registered explicitly instead of relying on discovery order.
+
+Discovery runs during application startup, so adding an independent startup service requires no central registration
+change: use the naming convention and expose `init()`.
 
 ---
 
-## 2. Where it lives
+## 4. Keep the Public API Focused
 
-- `src/shared/services/` — cross-cutting, used by more than one domain or feature (`device.service.ts`,
-  `local-storage.service.ts`, `document.service.ts`, and `pull-to-refresh.service.ts` are current examples).
-- `src/domains/<domain>/services/` or `src/features/<feature>/services/` — if the service is genuinely scoped to
-  one domain or feature, it lives there instead. The glob pattern discovers it either way; placement is purely
-  about which layer actually owns it, same as any other module.
-
-A service that needs no startup work can still live under `services/` and follow the naming convention for ownership and
-discoverability. Auto-discovery imports the module but safely skips exports without an `init()` method, as demonstrated
-by `service-worker.service.ts` and `local-storage.service.ts`.
-
----
-
-## 3. Shape
-
-Export an object (or several named exports) with an `init()` method for anything that needs setup, plus whatever
-public functions the service exposes. `device.service.ts` is the fullest real example — worth reading directly
-rather than duplicating here, but the shape is:
-
-```ts
-// src/shared/services/example.service.ts
-let state: SomeState | null = null;
-
-const ensureInitialized = () => {
-    if (state === null) {
-        throw new Error('exampleService is not initialized.');
-    }
-
-    return state;
-};
-
-const init = () => {
-    state = /* set up whatever this service owns */;
-};
-
-export const exampleService = {
-    init,
-    // ...public methods, each calling ensureInitialized() first
-};
-```
-
-Throwing from `ensureInitialized()` rather than silently returning a default is deliberate — a service used before
-`initServices()` has run is a real bug, and failing loudly surfaces it immediately instead of producing a confusing
-downstream symptom.
-
----
-
-## 4. Consuming it
-
-Import the exported object directly, same as anything else — there's no special access pattern once a service is
-initialized:
+Export the service object directly from its owning layer. Keep internal state and helper functions private unless they
+form part of the service contract.
 
 ```ts
 import { exampleService } from '@shared/services/example.service.ts';
 
-exampleService.someMethod();
+exampleService.execute();
 ```
 
 ---
 
-## 5. Tests
+## 5. Add Tests
 
-Colocated, same convention as everywhere else in this project — a local `tests/` folder next to the service file.
-Since a service typically holds module-level state (`state` above), tests usually need to call `init()` explicitly
-before asserting behavior, and should not assume a previous test's `init()` call is still in effect.
+Colocate tests with the owning layer. Initialize the service explicitly in tests when required, and reset module-level
+state when isolation between tests matters. A test must not assume that another test initialized the service first.
+
+Test:
+
+- initialization and idempotency;
+- behavior before required initialization;
+- public methods;
+- cleanup of listeners or external resources when applicable.
+
+---
+
+## Completion Checklist
+
+- The service lives in the narrowest correct owner.
+- Its public API represents one runtime capability.
+- `init()` exists only when startup work is required.
+- Initialization order is explicit when dependencies exist.
+- Internal state is not exposed unnecessarily.
+- Relevant behavior is covered by colocated tests.

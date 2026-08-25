@@ -1,79 +1,157 @@
 # Adding a Feature
 
-A feature encapsulates a reusable concern and owns its internal implementation — it's consumed by `domains` and
-higher-level layers, but a feature must **never** depend on a domain. That one-directional rule is the whole reason
-the layer exists: if what you're building only makes sense wired into one specific domain, it isn't a feature, it
-belongs inside that domain instead. `src/features/forms/` (form-state helpers usable by any domain's forms) is a
-real, if small, example already in this codebase.
+A feature owns a reusable application capability. It is consumed by domains or higher-level composition, but it must
+never depend on a domain.
+
+If the behavior makes sense only inside one business area, keep it in that domain. Move it into `features/` when the
+capability has an independent responsibility and a reusable contract.
 
 ---
 
-## 1. Create the folder
+## 1. Choose the Owner
 
-```
+Before creating the folder, confirm that the capability:
+
+- is not a route-level product area;
+- is not merely a generic technical primitive;
+- can be described without naming a specific domain;
+- does not require domain imports to function.
+
+---
+
+## 2. Create the Folder
+
+```text
 src/features/<feature-name>/
 ```
 
-A feature has no `routes/` or `views/` — those are domain-only, since a feature isn't a page. Everything else a
-domain can have, a feature can too, added only as needed: `api`, `types`, `mocks`, `stores`, `services`, `utils`,
-`configs`, `enums`, `composables`, `layouts`, `components`. See
-[ARCHITECTURE.md](../ARCHITECTURE.md#features) for the full layer definition.
+Add only the structures the feature needs:
+
+```text
+<feature-name>/
+├─ api.ts
+├─ components/
+├─ composables/
+├─ configs/
+├─ enums/
+├─ layouts/
+├─ mocks/
+├─ services/
+├─ stores/
+├─ tests/
+├─ types/
+└─ utils/
+```
+
+Features do not contain route-level views or route registration.
 
 ---
 
-## 2. Build the implementation
+## 3. Define the Public Capability
 
-Most features start as a single composable, store, or small component group — there's no required starting file the
-way a domain requires `routes/`. `src/features/forms/composables/useEntityFormState.ts` is representative: one
-focused file solving one reusable problem, exported for any domain to import.
+Most features begin with one composable, store, service, utility, or component group. Define the owned contract first
+and keep the initial API focused:
 
 ```ts
-// src/features/<feature-name>/composables/useSomething.ts
-export const useSomething = () => {
-    // ...
+// types/feature.ts
+export interface FeatureOptions {
+    enabled: boolean;
+}
+```
+
+```ts
+// composables/useFeatureState.ts
+import { ref } from 'vue';
+
+import type { FeatureOptions } from '../types/feature.ts';
+
+export const useFeatureState = (options: FeatureOptions) => {
+    const isEnabled = ref(options.enabled);
+
+    return { isEnabled };
 };
 ```
 
----
-
-## 3. Import it from a domain
-
-A domain reaches a feature through the feature's own path alias, never a relative path across the layer boundary:
+Use a feature-level entry point when consumers should not import internal files directly:
 
 ```ts
-// inside a domain
-import { useEntityFormState } from '@features/forms/composables/useEntityFormState.ts';
-```
-
-The reverse — a feature importing anything under `@domains/*` — is forbidden and enforced by ESLint
-(`ARCHITECTURE.md`'s eslint section calls this out explicitly: "Feature-to-domain alias imports are forbidden").
-If a feature genuinely needs domain-specific data, that's a sign the logic belongs in `shared` (if it's a
-cross-cutting concern with no single owner) or directly in the domain that needs it, not in `features`.
-
----
-
-## 4. API, if the feature talks to a backend resource
-
-Same shape as a domain's `api.ts` — one function per operation through the shared `apiClient` — surfaced through the
-same single entry point, `src/api/index.js`:
-
-```js
-// src/api/index.js
-export { default as SomethingApi } from '@features/<feature-name>/api.ts';
+export { useFeatureState } from './composables/useFeatureState.ts';
+export type { FeatureOptions } from './types/feature.ts';
 ```
 
 ---
 
-## 5. Tests
+## 4. Consume the Feature
 
-Colocated, same convention as domains: a local `tests/` folder inside the feature
-(`src/features/<feature-name>/tests/`), next to the composable, store, or component it verifies.
+A domain imports the feature through the feature alias or its public entry point. Do not use a relative path to cross a
+layer boundary.
+
+```ts
+import { useFeatureState } from '@features/<feature-name>/index.ts';
+```
+
+The feature remains unaware of which domains consume it.
 
 ---
 
-## When it's not actually a feature
+## 5. Keep Dependencies Directional
 
-If you find yourself reaching for `@domains/*` from inside a feature to make it work, stop — either the logic
-belongs in the domain that needs it, or the shared piece it actually needs (a type, a util, a config) should move to
-`shared` instead, where cross-cutting modules with no single owner belong. Forcing a domain dependency into
-`features` to avoid duplicating a few lines is the boundary violation ESLint is specifically there to catch.
+A feature may depend on shared primitives and external infrastructure. It must not import domain code.
+
+```ts
+// Allowed
+import type { Nullable } from '@shared/types/utility.ts';
+
+// Forbidden
+import type { DomainEntity } from '@domains/example/types/entity.ts';
+```
+
+If domain-specific data is required, pass it through a generic feature contract or keep the behavior in the domain.
+
+---
+
+## 6. Add External API Operations When Needed
+
+A feature that owns backend operations may expose an `api.ts` module through the shared API client:
+
+```ts
+import { apiClient } from '@api/client.ts';
+
+export default {
+    get: () => apiClient.request<unknown>({ method: 'get', url: 'feature-resource' }),
+};
+```
+
+Register it in the application-wide API entry point so external operations remain discoverable without transferring
+ownership out of the feature.
+
+---
+
+## 7. Add Tests
+
+Colocate tests with the feature:
+
+```text
+src/features/<feature-name>/tests/
+```
+
+Test the feature through the same public contract that production consumers use. Keep global test setup outside the
+feature.
+
+---
+
+## When It Is Not a Feature
+
+If implementation requires a domain import, the behavior belongs in that domain or needs a smaller domain-independent
+contract. Do not move domain types or rules into `shared` only to make a feature boundary compile; move only the truly
+reusable primitive.
+
+---
+
+## Completion Checklist
+
+- The feature has a responsibility independent of any domain.
+- It imports no domain modules.
+- Its folder contains only structures it actually uses.
+- Its public contract does not expose unnecessary implementation details.
+- Relevant behavior is covered by colocated tests.

@@ -4,6 +4,6 @@ export const env = {
 
     apiBaseUrl: import.meta.env.VITE_API_BASE_URL,
 
-    secretKey1: import.meta.env.VITE_SECRET_KEY_1,
-    secretKey2: import.meta.env.VITE_SECRET_KEY_2,
+    publicKey1: import.meta.env.VITE_PUBLIC_KEY_1,
+    publicKey2: import.meta.env.VITE_PUBLIC_KEY_2,
 };
